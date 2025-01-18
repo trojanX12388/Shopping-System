@@ -1,0 +1,326 @@
+{% extends "/Faculty-Home-Page/base.html" %}{% block title %}Advising and Mentoring{% endblock %} {% block content%}
+
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+
+<!-- Include DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+<!-- Include DataTables Buttons CSS and JS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.3.5/css/buttons.dataTables.min.css">
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.html5.min.js"></script>
+
+<!-- Include DataTables Print Button JS -->
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.print.min.js"></script>
+
+<main id="main" class="main">
+
+  {% block Advising_Mentoring %}
+    <div class="pagetitle">
+      <h1>Advising and Mentoring</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">Homepage</li>
+          <li class="breadcrumb-item">{{User}}</li>
+          <li class="breadcrumb-item active">Teaching Instructions</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="card">
+          <div class="card-body profile-card pt-4 d-flex flex-col align-items-start">
+            <img src="https://lh3.googleusercontent.com/d/{{profile_pic}}" alt="Profile" class="rounded-circle" style="width:150px; height:150px;">
+            <div class="mx-md-3" style="position:relative;left:30px;">
+              <div class="w-100">
+                <h4 class="my-0">{{user.FirstName}} {{user.MiddleInitial}} {{user.LastName}}</h4>
+                <small class="text-muted mt-sm-1">{{user.Rank}}</small>
+              </div>
+
+              <style>
+                .responsive-table {
+                  display: flex;
+                  flex-wrap: wrap;
+                  margin: -10px; /* Adjust margin as needed */
+                }
+              
+                .responsive-table td {
+                  flex: 1;
+                  padding: 10px; /* Adjust padding as needed */
+                  box-sizing: border-box;
+                }
+              
+                .responsive-table h6 {
+                  margin: 0;
+                }
+                .btnprinter-container {
+                  text-align: right;
+                }
+              
+                .btnprinter {
+                  width: 50px;
+                  background-color: transparent;
+                  border: none;
+                  padding: 0;
+                  cursor: pointer;
+                }
+              
+                .btnprinter i {
+                  font-size: 24px; /* You can adjust the font size as needed */
+                  color: #000; /* You can set the color as needed */
+                }
+              </style>
+
+              <div class="d-block mt-md-3">
+                <br>
+                <table class="responsive-table">
+                  {% for subjects in user.FISSubjectAssigned %}
+         
+                  {% if subjects.id != None %}
+                  <tr>
+                    <td><h6>{{subjects.subject_a}} Professor</h6></td>
+                    <td style="padding: 0 2em;"><h6>{{subjects.subject_b}} Professor</h6></td>
+                    <td style="padding: 0 2em;"><h6></h6></td>
+                  </tr>
+                  <tr>
+                    <td><h6>{{subjects.subject_c}} Professor</h6></td>
+                    <td style="padding: 0 2em;"><h6></h6></td>
+                  </tr>
+                  <tr>
+                    <td><h6>{{subjects.subject_d}} Professor</h6></td>
+                    <td style="padding: 0 2em;"><h6></h6></td>
+                  </tr>
+                  {% else %}
+                  <tr>
+                    <td><h6></h6></td>
+                    <td style="padding: 0 2em;"><h6></h6></td>
+                    <td style="padding: 0 2em;"><h6></h6></td>
+                  </tr>
+                  <tr>
+                    <td><h6></h6></td>
+                    <td style="padding: 0 2em;"><h6></h6></td>
+                  </tr>
+                  <tr>
+                    <td><h6></h6></td>
+                    <td style="padding: 0 2em;"><h6></h6></td>
+                  </tr>
+         
+                  {% endif %}
+  
+  
+               {% endfor %}  
+                </table>
+                <br>
+              </div>
+          </div>
+        </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body d-flex flex-column justify-content-center">
+            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+              <h5><strong>ADVISING CLASSES</strong></h5>
+            </div>
+            <div class="btnprinter-container">
+              <button id="btnPrintDetail1" class="btnprinter"><i class="bi bi-printer"></i></button>
+            </div>
+            <br>
+
+            <!-- Advising Table with stripped rows -->
+            <table id="table1" class="display" style="width:100%"> 
+              <thead>
+                <tr>
+                  <th scope="col">CLASSROOM ID</th>
+                  <th scope="col">COURSE CODE</th>
+                  <th scope="col">ADVISING SESSION</th>
+                  <th scope="col">COURSE</th>
+                  <th scope="col">SECTION</th>
+                  <th scope="col">STATUS</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for data1 in user.FISAdvisingClasses %}
+         
+                {% if data1.id != None %}
+              
+                <tr>
+                  <th scope="row">{{data1.classroomid}}</th>
+                  <td>{{data1.code}}</td>
+                  <td>{{data1.activity}}</td>
+                  <td>{{data1.course}}</td>
+                  <td>{{data1.section}}</td>
+                  <td>{{data1.status}}</td>
+                  <td> 
+                    <div class="d-grid gap-2 mt-3">
+                      <button type="button" onclick="classredirectToURL{{data1.id}}()" class="btn btn-success">Schedule</i></button>
+                      <script>
+                        function classredirectToURL{{data1.id}}() {
+                            window.location.href = '/TI-Advising-Class/{{data1.id}}/Schedules';
+                        }
+                    </script>
+                    </div>
+                </td>
+                </tr>
+                
+                {% else %}
+         
+                {% endif %}
+
+
+             {% endfor %}  
+               
+              </tbody>
+            </table><!-- End Table with stripped rows -->
+          </div>
+        </div>
+
+            <!-- ADVISING STUDENTS Card -->
+            <div class="card">
+              <div class="card-body d-flex flex-column justify-content-center">
+                <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                  <h5><strong>ADVISING STUDENTS</strong></h5>
+                </div>
+                <div class="btnprinter-container">
+                  <button id="btnPrintDetail2" class="btnprinter"><i class="bi bi-printer"></i></button>
+                </div>
+                <br>
+
+                <table id="table2" class="display" style="width:100%"> <!-- Mentoring Table with stripped rows -->
+                  <thead>
+                    <tr>
+                      <th scope="col">STUDENT ID</th>
+                      <th scope="col">STUDENT NAME</th>
+                      <th scope="col">COURSE/SECTION</th>
+                      <th scope="col">COURSE SUBJECT</th>
+                      <th scope="col">STATUS</th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for student in students %}
+                        <tr>
+                            <th scope="row">{{ student.StudentNumber }}</th>
+                            <td>{{ student.FullName }}</td>
+                            <td>{{ student.CourseSection }}</td>
+                            <td>{{ student.Subject }}</td>
+                            <td>{{ student.Status }}</td>
+                            <td> 
+                                <div class="d-grid gap-2 mt-3">
+                                    <button type="button" onclick="studentredirectToURL{{ student.Id }}()" class="btn btn-success">Schedule</button>
+                                    <script>
+                                        function studentredirectToURL{{ student.Id }}() {
+                                            window.location.href = '/TI-Advising-Student/{{ student.Id }}/Schedules';
+                                        }
+                                    </script>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                </table> 
+              </div> 
+          </div>
+
+            <!-- MENTORING STUDENT Card -->
+            <div class="card">
+              <div class="card-body d-flex flex-column justify-content-center">
+                <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                  <h5><strong>MENTORING</strong></h5>
+                </div>
+                <div class="btnprinter-container">
+                  <button id="btnPrintDetail3" class="btnprinter"><i class="bi bi-printer"></i></button>
+                </div>
+                <br>
+
+                <table id="table3" class="display" style="width:100%"> <!-- Mentoring Table with stripped rows -->
+                  <thead>
+                    <tr>
+                      <th scope="col">STUDENT ID</th>
+                      <th scope="col">STUDENT NAME</th>
+                      <th scope="col">COURSE/SECTION</th>
+                      <th scope="col">COURSE TITLE</th>
+                      <th scope="col">STATUS</th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                 
+                  </tbody>
+                </table> 
+              </div> 
+          </div>
+
+        </div>
+      
+    </section>
+
+  </main><!-- End #main -->
+
+ <script>
+  $(document).ready(function() {
+    // Function to initialize DataTable for a given table ID
+    function initializeDataTable(tableId, buttonId, title, customExportColumns) {
+      var dataTable = $(tableId).DataTable({
+        dom: 'BPlfrtip',
+        responsive: true,
+        columnDefs: [
+          {
+            searchPanes: {
+              show: true
+            },
+            targets: [0]
+          },
+          {
+            searchPanes: {
+              show: false
+            },
+            targets: [2]
+          }
+        ],
+        buttons: [
+          {
+            extend: 'print',
+            class: 'buttons-print',
+            title: title, // Set the title for each table
+            messageBottom: null,
+            exportOptions: {
+              columns: customExportColumns
+            },
+            text: 'Print'
+          }
+        ]
+      });
+
+       // Initially hide the DataTables print button
+      dataTable.buttons('.buttons-print').nodes().addClass('d-none');
+
+      $('#' + buttonId).on('click', function() {
+        // Trigger the DataTables print button click
+        dataTable.buttons('.buttons-print').trigger();
+      });
+    }
+
+    // Customize your export options for each table
+    var exportColumnsTable1 = [ 0, 1, 2, 3, 4, 5 ];
+    var exportColumnsTable2 = [ 0, 1, 2, 3, 4 ];
+    var exportColumnsTable3 = [ 0, 1, 2, 3, 4 ];
+
+    // Initialize DataTables for each table
+    initializeDataTable('#table1', 'btnPrintDetail1', 'Advising Classes', exportColumnsTable1);
+    initializeDataTable('#table2', 'btnPrintDetail2', 'Advising Students', exportColumnsTable2);
+    initializeDataTable('#table3', 'btnPrintDetail3', 'Mentoring', exportColumnsTable3);
+  });
+</script>
+
+  {% endblock %}
+
+{% endblock %}
+
+      

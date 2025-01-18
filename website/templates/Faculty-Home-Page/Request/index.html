@@ -1,0 +1,170 @@
+{% extends "/Faculty-Home-Page/base.html" %}{% block title %}Request{% endblock %} {% block content%}
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Request</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">Homepage</li>
+          <li class="breadcrumb-item">{{User}}</li>
+          <li class="breadcrumb-item active">Request</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <style>
+      .responsive-table {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -10px; /* Adjust margin as needed */
+      }
+    
+      .responsive-table td {
+        flex: 1;
+        padding: 10px; /* Adjust padding as needed */
+        box-sizing: border-box;
+        background-color: #f2f2f2 !important; /* !important to override DataTables styles */
+      }
+    
+      .responsive-table h6 {
+        margin: 0;
+      }
+    
+      .btnprinter-container {
+        text-align: right;
+      }
+    
+      .btnprinter {
+        width: 50px;
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+      }
+    
+      .btnprinter i {
+        font-size: 24px; /* You can adjust the font size as needed */
+        color: #000; /* You can set the color as needed */
+      }
+          
+    .records{
+      background-color: #1F2739;
+      color: #ffffff;
+      border-radius: 4px;
+    }
+    .records-top {
+      background-color: #F2F5F9;
+    }
+    .workshop {
+      background-color: #1F2739;
+    }
+    .close {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+  }
+
+  .close-icon {
+      color: #000; /* Set the color you want for the "x" */
+      font-size: 20px; /* Set the font size for the "x" */
+  }
+
+    </style>
+ 
+    <section class="section">
+      <div class="d-flex flex-row">
+      
+        <div class="card ms-md-2 w-100 mb-0 pb-0">
+            <div class="card-body">
+              <h5 class="card-title">If you want to update, changes, fix information of your Faculty Account, here you might request.</h5>
+              {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                  {% for category, message in messages %}
+                      {% if category == 'error' %}
+                          <div class="alert alert-danger alert-dismissible fade show d-flex justify-content-between" role="alert" style="z-index:1;">
+                              <div>{{ message }}</div>
+                              <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="closeNotification(this)">
+                                  <span aria-hidden="true" class="close-icon">&times;</span>
+                              </button>
+                          </div>
+                      {% elif category == 'success' %}
+                          <div class="alert alert-success alert-dismissible fade show d-flex justify-content-between" role="alert" style="z-index:1;">
+                              <div>{{ message }}</div>
+                              <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="closeNotification(this)">
+                                  <span aria-hidden="true" class="close-icon">&times;</span>
+                              </button>
+                          </div>
+                      {% endif %}
+                  {% endfor %}
+              {% endif %}
+          {% endwith %}
+  
+          <script>
+            function closeNotification(button) {
+                // Find the parent notification element and remove it
+                var notification = button.closest('.alert');
+                notification.remove();
+            }
+        </script>
+
+      <br><br>
+
+        <div class="text-center">
+          <h5 class="card-title">Request Form</h5>
+        </div>
+              
+               
+               <div class="card-body">
+               
+  
+                <!-- Multi Columns Form -->
+                <form method="POST" enctype="multipart/form-data" accept-charset="utf-8" class="row g-3">   
+                  <div class="col-md-4">
+                    <select id="inputState" name="request" class="form-select" style="height:50px;">
+                      <option selected value="Change Email Address">Change Email Address</option>
+                      <option value="Change Password">Change Password</option>
+                      <option value="Change Last Name">Change Last Name</option>
+                      <option value="Change Birth Date">Change Birth Date</option>
+                      <option value="Change Date Hired">Change Date Hired</option>
+                      <option value="Change Contact Number">Change Contact Number</option>
+                      <option value="Change Faculty Type">Change Faculty Type</option>
+                      <option value="Change Faculty Rank">Change Faculty Rank</option>
+                      <option value="Change Degree">Change Degree</option>
+                      <option value="Change Preferred Schedule (Day)">Change Preferred Schedule (Day)</option>
+                      <option value="Change Preferred Schedule (Time)">Change Preferred Schedule (Time)</option>
+                      <option value="Update Account Status">Update Account Status</option>
+                    </select>
+                  </div>
+                
+                      <h5 class="card-title">Message</h5>
+        
+                      <div class="col-sm-12">
+                        <textarea class="form-control" name="message" style="height: 100px"></textarea>
+                      </div>
+                 
+
+                  <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form><!-- End Multi Columns Form -->
+  
+              </div>
+
+
+            </div>
+           
+        </div>
+    </div>
+
+    </section>
+
+  </main><!-- End #main -->
+
+{% endblock %}
+
+      

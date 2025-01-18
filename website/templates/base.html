@@ -1,0 +1,93 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+     {# INTERNAL MAIN CSS #}  
+
+    <link rel="stylesheet" href="{{url_for('static', filename='css/util.css')}}">	{# UTIL CSS #}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}"> {# MAIN CSS #}
+
+    {# EXTERNAL CSS #}  
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.3/css/bootstrap.min.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hamburgers/1.2.1/hamburgers.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animsition/3.2.1/css/animsition.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+   
+
+ <title> {% block title %}Faculty Information System{% endblock %} </title>
+  <link rel = "icon" href = "{{url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" 
+  type = "image/x-icon">
+</head>
+
+{# WELCOME PAGE CONTENT #}  
+
+{% block content %}
+
+<body>
+
+	<div class="limiter">
+		<section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+			<form method="POST" class="validate-form">
+				<div class="container">
+					<div class="row justify-content-center">
+					  <div class="d-flex flex-column align-items-center justify-content-center">
+		  
+						<div class="d-flex justify-content-center py-4">
+						  <a href="/" class="logo d-flex align-items-center w-auto text-decoration-none">
+							<img src="{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" style="width:50px;height:50px;">
+							<h4 class="d-flex ms-sm-1">Faculty Information System</h4>
+						  </a>
+						</div><!-- End Logo -->
+		  
+						<div class="welcome card mb-3 px-md-5" style="border-width:3px;">
+						  <div class="card-body">
+							<div class="pb-2 mb-md-3">
+							  <h3 class="card-title text-center">Log in as</h3>
+							</div>
+							  <div class="mx-lg-5">
+								  <a href="/faculty-login"><button type="button" class="btn btn-primary w-100 my-md-2"><strong>Faculty</strong></button></a>
+								  <a href="/admin-login"><button type="button" class="btn btn-danger w-100 my-md-2"><strong>Admin</strong></button></a>
+							  </div>
+		  
+						  </div>
+						</div>
+					  </div>
+					</div>
+				  </div>
+			</form>
+		  </div>
+		</section>
+	  </div>
+	
+</body>
+
+{% endblock %}
+    
+
+   {# JAVASCRIPTS  #} 
+
+  {# EXTERNAL CSS #}  
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.3/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animsition/3.2.1/js/animsition.min.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/countdown/2.6.0/countdown.js"></script>
+
+  {# INTERNAL CSS #}  
+
+	<script src="{{url_for('static', filename='javascript/welcome.js')}}"></script>
+	<script src="{{ url_for('static', filename='javascript/login_attempt.js')}}"></script>
+	{# <script src="{{ url_for('static', filename='javascript/login.js')}}"></script> REFRESH TOKEN JS #}
+
+</html>

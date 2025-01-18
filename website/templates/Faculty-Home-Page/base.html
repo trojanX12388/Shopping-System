@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title id="notification-count-title"></title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+   <!-- Favicons -->
+   <link href="{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" rel="icon">
+   <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+ 
+   <!-- Google Fonts -->
+   <link href="https://fonts.gstatic.com" rel="preconnect">
+   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  
+  <!-- Vendor CSS Files -->
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link href="https://cdn.remixicon.com/releases/v1.2.2/remixicon.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+
+  
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/plugin/relativeTime.min.js"></script>
+
+  
+  <!-- Include jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <!-- Include DataTables CSS -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  
+
+<!-- Include DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+<!-- Include DataTables Buttons CSS and JS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.3.5/css/buttons.dataTables.min.css">
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.html5.min.js"></script>
+
+<!-- Include DataTables Print Button JS -->
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.print.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+ 
+   <!-- Template Main CSS File -->
+ <link rel="stylesheet" href="{{url_for('static', filename='css/homepage/style.css')}}"> {# MAIN HOMEPAGE CSS #}
+ <link rel="stylesheet" href="{{url_for('static', filename='css/homepage/PDM-Basic-Details/uploadprofile.css')}}"> {# UPLOAD PROFILE CSS #}
+ <link rel="stylesheet" href="{{url_for('static', filename='css/homepage/PDM-Basic-Details/uploadprofile2.css')}}"> {# UPLOAD PROFILE SCSS #}
+
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="/faculty-home-page" class="logo d-flex align-items-center">
+        <img src="{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" alt="PUPQC LOGO">
+        <span class="d-none d-lg-block">Faculty Page</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+        <li class="nav-item dropdown">
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-bell"></i>
+            <span class="badge bg-danger badge-number" id="notification-count">0</span>
+          </a><!-- End Notification Icon -->
+        
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+            <li class="dropdown-header">
+              You have <span id="notification-count-text">0</span> Notifications
+              <a href="/Faculty-Notifications"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+        
+            <!-- Notifications will be dynamically added here -->
+        
+          </ul><!-- End Notification Dropdown Items -->
+        
+        </li><!-- End Notification Nav -->
+
+      
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="https://lh3.googleusercontent.com/d/{{profile_pic}}" alt="Profile" class="rounded-circle" style="width:30px;height:30px;">
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{User}}</span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>{{User}}</h6>
+              <span>{{user.Rank}}</span>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="/PDM-Basic-Details">
+                <i class="bi bi-person"></i>
+                <span>My Profile</span>
+              </a>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="/Settings">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+              </a>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <script>
+              function logout() {
+                  // ... (your existing logout code)
+          
+                  localStorage.setItem('entry', 3);  // Reset entry count to 3 in local storage
+                  // ... (any additional code for logging out)
+              }
+          </script>
+          
+          <!-- Your existing HTML code with the modified logout link -->
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="/logout" onclick="logout()">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Sign Out</span>
+              </a>
+          </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/faculty-home-page">
+          <i class="bi bi-house-fill"></i>
+          <span>HOMEPAGE</span>
+        </a>
+      </li><!-- End HOMEPAGE Nav -->
+
+      <li class="nav-item"><!-- PERSONAL DATA MANAGEMENT Nav -->
+        <a class="nav-link collapsed" data-bs-target="#PDM-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-person-fill"></i><span>PERSONAL DATA MANAGEMENT</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="PDM-nav" class="nav-content collapse {{ PDM }}" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="/PDM-Basic-Details" class="{{activate_BD}}">
+              <i class="bi bi-circle"></i><span>Basic Details</span>
+            </a>
+          </li>
+          <li>
+            <a href="/PDM-Personal-Details" class="{{activate_PD}}">
+              <i class="bi bi-circle"></i><span>Personal Details</span>
+            </a>
+          </li>
+          <li>
+            <a href="/PDM-Contact-Details" class="{{activate_CD}}">
+              <i class="bi bi-circle"></i><span>Contact Details</span>
+            </a>
+          </li>
+          <li>
+            <a href="/PDM-Family-Background" class="{{activate_FB}}">
+              <i class="bi bi-circle"></i><span>Family Background</span>
+            </a>
+          </li>
+          <li>
+            <a href="/PDM-Educational-Background" class="{{activate_EB}}">
+              <i class="bi bi-circle"></i><span>Educational Background</span>
+            </a>
+          </li>
+           <li>
+            <a href="/PDM-Eligibities" class="{{activate_E}}">
+              <i class="bi bi-circle"></i><span>Eligibities</span>
+            </a>
+          </li>
+          <li>
+            <a href="/PDM-Work-Experience" class="{{activate_WE}}">
+              <i class="bi bi-circle"></i><span>Work Experience</span>
+            </a>
+          </li>
+          <li>
+            <a href="/PDM-Voluntary-Works" class="{{activate_VW}}">
+              <i class="bi bi-circle"></i><span>Voluntary Works</span>
+            </a>
+          </li>
+          <li>
+            <a href="/PDM-Training-Seminars" class="{{activate_TS}}">
+              <i class="bi bi-circle"></i><span>Training, Seminars, & Workshop</span>
+            </a>
+          </li>
+          <li>
+            <a href="/PDM-Outstanding-Achievements" class="{{activate_OA}}">
+              <i class="bi bi-circle"></i><span>Outstanding Achievements</span>
+            </a>
+          </li>
+          <li>
+            <a href="/PDM-Officeships-Memberships" class="{{activate_OSM}}">
+              <i class="bi bi-circle"></i><span>OfficeShip/Membership</span>
+            </a>
+          </li>
+          <li>
+            <a href="/PDM-Agency-Membership" class="{{activate_AM}}">
+              <i class="bi bi-circle"></i><span>Agency Membership</span>
+            </a>
+          </li>
+          <li>
+            <a href="/PDM-Additional-Questions" class="{{activate_AQ}}">
+              <i class="bi bi-circle"></i><span>Additional Questions</span>
+            </a>
+          </li>
+          <li>
+            <a href="/PDM-Character-Reference" class="{{activate_CR}}">
+              <i class="bi bi-circle"></i><span>Character Reference</span>
+            </a>
+          </li>
+          <li>
+            <a href="/PDM-Signature" class="{{activate_Sig}}">
+              <i class="bi bi-circle"></i><span>Signature</span>
+            </a>
+          </li>
+          <li>
+            <a href="/PDM-Personal-Data-Reports" class="{{activate_PDR}}">
+              <i class="bi bi-circle"></i><span>Personal Data Reports</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End PERSONAL DATA MANAGEMENT Nav -->
+
+      <li class="nav-item"><!-- TEACHING INSTRUCTIONS Nav -->
+        <a class="nav-link collapsed" data-bs-target="#teaching-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-book-fill"></i><span>TEACHING INSTRUCTIONS</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="teaching-nav" class="nav-content collapse {{ TI }}" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="/TI-Teaching-Assignments" class="{{activate_TA}}">
+              <i class="bi bi-circle"></i><span>Teaching Assignments</span>
+            </a>
+          </li>
+          <!--
+          <li>
+            <a href="/TI-Advising-Mentoring" class="{{activate_AdM}}">
+              <i class="bi bi-circle"></i><span>Advising Mentoring</span>
+            </a>
+          </li>
+          -->
+          <li>
+            <a href="/TI-Teaching-Effectiveness" class="{{activate_TE}}">
+              <i class="bi bi-circle"></i><span>Teaching Effectiveness</span>
+            </a>
+          </li>
+          <!--
+          <li>
+            <a href="/TI-Curriculum" class="{{activate_C}}">
+              <i class="bi bi-circle"></i><span>Curriculum</span>
+            </a>
+          </li>
+          -->
+          <li>
+            <a href="/TI-Instructional-Materials-Developed" class="{{activate_IMD}}">
+              <i class="bi bi-circle"></i><span>Instructional Materials Developed</span>
+            </a>
+          </li>
+          <li>
+            <a href="/TI-Special-Project" class="{{activate_SP}}">
+              <i class="bi bi-circle"></i><span>Special Project</span>
+            </a>
+          </li>
+          <li>
+            <a href="/TI-Capstone" class="{{activate_Caps}}">
+              <i class="bi bi-circle"></i><span>Capstone</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End TEACHING INSTRUCTION Nav -->
+      
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/Committee-Administrative-Roles">
+          <i class="bi bi-people-fill"></i>
+          <span>FACULTY ROLES</span>
+        </a>
+      </li><!-- End COMMITTEE & ADMINISTRATIVE ROLES Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/Attendance-Management">
+          <i class="bi bi-calendar-check-fill"></i>
+          <span>ATTENDANCE MANAGEMENT</span>
+        </a>
+      </li><!-- End ATTENDANCE MANAGEMENT Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/Leave-Absence-Management">
+          <i class="bi bi-person-dash-fill"></i>
+          <span>LEAVE OF ABSENCE MANAGEMENT</span>
+        </a>
+      </li><!-- End LEAVE OF ABSENCE MANAGEMENT Nav -->
+
+      <li class="nav-item"><!-- SCHEDULE MANAGEMENT Nav -->
+        <a class="nav-link collapsed" href="/SM-Class-Schedule">
+          <i class="bi bi-clock-fill"></i><span>SCHEDULE MANAGEMENT</span>
+        </a>
+      </li><!-- End SCHEDULE MANAGEMENT Nav -->
+
+      <li class="nav-item"><!-- RESEARCH INNOVATION FOR CREATIVE WORK Nav -->
+        <a class="nav-link collapsed" href="/RP-Research-Report">
+          <i class="bi bi-lightbulb-fill"></i><span>RESEARCH INNOVATION FOR CREATIVE WORK</span>
+        </a>
+      </li>
+        <!-- <i class="bi bi-chevron-down ms-auto"></i>
+            <ul id="research-nav" class="nav-content collapse {{ RP }}" data-bs-parent="#sidebar-nav">
+      <li>
+            <a href="/RP-Research-Utilization" class="{{activate_RU}}">
+              <i class="bi bi-circle"></i><span>Research Utilization</span>
+            </a>
+          </li> 
+        --> 
+       <!--    <li>
+            <a href="/RP-Research-Report" class="{{activate_R}}">
+              <i class="bi bi-circle"></i><span>Research Report</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      --> 
+      <!-- End RESEARCH INNOVATION FOR CREATIVE WORK Nav -->
+
+      <!--
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/Awards-Recognitions">
+          <i class="bi bi-trophy-fill"></i>
+          <span>AWARDS & RECOGNITIONS</span>
+        </a>
+      </li> End AWARDS & RECOGNITIONS Nav 
+    -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/Feedback-Surveys">
+          <i class="bi bi-chat-right-dots-fill"></i>
+          <span>SELF EVALUATION</span>
+        </a>
+      </li>
+ 
+     <li class="nav-item">
+        <a class="nav-link collapsed" href="/Professional-Development">
+          <i class="bi bi-file-earmark-person-fill"></i>
+          <span>PROFESSIONAL DEVELOPMENT</span>
+        </a>
+      </li><!-- End PROFESSIONAL DEVELOPMENT Nav -->
+
+      <!-- EXTENSION PROJECTS Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/Extension-Projects">
+          <i class="bi bi-puzzle-fill"></i>
+          <span>EXTENSION PROJECTS</span>
+        </a>
+      </li><!-- End AWARDS & RECOGNITIONS Nav -->
+
+    <!--
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#announcement-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-chat-left-quote-fill"></i><span>ANNOUNCEMENT & FORUM</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="announcement-nav" class="nav-content collapse {{ AF }}" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="/AF-Announcements" class="{{activate_A}}">
+              <i class="bi bi-circle"></i><span>Announcements</span>
+            </a>
+          </li>
+          <li>
+            <a href="/AF-Forum" class="{{activate_F}}">
+              <i class="bi bi-circle"></i><span>Forum</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    -->
+      
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="/Mandatory-Requirements">
+        <i class="bi bi-exclamation-octagon-fill"></i>
+        <span>MANDATORY REQUIREMENTS</span>
+        <span id="mandatory-requirements-warning" style="display: none; color: red;"> <!-- Add this span with an appropriate style -->
+          <i class="bi bi-exclamation-triangle-fill"></i> Warning!
+        </span>
+      </a>
+    </li><!-- End MANDATORY REQUIREMENTS Nav -->
+
+     <!--   <li class="nav-item">
+        <a class="nav-link collapsed" href="/Records">
+          <i class="bi bi-file-earmark-text-fill"></i>
+          <span>RECORDS</span>
+        </a>
+      </li>End RECORDS Nav --> 
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/Medical-Information">
+          <i><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-pulse-fill" viewBox="0 0 16 16">
+            <path d="M1.475 9C2.702 10.84 4.779 12.871 8 15c3.221-2.129 5.298-4.16 6.525-6H12a.5.5 0 0 1-.464-.314l-1.457-3.642-1.598 5.593a.5.5 0 0 1-.945.049L5.889 6.568l-1.473 2.21A.5.5 0 0 1 4 9H1.475Z"/>
+            <path d="M.88 8C-2.427 1.68 4.41-2 7.823 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C11.59-2 18.426 1.68 15.12 8h-2.783l-1.874-4.686a.5.5 0 0 0-.945.049L7.921 8.956 6.464 5.314a.5.5 0 0 0-.88-.091L3.732 8H.88Z"/>
+          </svg></i>
+          <span>MEDICAL INFORMATION</span>
+        </a>
+      </li><!-- End MEDICAL INFORMATION Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/Request">
+          <i class="bi bi-stickies-fill"></i>
+          <span>REQUEST</span>
+        </a>
+      </li><!-- End REQUEST Nav -->
+
+    </ul>
+    <br>
+    <br>
+    <br>
+    <div class="footer-copyright">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <img src="{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" alt="PUPFIS LOGO" class="rounded mx-auto d-block" style="width: 80px;height: 80px;"/>
+            <br>
+            <p style="font-size: small; color: #2e2d2d;">Faculty Information System of the Polytechnic University of the Philippines Quezon City Branch</p>
+            <p style="font-size: smaller; color: #0099ff;">#123-456-789/ <a href="https://www.pup.edu.ph/">@pup.edu.ph</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </aside><!-- End Sidebar-->
+
+{% block content %} <!-- PAGE BODY CONTENT -->
+
+      <main id="main" class="main">
+
+      {% include "/Faculty-Home-Page/Announcement/Announcement.html" %}  <!-- Announcement -->
+
+      </main><!-- End #main -->
+ 
+{% endblock %}
+
+
+
+<script>
+  // Load the relativeTime plugin for dayjs
+  dayjs.extend(window.dayjs_plugin_relativeTime);
+
+  // Function to calculate custom human-readable time difference using dayjs
+  function calculateTimeDifference(dateTime) {
+    const diffInSeconds = dayjs().diff(dayjs(dateTime), 'seconds');
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInSeconds / 3600);
+    const diffInDays = Math.floor(diffInSeconds / 86400);
+
+    if (diffInSeconds < 60) {
+      return diffInSeconds + 's ago';
+    } else if (diffInMinutes < 60) {
+      return diffInMinutes + 'm ago';
+    } else if (diffInHours < 24) {
+      return diffInHours + 'h ago';
+    } else if (diffInDays < 7) {
+      return diffInDays + 'd ago';
+    } else if (diffInDays < 30) {
+      return Math.floor(diffInDays / 7) + 'w ago';
+    } else if (diffInDays < 365) {
+      return Math.floor(diffInDays / 30) + 'mo ago';
+    } else {
+      return Math.floor(diffInDays / 365) + 'y ago';
+    }
+  }
+  
+  // Variable to track whether "Show all" link has been added
+  var showAllLinkAdded = false;
+
+  // Function to fetch and display pending notifications
+  function fetchAndDisplayPendingNotifications() {
+    $.ajax({
+      url: '/api/Faculty/Notifications',
+      type: 'GET',
+      dataType: 'json',
+      success: function (data) {
+        // Handle the response and update the HTML
+        var pendingRequests = data.requests.filter(function (request) {
+          return request.Status.toLowerCase() === 'pending' || request.Type.toLowerCase() === 'mandatory';
+        });
+
+        var newTitle = "{% block title %}Faculty Page{% endblock %}";
+
+        if (pendingRequests.length > 0) {
+          // Sort pending notifications by DateTime in descending order
+          pendingRequests.sort(function (a, b) {
+            return new Date(b.DateTime) - new Date(a.DateTime);
+          });
+
+          document.getElementById("notification-count-title").innerText = '(' + pendingRequests.length + ')' + ' ' + newTitle;
+
+          // Update the notification count
+          $('#notification-count').text(pendingRequests.length);
+          $('#notification-count-text').text(pendingRequests.length);
+
+          // Clear existing pending notifications
+          $('.notifications .notification-item').remove();
+
+          // Loop through the latest 4 pending notifications and append them to the HTML
+          for (let index = 0; index < Math.min(4, pendingRequests.length); index++) {
+            var notification = pendingRequests[index];
+
+            var notificationItem = $('<li class="notification-item">');
+
+            var ProfileIcon = $('<img src="https://lh3.googleusercontent.com/d/'+notification.Profile_Pic+'" alt="Profile" class="rounded-circle" style="width:50px;height:50px;margin-right: 15px;"></img>');
+            var notificationContent = $('<div>');
+            var notificationTitle = $('<h4>').text(notification.Notification);
+            var identifierInfo = notification.Notif_By + ' (' + notification.IdentifierType + ': ' + notification.IdentifierId + ')';
+            var notificationDescription = $('<p>').text(identifierInfo + ' ' + calculateTimeDifference(notification.DateTime));
+
+            notificationContent.append(notificationTitle, notificationDescription);
+            notificationItem.append(ProfileIcon, notificationContent);
+            $('.notifications').append(notificationItem);
+
+          }
+
+        } else {
+          // Handle the case when there are no pending notifications
+          document.getElementById("notification-count-title").innerText = newTitle;
+
+          $('.notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">You have no notifications.</h6>');
+        }
+      },
+      error: function () {
+        // Handle the error case
+        document.getElementById("notification-count-title").innerText = newTitle;
+        
+        $('.notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">No notifications available.</h6>');
+      }
+    });
+  }
+
+  // Initial fetch and display
+  fetchAndDisplayPendingNotifications();
+
+  // Reload pending notifications every minute
+  setInterval(fetchAndDisplayPendingNotifications, 60000);
+</script>
+
+
+
+
+<script>
+  // Function to fetch and display pending notifications
+  function checkMandatoryRequirements() {
+    $.ajax({
+      url: '/Mandatory-Requirements/api/get-record',
+      type: 'GET',
+      dataType: 'json',
+      success: function (data) {
+        // Check if both year and FacultyId are not null
+        if (data.record.length > 0 && data.record[0].year !== null && data.record[0].FacultyId !== null) {
+          // Hide the warning sign
+          $('#mandatory-requirements-warning').hide();
+        } else {
+          // Show the warning sign
+          $('#mandatory-requirements-warning').show();
+        }
+
+        // Rest of your existing code to handle pending notifications...
+      },
+      error: function () {
+        // Handle the error case
+        // Hide the warning sign on error
+        $('#mandatory-requirements-warning').hide();
+      }
+    });
+  }
+
+  // Initial fetch and display
+  checkMandatoryRequirements();
+
+  // Reload pending notifications every minute
+  setInterval(checkMandatoryRequirements, 60000);
+</script>
+
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy;<strong><span>Copyright PUPQCFIS 2023.</span></strong>. All Rights Reserved
+    </div>
+    
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+  <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+  
+
+  <!-- Template Main JS File -->
+  <script src="{{ url_for('static', filename='javascript/homepage/main.js')}}"></script>
+  <script src="{{ url_for('static', filename='javascript/homepage/PDM-Basic-Details/uploadprofile.js')}}"></script> {# UPLOAD PROFILE JS #}
+ {#  <script src="{{ url_for('static', filename='javascript/homepage/refresh_token.js')}}"></script> REFRESH TOKEN JS #}
+
+</body>
+
+</html>

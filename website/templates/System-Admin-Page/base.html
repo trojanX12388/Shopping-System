@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title id="notification-count-title"></title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+   <!-- Favicons -->
+   <link href="{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" rel="icon">
+   <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+ 
+   <!-- Google Fonts -->
+   <link href="https://fonts.gstatic.com" rel="preconnect">
+   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  
+  <!-- Vendor CSS Files -->
+  
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link href="https://cdn.remixicon.com/releases/v1.2.2/remixicon.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/plugin/relativeTime.min.js"></script>
+  
+  <!-- Include jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <!-- Include DataTables CSS -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  
+
+<!-- Include DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+<!-- Include DataTables Buttons CSS and JS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.3.5/css/buttons.dataTables.min.css">
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.html5.min.js"></script>
+
+<!-- Include DataTables Print Button JS -->
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.print.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+   <!-- Template Main CSS File -->
+ <link rel="stylesheet" href="{{url_for('static', filename='css/homepage/style.css')}}"> {# MAIN HOMEPAGE CSS #}
+ <link rel="stylesheet" href="{{url_for('static', filename='css/homepage/PDM-Basic-Details/uploadprofile.css')}}"> {# UPLOAD PROFILE CSS #}
+ <link rel="stylesheet" href="{{url_for('static', filename='css/homepage/PDM-Basic-Details/uploadprofile2.css')}}"> {# UPLOAD PROFILE SCSS #}
+
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="/faculty-home-page" class="logo d-flex align-items-center">
+        <img src="{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" alt="PUPQC LOGO">
+        <span class="d-none d-lg-block">System Admin</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+        <li class="nav-item dropdown">
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-bell"></i>
+            <span class="badge bg-danger badge-number" id="notification-count">0</span>
+          </a><!-- End Notification Icon -->
+        
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+            <li class="dropdown-header">
+              You have <span id="notification-count-text">0</span> pending actions
+              <a href="/auth/sysadmin/Requests"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+        
+            <!-- Notifications will be dynamically added here -->
+        
+          </ul><!-- End Notification Dropdown Items -->
+        
+        </li><!-- End Notification Nav -->
+        
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="https://lh3.googleusercontent.com/d/{{profile_pic}}" alt="Profile" class="rounded-circle" style="width:30px;height:30px;">
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{User}}</span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>{{User}}</h6>
+              <span>{{user.SystemAdminId}}</span>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="/auth/sysadmin/Settings">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+              </a>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <script>
+              function logout() {
+                  // ... (your existing logout code)
+          
+                  localStorage.setItem('entry', 3);  // Reset entry count to 3 in local storage
+                  // ... (any additional code for logging out)
+              }
+          </script>
+          
+          <!-- Your existing HTML code with the modified logout link -->
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="/auth/sysadmin/logout" onclick="logout()">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Sign Out</span>
+              </a>
+          </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+ <!-- ======= Sidebar ======= -->
+ <aside id="sidebar" class="sidebar">
+ 
+  <ul class="sidebar-nav" id="sidebar-nav">
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="/auth/sysadmin/homepage">
+        <i class="bi bi-grid"></i>
+        <span>DASHBOARD</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="/auth/sysadmin/Faculty-Management">
+        <i class="bi bi-person-lines-fill"></i>
+        <span>FACULTY MANAGEMENT</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="/auth/sysadmin/Admin-Management">
+        <i class="bi"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill-gear" viewBox="0 0 16 16">
+          <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4m9.886-3.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382zM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0"/>
+        </svg></i>
+        <span>ADMIN MANAGEMENT</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="/auth/sysadmin/Requests">
+        <i class="bi bi-envelope-open-fill"></i>
+        <span>REQUESTS</span>
+      </a>
+    </li><!-- End REQUESTS Nav -->
+
+  </ul>
+  <br>
+  <br>
+  <br>
+  <div class="footer-copyright">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <img src="{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" alt="PUPFIS LOGO" class="rounded mx-auto d-block" style="width: 80px;height: 80px;"/>
+          <br>
+          <p style="font-size: small; color: #2e2d2d;">Faculty Information System of the Polytechnic University of the Philippines Quezon City Branch</p>
+          <p style="font-size: smaller; color: #0099ff;">#123-456-789/ <a href="https://www.pup.edu.ph/">@pup.edu.ph</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</aside><!-- End Sidebar-->
+
+{% block content %}
+
+
+<main id="main" class="main">
+  <div style="background-color:#08101B; height:200px; position: relative; display: flex; align-items: center;">
+    <div style="background: url('{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}') no-repeat; background-size: 300px 300px; width: 300px; height: 200px; opacity: 0.5; filter: grayscale(100%);"></div>
+    <div style="margin-left: 20px;">
+        <h1 style="color:#FFFFFF;">DASHBOARD</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" style="color:#CECDCD;"><a href="/auth/sysadmin/homepage" style="color:#CECDCD;">System Admin Dashboard</a></li>
+            </ol>
+        </nav>
+    </div>
+</div><!-- End Page Title -->
+
+  <br><br>
+
+  <style>
+    .responsive-table {
+      display: flex;
+      flex-wrap: wrap;
+      margin: -10px; /* Adjust margin as needed */
+    }
+  
+    .responsive-table td {
+      flex: 1;
+      padding: 10px; /* Adjust padding as needed */
+      box-sizing: border-box;
+    }
+  
+    .responsive-table h6 {
+      margin: 0;
+    }
+    .btnprinter-container {
+      text-align: right;
+    }
+  
+    .btnprinter {
+      width: 50px;
+      background-color: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+  
+    .btnprinter i {
+      font-size: 24px; /* You can adjust the font size as needed */
+      color: #000; /* You can set the color as needed */
+    }
+
+        
+    .pheader {
+      background-color: #1F2739;
+      padding: 20px 0;
+      font-size: 14px;
+      transition: all 0.3s;
+      border-top: 1px solid #6e0303;
+    }
+
+    .pheader .copyright {
+      text-align: center;
+      color: #eeeeff;
+    }
+
+    .pheader .credits {
+      padding-top: 5px;
+      text-align: center;
+      font-size: 13px;
+      color: #e9e2ff;
+    }
+  </style>
+
+  <section class="section dashboard">
+
+    <div class="row">
+
+       <!-- Left side columns -->
+       <div class="col-lg-8">
+        <div class="row">
+
+       <!-- Left side columns -->
+       <div class="col-lg-12">
+        <div class="row">
+
+          <!-- TOTAL FACULTIES Card -->
+          <div class="col-xxl-6 col-md-6">
+            <div class="card info-card revenue-card">
+              <div class="card-body">
+                <h5 class="card-title">TOTAL FACULTY MEMBERS</h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-people"></i>
+                  </div>
+                  <div class="ps-3">
+
+                    <h6 id="total_faculty_placeholder"></h6>
+
+                    <span class="text-success small pt-1 fw-bold">Faculties</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div><!-- End Sales Card -->
+
+          <!-- Customers Card -->
+          <div class="col-xxl-6 col-xl-12">
+
+            <div class="card info-card sales-card">
+
+              <div class="card-body">
+                <h5 class="card-title">TOTAL ADMIN MEMBERS</h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-person-check"></i>
+                  </div>
+                  <div class="ps-3">
+
+                    <h6 id="total_admin_placeholder"></h6>
+
+                    <span class="text-success small pt-1 fw-bold">Admins</span>
+                   
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div><!-- End Customers Card -->
+
+        </div>
+      </div>
+          <!-- Projects Card -->
+          <div class="col-xxl-3 col-md-6">
+            <div class="card info-card customers-card">
+
+              <div class="card-body">
+                <h5 class="card-title">ACTIVED ACCOUNTS</h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-person-check"></i>
+                  </div>
+                  <div class="ps-3">
+
+                    <h6 id="faculty_active"></h6>
+
+                    <span class="text-inactive small pt-1 fw-bold">ACTIVE</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div><!-- End Projects Card -->
+
+              <!-- Projects Card -->
+              <div class="col-xxl-3 col-md-6">
+                <div class="card info-card revenue-card">
+    
+                  <div class="card-body">
+                    <h5 class="card-title">DISABLED ACCOUNTS</h5>
+    
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-person-x-fill"></i>
+                      </div>
+                      <div class="ps-3">
+
+                        <h6 id="faculty_disabled"></h6>
+
+                        <span class="text-inactive small pt-1 fw-bold">DISABLED</span>
+                      </div>
+                     
+                    </div>
+                  </div>
+    
+                </div>
+              </div><!-- End Projects Card -->
+
+                  <!-- Projects Card -->
+          <div class="col-xxl-3 col-md-6">
+            <div class="card info-card revenue-card">
+
+              <div class="card-body">
+                <h5 class="card-title">LOCKED ACCOUNTS</h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi"><img src="https://icons.iconarchive.com/icons/bootstrap/bootstrap/128/Bootstrap-person-fill-lock-icon.png" width="48" height="48"></i>
+                  </div>
+                  <div class="ps-3">
+
+                    <h6 id="faculty_locked"></h6>
+                    
+                    <span class="text-inactive small pt-1 fw-bold">LOCKED</span>
+                  </div>
+                
+                </div>
+              </div>
+
+            </div>
+          </div><!-- End Projects Card -->
+
+              <!-- Projects Card -->
+              <div class="col-xxl-3 col-md-6">
+                <div class="card info-card revenue-card">
+    
+                  <div class="card-body">
+                    <h5 class="card-title">DEACTIVATED</h5>
+    
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="fa fa-ban" style="font-size:48px;color:black"></i>
+                      </div>
+                      <div class="ps-3">
+
+                        <h6 id="faculty_deactivated"></h6>
+
+                        <span class="text-inactive small pt-1 fw-bold">DEACTIVATED</span>
+                      </div>
+                     
+                    </div>
+                  </div>
+    
+                </div>
+              </div>
+
+              <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+      
+              <div class="card-body pt-3">
+                <!-- Bordered Tabs -->
+                <ul class="nav nav-tabs nav-tabs-bordered" role="tablist">
+  
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview" aria-selected="true" role="tab">Faculties Chart</button>
+                  </li>
+  
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit" aria-selected="false" role="tab" tabindex="-1">Admins Chart</button>
+                  </li>
+  
+                </ul>
+                <div class="tab-content pt-2">
+  
+                  <div class="tab-pane fade profile-overview active show" id="profile-overview" role="tabpanel">
+                
+                     <!-- Create a container element for the chart -->
+                        <div id="chart"></div>
+
+                  </div>
+  
+                  <div class="tab-pane fade profile-edit pt-3" id="profile-edit" role="tabpanel">
+
+                     <!-- Create a container element for the chart -->
+                     <div id="chart2"></div>
+
+                  </div>
+    
+  
+                </div><!-- End Bordered Tabs -->
+  
+              </div>
+
+      
+                  </div>
+                </div><!-- End News & Updates -->
+                <div class="col-lg-4">
+
+                  <!-- Recent Activity -->
+                  <div class="card">
+                 
+                    <div class="card-body">
+                      <h5 class="card-title">Users Activity</h5>
+        
+                      <div class="activity" id="activity-container2" style="max-height: 300px; height: 300px; overflow-y: auto;">
+        
+          
+                      </div>
+        
+                    </div>
+                  </div><!-- End Recent Activity -->
+        
+             <!-- Recent Activity -->
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Activity Logs</h5>
+
+                <div class="activity" id="activity-container" style="max-height: 300px; height: 300px; overflow-y: auto;">
+
+                  <!-- Log entries will be appended here dynamically -->
+                </div>
+
+              </div>
+            </div><!-- End Recent Activity -->
+
+          </div>
+
+  </section>
+</main><!-- End #main -->
+
+<script>
+  $(document).ready(function () {
+    var options1 = {
+      series: [{
+        name: "Faculties",
+        data: []  // Initial empty data
+      }],
+      chart: {
+        height: 350,
+        type: 'line',
+        zoom: {
+          enabled: false
+        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: 'straight'
+      },
+      title: {
+        text: 'Added Faculties (Last 7 Years)',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'],
+          opacity: 0.5
+        },
+      },
+      xaxis: {
+        categories: [],  // Initial empty categories
+      },
+      yaxis: {
+        max: 30 // Set a maximum value for the y-axis
+      }
+    };
+
+    var options2 = {
+      series: [{
+        name: "Admins",
+        data: []  // Initial empty data
+      }],
+      chart: {
+        height: 350,
+        type: 'line',
+        zoom: {
+          enabled: false
+        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: 'straight'
+      },
+      title: {
+        text: 'Added Admins (Last 7 Years)',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'],
+          opacity: 0.5
+        },
+      },
+      xaxis: {
+        categories: [],  // Initial empty categories
+      },
+      yaxis: {
+        max: 30 // Set a maximum value for the y-axis
+      }
+    };
+
+    var chart1 = new ApexCharts(document.querySelector("#chart"), options1);
+    chart1.render();
+
+    var chart2 = new ApexCharts(document.querySelector("#chart2"), options2);
+    chart2.render();
+
+    // Function to update the content and chart data
+    function updateContent(data) {
+      $('#total_faculty_placeholder').text(data.total_faculty);
+      $('#faculty_active').text(data.faculty_active);
+      $('#faculty_disabled').text(data.faculty_disabled);
+      $('#faculty_locked').text(data.faculty_locked);
+      $('#faculty_deactivated').text(data.faculty_deactivated);
+      $('#total_admin_placeholder').text(data.total_admin);
+
+      // CHART FOR FACULTY
+      var categories1 = data.chart_data.map(function(item) {
+        return item.year;
+      });
+
+      chart1.updateOptions({
+        xaxis: {
+          categories: categories1
+        }
+      });
+
+      chart1.updateSeries([{
+        data: data.chart_data.map(function(item) {
+          return item.value;
+        })
+      }]);
+
+      // CHART FOR ADMIN
+      var categories2 = data.chart_data2.map(function(item) {
+        return item.year;
+      });
+
+      chart2.updateOptions({
+        xaxis: {
+          categories: categories2
+        }
+      });
+
+      chart2.updateSeries([{
+        data: data.chart_data2.map(function(item) {
+          return item.value;
+        })
+      }]);
+    }
+
+    // Fetch data using Ajax
+    function fetchData() {
+      $.ajax({
+        url: '/auth/sysadmin/api/FISData',
+        method: 'GET',
+        dataType: 'json',
+        success: function (data) {
+          updateContent(data);
+        },
+        error: function (xhr, status, error) {
+          // Handle errors if needed
+          console.error('Error fetching data:', error);
+        }
+      });
+    }
+
+    // Initial data load on page load
+    fetchData();
+
+    // Set up a timer to periodically refresh the data (adjust the interval as needed)
+    setInterval(fetchData, 60000); // Refresh every 60 seconds
+  });
+</script>
+
+<script>
+  // Load the relativeTime plugin for dayjs
+  dayjs.extend(window.dayjs_plugin_relativeTime);
+
+  // Function to calculate custom human-readable time difference using dayjs
+  function calculateTimeDifference(dateTime) {
+    const diffInSeconds = dayjs().diff(dayjs(dateTime), 'seconds');
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInSeconds / 3600);
+    const diffInDays = Math.floor(diffInSeconds / 86400);
+
+    if (diffInSeconds < 60) {
+      return diffInSeconds + 's ago';
+    } else if (diffInMinutes < 60) {
+      return diffInMinutes + 'm ago';
+    } else if (diffInHours < 24) {
+      return diffInHours + 'h ago';
+    } else if (diffInDays < 7) {
+      return diffInDays + 'd ago';
+    } else if (diffInDays < 30) {
+      return Math.floor(diffInDays / 7) + 'w ago';
+    } else if (diffInDays < 365) {
+      return Math.floor(diffInDays / 30) + 'mo ago';
+    } else {
+      return Math.floor(diffInDays / 365) + 'y ago';
+    }
+  }
+
+  // Function to fetch logs and update HTML
+  function fetchAndDisplayLogs() {
+    $.ajax({
+      url: '/auth/sysadmin/api/System-Admin-Log',
+      type: 'GET',
+      dataType: 'json',
+      success: function (data) {
+        // Handle the response and update the HTML
+        if (data.logs.length > 0) {
+          // Sort logs by DateTime in descending order
+          data.logs.sort(function (a, b) {
+            return new Date(b.DateTime) - new Date(a.DateTime);
+          });
+
+          var activityContainer = $('#activity-container');
+          activityContainer.empty(); // Clear existing content
+
+          // Loop through the sorted logs and append them to the HTML
+          $.each(data.logs, function (index, log) {
+            var activityItem = $('<div class="activity-item d-flex">');
+            var activityLabel = $('<div class="activite-label">').text(calculateTimeDifference(log.DateTime));
+            var activityBadge = $('<i class="bi bi-circle-fill activity-badge align-self-start">');
+            var activityContent = $('<div class="activity-content">').text(log.Log);
+
+            // Set activity badge color based on log status
+            if (log.Status.toLowerCase() === 'success') {
+              activityBadge.addClass('text-success');
+            } else if (log.Status.toLowerCase() === 'alert') {
+              activityBadge.addClass('text-danger');
+            } else if (log.Status.toLowerCase() === 'update') {
+              activityBadge.addClass('text-warning');
+            } else if (log.Status.toLowerCase() === 'info') {
+              activityBadge.addClass('text-primary');
+            } else {
+              activityBadge.addClass('text-secondary');
+            }
+
+            // If there is a FacultyId or AdminId, display it
+            if (log.IdentifierType && log.IdentifierValue) {
+              activityContent.append(' (', log.IdentifierType, ': ', log.IdentifierValue, ')');
+            }
+
+            activityItem.append(activityLabel, activityBadge, activityContent);
+            activityContainer.append(activityItem);
+          });
+        } else {
+          // Handle the case when there are no logs
+          $('#activity-container').text('No activity logs available.');
+        }
+      },
+      error: function () {
+        // Handle the error case
+        $('#activity-container').text('Failed to fetch activity logs.');
+      }
+    });
+  }
+
+  // Initial fetch and display
+  fetchAndDisplayLogs();
+
+  // Reload logs every minute
+  setInterval(fetchAndDisplayLogs, 60000);
+</script>
+
+<script>
+  // Load the relativeTime plugin for dayjs
+  dayjs.extend(window.dayjs_plugin_relativeTime);
+
+  // Function to calculate custom human-readable time difference using dayjs
+  function calculateTimeDifference(dateTime) {
+    const diffInSeconds = dayjs().diff(dayjs(dateTime), 'seconds');
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInSeconds / 3600);
+    const diffInDays = Math.floor(diffInSeconds / 86400);
+
+    if (diffInSeconds < 60) {
+      return diffInSeconds + 's ago';
+    } else if (diffInMinutes < 60) {
+      return diffInMinutes + 'm ago';
+    } else if (diffInHours < 24) {
+      return diffInHours + 'h ago';
+    } else if (diffInDays < 7) {
+      return diffInDays + 'd ago';
+    } else if (diffInDays < 30) {
+      return Math.floor(diffInDays / 7) + 'w ago';
+    } else if (diffInDays < 365) {
+      return Math.floor(diffInDays / 30) + 'mo ago';
+    } else {
+      return Math.floor(diffInDays / 365) + 'y ago';
+    }
+  }
+
+  // Function to fetch logs and update HTML
+  function fetchAndDisplayUserLogs() {
+    $.ajax({
+      url: '/auth/sysadmin/api/User-Log',
+      type: 'GET',
+      dataType: 'json',
+      success: function (data) {
+        // Handle the response and update the HTML
+        if (data.logs.length > 0) {
+          // Sort logs by DateTime in descending order
+          data.logs.sort(function (a, b) {
+            return new Date(b.DateTime) - new Date(a.DateTime);
+          });
+
+          var activityContainer2 = $('#activity-container2');
+          activityContainer2.empty(); // Clear existing content
+
+          // Loop through the sorted logs and append them to the HTML
+          $.each(data.logs, function (index, log) {
+            var activityItem = $('<div class="activity-item d-flex">');
+            var activityLabel = $('<div class="activite-label">').text(calculateTimeDifference(log.DateTime));
+            var activityBadge = $('<i class="bi bi-circle-fill activity-badge align-self-start">');
+            var activityContent = $('<div class="activity-content">').text(log.Log);
+
+            // Set activity badge color based on log status
+            if (log.Status.toLowerCase() === 'success') {
+              activityBadge.addClass('text-success');
+            } else if (log.Status.toLowerCase() === 'alert') {
+              activityBadge.addClass('text-danger');
+            } else if (log.Status.toLowerCase() === 'update') {
+              activityBadge.addClass('text-warning');
+            } else if (log.Status.toLowerCase() === 'info') {
+              activityBadge.addClass('text-primary');
+            } else {
+              activityBadge.addClass('text-secondary');
+            }
+
+            // If there is a FacultyId or AdminId, display it
+            if (log.IdentifierType && log.IdentifierValue) {
+              activityContent.append(' (', log.IdentifierType, ': ', log.IdentifierValue, ')');
+            }
+
+            activityItem.append(activityLabel, activityBadge, activityContent);
+            activityContainer2.append(activityItem);
+          });
+        } else {
+          // Handle the case when there are no logs
+          $('#activity-container2').text('No user logs available.');
+        }
+      },
+      error: function () {
+        // Handle the error case
+        $('#activity-container2').text('Failed to fetch user logs.');
+      }
+    });
+  }
+
+  // Initial fetch and display
+  fetchAndDisplayUserLogs();
+
+  // Reload user logs every minute
+  setInterval(fetchAndDisplayUserLogs, 60000);
+</script>
+
+{% endblock %}
+
+<script>
+  // Load the relativeTime plugin for dayjs
+  dayjs.extend(window.dayjs_plugin_relativeTime);
+
+  // Function to calculate custom human-readable time difference using dayjs
+  function calculateTimeDifference(dateTime) {
+    const diffInSeconds = dayjs().diff(dayjs(dateTime), 'seconds');
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInSeconds / 3600);
+    const diffInDays = Math.floor(diffInSeconds / 86400);
+
+    if (diffInSeconds < 60) {
+      return diffInSeconds + 's ago';
+    } else if (diffInMinutes < 60) {
+      return diffInMinutes + 'm ago';
+    } else if (diffInHours < 24) {
+      return diffInHours + 'h ago';
+    } else if (diffInDays < 7) {
+      return diffInDays + 'd ago';
+    } else if (diffInDays < 30) {
+      return Math.floor(diffInDays / 7) + 'w ago';
+    } else if (diffInDays < 365) {
+      return Math.floor(diffInDays / 30) + 'mo ago';
+    } else {
+      return Math.floor(diffInDays / 365) + 'y ago';
+    }
+  }
+  
+  // Variable to track whether "Show all" link has been added
+  var showAllLinkAdded = false;
+
+  // Function to fetch and display pending notifications
+  function fetchAndDisplayPendingNotifications() {
+    $.ajax({
+      url: '/auth/sysadmin/api/Requests',
+      type: 'GET',
+      dataType: 'json',
+      success: function (data) {
+        // Handle the response and update the HTML
+        var pendingRequests = data.requests.filter(function (request) {
+          return request.Status.toLowerCase() === 'pending';
+        });
+
+        var newTitle = "{% block title %}System Admin{% endblock %}";
+
+        if (pendingRequests.length > 0) {
+          // Sort pending notifications by DateTime in descending order
+          pendingRequests.sort(function (a, b) {
+            return new Date(b.DateTime) - new Date(a.DateTime);
+          });
+
+          document.getElementById("notification-count-title").innerText = '(' + pendingRequests.length + ')' + ' ' + newTitle;
+         
+           // Update the notification count
+          $('#notification-count').text(pendingRequests.length);
+          $('#notification-count-text').text(pendingRequests.length);
+
+          // Clear existing pending notifications
+          $('.notifications .notification-item').remove();
+
+          // Loop through the latest 4 pending notifications and append them to the HTML
+          for (let index = 0; index < Math.min(4, pendingRequests.length); index++) {
+            var notification = pendingRequests[index];
+
+            var notificationItem = $('<li class="notification-item">');
+
+            var ProfileIcon = $('<img src="https://lh3.googleusercontent.com/d/'+notification.Profile_Pic+'" alt="Profile" class="rounded-circle" style="width:50px;height:50px;margin-right: 15px;"></img>');
+            var notificationContent = $('<div>');
+            var notificationTitle = $('<h4>').text(notification.Request);
+            var identifierInfo = notification.IdentifierName + ' (' + notification.IdentifierType + ': ' + notification.IdentifierId + ')';
+            var notificationDescription = $('<p>').text(identifierInfo + ' ' + calculateTimeDifference(notification.DateTime));
+
+            notificationContent.append(notificationTitle, notificationDescription);
+            notificationItem.append(ProfileIcon, notificationContent);
+            $('.notifications').append(notificationItem);
+
+          }
+
+        } else {
+          document.getElementById("notification-count-title").innerText = newTitle;
+          // Handle the case when there are no pending notifications
+          $('.notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">You have no pending actions.</h6>');
+        }
+      },
+      error: function () {
+        document.getElementById("notification-count-title").innerText = newTitle;
+        // Handle the error case
+        $('.notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">No pending actions available.</h6>');
+      }
+    });
+  }
+
+  // Initial fetch and display
+  fetchAndDisplayPendingNotifications();
+
+  // Reload pending notifications every minute
+  setInterval(fetchAndDisplayPendingNotifications, 60000);
+</script>
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy;<strong><span>Copyright PUPQCFIS 2023.</span></strong>. All Rights Reserved
+    </div>
+    
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+  <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{{ url_for('static', filename='javascript/homepage/main.js')}}"></script>
+  <script src="{{ url_for('static', filename='javascript/homepage/PDM-Basic-Details/uploadprofile.js')}}"></script> {# UPLOAD PROFILE JS #}
+ {#  <script src="{{ url_for('static', filename='javascript/homepage/refresh_token.js')}}"></script> REFRESH TOKEN JS #}
+
+</body>
+
+</html>

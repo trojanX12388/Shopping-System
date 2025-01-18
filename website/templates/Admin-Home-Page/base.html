@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title id="notification-count-title"></title>
+  
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+   <!-- Favicons -->
+   <link href="{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" rel="icon">
+   <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+ 
+   <!-- Google Fonts -->
+   <link href="https://fonts.gstatic.com" rel="preconnect">
+   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  
+  <!-- Vendor CSS Files -->
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link href="https://cdn.remixicon.com/releases/v1.2.2/remixicon.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+
+  
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/plugin/relativeTime.min.js"></script>
+
+  
+  <!-- Include jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <!-- Include DataTables CSS -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  
+
+<!-- Include DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+<!-- Include DataTables Buttons CSS and JS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.3.5/css/buttons.dataTables.min.css">
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.html5.min.js"></script>
+
+<!-- Include DataTables Print Button JS -->
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.print.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+   <!-- Template Main CSS File -->
+ <link rel="stylesheet" href="{{url_for('static', filename='css/homepage/style.css')}}"> {# MAIN HOMEPAGE CSS #}
+ <link rel="stylesheet" href="{{url_for('static', filename='css/homepage/PDM-Basic-Details/uploadprofile.css')}}"> {# UPLOAD PROFILE CSS #}
+ <link rel="stylesheet" href="{{url_for('static', filename='css/homepage/PDM-Basic-Details/uploadprofile2.css')}}"> {# UPLOAD PROFILE SCSS #}
+
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="/admin-home-page" class="logo d-flex align-items-center">
+        <img src="{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" alt="PUPQC LOGO">
+        <span class="d-none d-lg-block">Admin Page</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+        <li class="nav-item dropdown">
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-bell"></i>
+            <span class="badge bg-danger badge-number" id="notification-count">0</span>
+          </a><!-- End Notification Icon -->
+        
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+            <li class="dropdown-header">
+              You have <span id="notification-count-text">0</span> Notifications
+              <a href="/Admin-Notifications"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+        
+            <!-- Notifications will be dynamically added here -->
+        
+          </ul><!-- End Notification Dropdown Items -->
+        
+        </li><!-- End Notification Nav -->
+      
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="https://lh3.googleusercontent.com/d/{{profile_pic}}" alt="Profile" class="rounded-circle" style="width:30px;height:30px;">
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{User}}</span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>{{User}}</h6>
+              <span>{{user.AdminType}}</span>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="/adminPDM-Basic-Details">
+                <i class="bi bi-person"></i>
+                <span>My Profile</span>
+              </a>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="/Admin-Settings">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+              </a>
+            </li>
+
+          
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <script>
+              function logout() {
+                  // ... (your existing logout code)
+          
+                  localStorage.setItem('entry', 3);  // Reset entry count to 3 in local storage
+                  // ... (any additional code for logging out)
+              }
+          </script>
+          
+          <!-- Your existing HTML code with the modified logout link -->
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="/admin-logout" onclick="logout()">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Sign Out</span>
+              </a>
+          </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+ <!-- ======= Sidebar ======= -->
+ <aside id="sidebar" class="sidebar">
+ 
+  <ul class="sidebar-nav" id="sidebar-nav">
+    <li class="nav-item ">
+      <a class="nav-link collapsed" href="/admin-home-page">
+        <i class="bi bi-grid"></i>
+        <span>FACULTIES</span>
+      </a>
+    </li>
+
+    <li class="nav-item"><!-- PERSONAL DATA MANAGEMENT Nav -->
+      <a class="nav-link collapsed" data-bs-target="#adminPDM-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-person-fill"></i><span>PERSONAL DATA MANAGEMENT</span><i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <ul id="adminPDM-nav" class="nav-content collapse {{ adminPDM }}" data-bs-parent="#sidebar-nav">
+        <li>
+          <a href="/adminPDM-Basic-Details" class="{{activate_BD}}">
+            <i class="bi bi-circle"></i><span>Basic Details</span>
+          </a>
+        </li>
+        <li>
+          <a href="/adminPDM-Personal-Details" class="{{activate_PD}}">
+            <i class="bi bi-circle"></i><span>Personal Details</span>
+          </a>
+        </li>
+        <li>
+          <a href="/adminPDM-Contact-Details" class="{{activate_CD}}">
+            <i class="bi bi-circle"></i><span>Contact Details</span>
+          </a>
+        </li>
+        <li>
+          <a href="/adminPDM-Family-Background" class="{{activate_FB}}">
+            <i class="bi bi-circle"></i><span>Family Background</span>
+          </a>
+        </li>
+        <li>
+          <a href="/adminPDM-Educational-Background" class="{{activate_EB}}">
+            <i class="bi bi-circle"></i><span>Educational Background</span>
+          </a>
+        </li>
+         <li>
+          <a href="/adminPDM-Eligibities" class="{{activate_E}}">
+            <i class="bi bi-circle"></i><span>Eligibities</span>
+          </a>
+        </li>
+        <li>
+          <a href="/adminPDM-Work-Experience" class="{{activate_WE}}">
+            <i class="bi bi-circle"></i><span>Work Experience</span>
+          </a>
+        </li>
+        <li>
+          <a href="/adminPDM-Voluntary-Works" class="{{activate_VW}}">
+            <i class="bi bi-circle"></i><span>Voluntary Works</span>
+          </a>
+        </li>
+        <li>
+          <a href="/adminPDM-Training-Seminars" class="{{activate_TS}}">
+            <i class="bi bi-circle"></i><span>Training & Seminars</span>
+          </a>
+        </li>
+        <li>
+          <a href="/adminPDM-Outstanding-Achievements" class="{{activate_OA}}">
+            <i class="bi bi-circle"></i><span>Outstanding Achievements</span>
+          </a>
+        </li>
+        <li>
+          <a href="/adminPDM-Officeships-Memberships" class="{{activate_OSM}}">
+            <i class="bi bi-circle"></i><span>OfficeShips/Memberships</span>
+          </a>
+        </li>
+        <li>
+          <a href="/adminPDM-Agency-Membership" class="{{activate_AM}}">
+            <i class="bi bi-circle"></i><span>Agency Membership</span>
+          </a>
+        </li>
+        <li>
+          <a href="/adminPDM-Additional-Questions" class="{{activate_AQ}}">
+            <i class="bi bi-circle"></i><span>Additional Questions</span>
+          </a>
+        </li>
+        <li>
+          <a href="/adminPDM-Character-Reference" class="{{activate_CR}}">
+            <i class="bi bi-circle"></i><span>Character Reference</span>
+          </a>
+        </li>
+        <li>
+          <a href="/adminPDM-Signature" class="{{activate_Sig}}">
+            <i class="bi bi-circle"></i><span>Signature</span>
+          </a>
+        </li>
+        <li>
+          <a href="/adminPDM-Personal-Data-Reports" class="{{activate_PDR}}">
+            <i class="bi bi-circle"></i><span>Personal Data Reports</span>
+          </a>
+        </li>
+      </ul>
+    </li><!-- End PERSONAL DATA MANAGEMENT Nav -->
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="/Admin-Feedback-Surveys">
+        <i class="bi bi-chat-right-dots-fill"></i>
+        <span>FACULTY EVALUATION</span>
+      </a>
+    </li><!-- End FEEDBACK AND SURVEY Nav -->
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="/Admin-Professional-Development">
+        <i class="bi bi-file-earmark-person-fill"></i>
+        <span>PROFESSIONAL DEVELOPMENT</span>
+      </a>
+    </li><!-- End PROFESSIONAL DEVELOPMENT Nav -->
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="/Admin-Request">
+        <i class="bi bi-stickies-fill"></i>
+        <span>REQUEST</span>
+      </a>
+    </li><!-- End REQUEST Nav -->
+    
+<!-- 
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="/auth/sysadmin/Faculty-Resignation">
+        <i class="bi bi-person-dash"></i>
+        <span>RETIREMENT/ RESIGNATION OF FACULTY</span>
+      </a>
+    </li> End RETIREMENT/ RESIGNATION OF FACULTY Nav -->
+
+
+  </ul>
+  <br>
+  <br>
+  <br>
+  <div class="footer-copyright">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <img src="{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" alt="PUPFIS LOGO" class="rounded mx-auto d-block" style="width: 80px;height: 80px;"/>
+          <br>
+          <p style="font-size: small; color: #2e2d2d;">Faculty Information System of the Polytechnic University of the Philippines Quezon City Branch</p>
+          <p style="font-size: smaller; color: #0099ff;">#123-456-789/ <a href="https://www.pup.edu.ph/">@pup.edu.ph</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</aside><!-- End Sidebar-->
+
+{% block content %} <!-- PAGE BODY CONTENT -->
+
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Faculties</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-item active">Faculty Dashboard</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section dashboard">
+    <div class="row">
+
+      <!-- Left side columns -->
+      <div class="col-lg-12">
+        <div class="row">
+
+          <!-- TOTAL FACULTIES Card -->
+          <div class="col-xxl-4 col-md-6">
+            <div class="card info-card sales-card">
+              <div class="card-body">
+                <h5 class="card-title">Total Faculties</h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-people"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{total_faculty}}</h6>
+                    <span class="text-success small pt-1 fw-bold">Members</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div><!-- End Sales Card -->
+
+          <!-- Projects Card -->
+          <div class="col-xxl-4 col-md-6">
+            <div class="card info-card revenue-card">
+
+              <div class="card-body">
+                <h5 class="card-title">Extension Projects</h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-files"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6 id="total_projects_placeholder"><span id="loadingDots">Scanning</span></h6>
+                    <span class="text-success small pt-1 fw-bold">Projects</span>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div><!-- End Projects Card -->
+
+          <!-- RESEARCH Card -->
+          <div class="col-xxl-4 col-xl-12">
+
+            <div class="card info-card research-card">
+
+              <div class="card-body">
+                <h5 class="card-title">Researches</h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-file-richtext"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6 id="total_researches_placeholder"><span id="loadingDots2">Scanning</span></h6>
+                    <span class="text-success small pt-1 fw-bold">Research Published by Faculties</span>
+                </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div><!-- End Customers Card -->
+
+            <!-- ACTIVE Card -->
+            <div class="col-xxl-3 col-xl-12">
+
+              <div class="card info-card customers-card">
+  
+                <div class="card-body">
+                  <h5 class="card-title">Active</h5>
+  
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-person-check"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{faculty_active}}</h6>
+                      <span class="text-success small pt-1 fw-bold">Active Accounts</span>
+                     
+                    </div>
+                  </div>
+  
+                </div>
+              </div>
+  
+            </div><!-- End Customers Card -->
+
+             <!-- Disabled Card -->
+             <div class="col-xxl-3 col-xl-12">
+
+              <div class="card info-card disabled-card">
+  
+                <div class="card-body">
+                  <h5 class="card-title">Disabled</h5>
+  
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-person-dash"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{faculty_disabled}}</h6>
+                      <span class="text-secondary small pt-1 fw-bold">Disabled Accounts</span>
+                     
+                    </div>
+                  </div>
+  
+                </div>
+              </div>
+  
+            </div><!-- End Customers Card -->
+
+             <!-- Locked Card -->
+             <div class="col-xxl-3 col-xl-12">
+
+              <div class="card info-card locked-card">
+  
+                <div class="card-body">
+                  <h5 class="card-title">Locked</h5>
+  
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-person-square"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{faculty_locked}}</h6>
+                      <span class="text-warning small pt-1 fw-bold">Locked Accounts</span>
+                     
+                    </div>
+                  </div>
+  
+                </div>
+              </div>
+  
+            </div><!-- End Customers Card -->
+
+             <!-- Deactivated Card -->
+             <div class="col-xxl-3 col-xl-12">
+
+              <div class="card info-card revenue-card">
+  
+                <div class="card-body">
+                  <h5 class="card-title">Deactivated</h5>
+  
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-person-x"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{faculty_deactivated}}</h6>
+                      <span class="text-danger small pt-1 fw-bold">Deactivated Accounts</span>
+                     
+                    </div>
+                  </div>
+  
+                </div>
+              </div>
+  
+            </div><!-- End Customers Card -->
+
+          <div class="card">
+            <div class="card-body pb-0">
+              <div class="row">
+                <div class="col-lg-4">
+                  <h5 class="card-title">Instructors ({{total_instructors}})</h5>
+                  <div id="Rank1" style="min-height: 500px;" class="echart"></div>
+                  <h5 class="d-flex align-items-center justify-content-center">{{total_instructors_percentage}}% Instructors</h5>
+                </div>
+          
+                <div class="col-lg-4">
+                  <h5 class="card-title">Assistant Professors ({{total_assistProfs}})</h5>
+                  <div id="Rank2" style="min-height: 500px;" class="echart"></div>
+                  <h5 class="d-flex align-items-center justify-content-center">{{total_assistProfs_percentage}}% Assistant Professors</h5>
+                </div>
+          
+                <div class="col-lg-4">
+                  <h5 class="card-title">Associate Professors ({{total_assocProfs}})</h5>
+                  <div id="Rank3" style="min-height: 500px;" class="echart"></div>
+                  <h5 class="d-flex align-items-center justify-content-center">{{total_assocProfs_percentage}}% Associate Professors</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+    
+                <script>
+                  document.addEventListener("DOMContentLoaded", () => {
+                    echarts.init(document.querySelector("#Rank1")).setOption({
+                      tooltip: {
+                        trigger: 'item'
+                      },
+                      legend: {
+                        top: '0%',
+                        left: 'center'
+                      },
+                      series: [{
+                        name: 'Access From',
+                        type: 'pie', // Set the type to 'pie'
+                        avoidLabelOverlap: false,
+                        itemStyle: {
+                          borderRadius: 10,
+                          borderColor: '#fff',
+                          borderWidth: 2
+                        },
+                        label: {
+                          show: true, // Set to true to display data labels
+                          position: 'inside', // You can adjust the position as per your preference
+                          formatter: '{d}%' // Adjust the formatter as needed
+                        },
+                        emphasis: {
+                          label: {
+                            show: true,
+                            fontSize: '18',
+                            fontWeight: 'bold'
+                          }
+                        },
+                        labelLine: {
+                          show: false
+                        },
+                        data: [{
+                            value: {{total_instructor_I}},
+                            name: 'Instructor I'
+                          },
+                          {
+                            value: {{total_instructor_II}},
+                            name: 'Instructor II'
+                          },
+                          {
+                            value: {{total_instructor_III}},
+                            name: 'Instructor III'
+                          },
+                          {
+                            value: {{total_instructor_IV}},
+                            name: 'Instructor IV'
+                          },
+                          {
+                            value: {{total_instructor_V}},
+                            name: 'Instructor V'
+                          }
+                        ]
+                      }]
+                    });
+                  });
+                </script>
+
+                <script>
+                  document.addEventListener("DOMContentLoaded", () => {
+                    echarts.init(document.querySelector("#Rank2")).setOption({
+                      tooltip: {
+                        trigger: 'item'
+                      },
+                      legend: {
+                        top: '0%',
+                        left: 'center'
+                      },
+                      series: [{
+                        name: 'Access From',
+                        type: 'pie', // Set the type to 'pie'
+                        avoidLabelOverlap: false,
+                        itemStyle: {
+                          borderRadius: 10,
+                          borderColor: '#fff',
+                          borderWidth: 2
+                        },
+                        label: {
+                          show: true, // Set to true to display data labels
+                          position: 'inside', // You can adjust the position as per your preference
+                          formatter: '{d}%' // Adjust the formatter as needed
+                        },
+                        emphasis: {
+                          label: {
+                            show: true,
+                            fontSize: '18',
+                            fontWeight: 'bold'
+                          }
+                        },
+                        labelLine: {
+                          show: true // Set to true if you want to display label lines
+                        },
+                        data: [
+                          {
+                            value: {{total_assistProf_I}},
+                            name: 'Assistant Professor I'
+                          },
+                          {
+                            value: {{total_assistProf_II}},
+                            name: 'Assistant Professor II'
+                          },
+                          {
+                            value: {{total_assistProf_III}},
+                            name: 'Assistant Professor III'
+                          },
+                          {
+                            value: {{total_assistProf_IV}},
+                            name: 'Assistant Professor IV'
+                          },
+                          {
+                            value: {{total_assistProf_V}},
+                            name: 'Assistant Professor V'
+                          }
+                        ]
+                      }]
+                    });
+                  });
+                </script>
+    
+                <script>
+                  document.addEventListener("DOMContentLoaded", () => {
+                    echarts.init(document.querySelector("#Rank3")).setOption({
+                      tooltip: {
+                        trigger: 'item'
+                      },
+                      legend: {
+                        top: '0%',
+                        left: 'center'
+                      },
+                      series: [{
+                        name: 'Access From',
+                        type: 'pie', // Set the type to 'pie'
+                        avoidLabelOverlap: false,
+                        itemStyle: {
+                          borderRadius: 10,
+                          borderColor: '#fff',
+                          borderWidth: 2
+                        },
+                        label: {
+                          show: true, // Set to true to display data labels
+                          position: 'inside', // You can adjust the position as per your preference
+                          formatter: '{d}%' // Adjust the formatter as needed
+                        },
+                        emphasis: {
+                          label: {
+                            show: true,
+                            fontSize: '18',
+                            fontWeight: 'bold'
+                          }
+                        },
+                        labelLine: {
+                          show: false
+                        },
+                        data: [
+                          {
+                            value: {{total_assocProf_I}},
+                            name: 'Associate Professor I'
+                          },
+                          {
+                            value: {{total_assocProf_II}},
+                            name: 'Associate Professor II'
+                          },
+                          {
+                            value: {{total_assocProf_III}},
+                            name: 'Associate Professor III'
+                          },
+                          {
+                            value: {{total_assocProf_V}},
+                            name: 'Associate Professor V'
+                          },
+                          {
+                            value: {{total_assocProf_IV}},
+                            name: 'Associate Professor IV'
+                          }
+                        ]
+                      }]
+                    });
+                  });
+                </script>
+
+                <script>
+                  const facultyAccountIds = {{ faculty_info | tojson | safe }};
+                  // This will create a JavaScript object containing your fetched faculty data
+                  
+                  // Function to display modal with faculty information
+                  function showModal(title, quantity, content) {
+                    $('#modalTitle').text(title);
+                    $('#modalQuantity').text(`${quantity}`);
+                  
+                    const modalBody = $('#modalContent');
+                    modalBody.empty(); // Clear modal content
+                  
+                    if (Array.isArray(content) && content.length > 0) {
+                      const table = $('<table>').addClass('table'); // Create table with Bootstrap styling
+                  
+                      // Create table header
+                      const tableHeader = $('<thead>').html(`
+                        <tr>
+                          <th>ID</th>
+                          <th>Profile Pic</th>
+                          <th>Full name</th>
+                          <th>Units</th>
+                        </tr>
+                      `);
+                      table.append(tableHeader);
+                  
+                      // Create table body
+                      const tableBody = $('<tbody>');
+                  
+                      // Ensure content is an array of objects and iterate through faculty data to create table rows
+                      if (content.every(faculty => typeof faculty === 'object')) {
+                        content.forEach(faculty => {
+                          const row = $('<tr>').html(`
+                            <td><a href="/faculty-member/${faculty.FacultyId}">${faculty.FacultyId}</a></td>
+                            <td><img src="https://lh3.googleusercontent.com/d/${faculty.ProfilePic}" alt="Profile Pic" style="width:90px;height:80px; border-radius: 10px 10px 10px 10px"></td>
+                            <td>${faculty.FirstName} ${faculty.LastName}</td>
+                            <td>${faculty.Units}</td>
+                          `);
+                          tableBody.append(row);
+                        });
+                  
+                        table.append(tableBody);
+                        modalBody.append(table); // Append table to modal body
+                      } else {
+                        modalBody.text('Invalid faculty information format.');
+                      }
+                    } else {
+                      modalBody.text('No faculty information available for this category.');
+                    }
+                  
+                    $('#myModal').modal('show');
+                  }
+                  
+                  // Pie chart click event listeners
+                  document.addEventListener("DOMContentLoaded", () => {
+                    const chart1 = echarts.init(document.querySelector("#Rank1"));
+                    const chart2 = echarts.init(document.querySelector("#Rank2"));
+                    const chart3 = echarts.init(document.querySelector("#Rank3"));
+                  
+                    function createChartClickHandler(chart, rankname) {
+                      chart.on('click', function(params) {
+                        if (params.componentType === 'series') {
+                          const clickedCategory = params.name;
+                          const facultyInCategory = Object.values(facultyAccountIds).filter(faculty => faculty.Rank === rankname && faculty.Rank === clickedCategory);
+                  
+                          if (facultyInCategory.length > 0) {
+                            // Display faculty information in the modal
+                            showModal(clickedCategory, facultyInCategory.length, facultyInCategory);
+                          }
+                        }
+                      });
+                    }
+                  
+                    createChartClickHandler(chart1, 'Instructor I');
+                    createChartClickHandler(chart1, 'Instructor II');
+                    createChartClickHandler(chart1, 'Instructor III');
+                    createChartClickHandler(chart1, 'Instructor IV');
+                    createChartClickHandler(chart1, 'Instructor V');
+                    createChartClickHandler(chart2, 'Assistant Professor I');
+                    createChartClickHandler(chart2, 'Assistant Professor II');
+                    createChartClickHandler(chart2, 'Assistant Professor III');
+                    createChartClickHandler(chart2, 'Assistant Professor IV');
+                    createChartClickHandler(chart2, 'Assistant Professor V');
+                    createChartClickHandler(chart3, 'Associate Professor I');
+                    createChartClickHandler(chart3, 'Associate Professor II');
+                    createChartClickHandler(chart3, 'Associate Professor III');
+                    createChartClickHandler(chart3, 'Associate Professor IV');
+                    createChartClickHandler(chart3, 'Associate Professor V');
+                    // Add similar handlers for other ranks and charts as needed
+                  });
+                </script>
+
+           <!-- DISPLAY FACULTIES MODAL BASED ON CATEGORY -->
+           <style>
+            .modal-body {
+              max-height: calc(100vh - 200px); /* Adjust the height as needed */
+              overflow-y: auto;
+            }
+          </style>
+
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="card-title" id="modalTitle"></h5>&nbsp &nbsp<h6 id="modalQuantity" style="color:#ff0000;"></h6>
+                    <button type="button" class="btn-close" onclick="closeModal()" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <h6 class="card-title">Click the ID of a faculty member to view more information.</h6>
+                    <p id="modalContent"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <script>
+              // Function to close the modal
+              function closeModal() {
+                $('#myModal').modal('hide');
+              }
+            </script>
+          
+           <!-- Faculty Members -->
+           <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+
+              <div class="card-body">
+                <h5 class="card-title">Quantity of New Hired Faculty (Year: {{years_range7}} to {{years_range1}})</h5>
+
+                <div id="container" style="height: 500px"></div>
+
+  
+            <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+            
+            <script type="text/javascript">
+              var dom = document.getElementById('container');
+              var myChart = echarts.init(dom, null, {
+                renderer: 'canvas',
+                useDirtyRect: false
+              });
+              var app = {};
+              
+              var option;
+
+              option = {
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                type: 'shadow'
+              }
+            },
+            toolbox: {
+              feature: {
+                dataView: { show: true, readOnly: true },
+                magicType: { show: true, type: ['line', 'bar'] },
+                restore: { show: true },
+                saveAsImage: { show: true }
+              }
+            },
+            legend: {
+              data: ['Instructor', 'Lecturer', 'Researcher', 'Professor', 'Assistant', 'Associate', 'Visiting', 'Emeritus']
+            },
+            xAxis: [
+              {
+                type: 'category',
+                data: ['{{years_range1}}', '{{years_range2}}', '{{years_range3}}', '{{years_range4}}', '{{years_range5}}', '{{years_range6}}', '{{years_range7}}'],
+                axisPointer: {
+                  type: 'shadow'
+                }
+              }
+            ],
+            yAxis: [
+              {
+                type: 'value',
+                name: 'Quantity',
+                min: 0,
+                max: 25,
+                axisLabel: {
+                  formatter: '{value}'
+                }
+              }
+            ],
+            series: [
+            {
+              name: 'Instructor',
+              type: 'bar',
+              tooltip: {
+                valueFormatter: function (value) {
+                  return value + '';
+                }
+              },
+              data: [
+                {% for year in years_range %}
+                  {% set instructor_count = instructor_counts[year] %}
+                  {{ instructor_count }},
+                {% endfor %}
+              ]
+            },
+            {
+              name: 'Lecturer',
+              type: 'bar',
+              tooltip: {
+                valueFormatter: function (value) {
+                  return value + '';
+                }
+              },
+              data: [
+                {% for year in years_range %}
+                  {% set lecturer_count = lecturer_counts[year] %}
+                  {{ lecturer_count }},
+                {% endfor %}
+              ]
+            },
+            {
+              name: 'Researcher',
+              type: 'bar',
+              tooltip: {
+                valueFormatter: function (value) {
+                  return value + '';
+                }
+              },
+              data: [
+                {% for year in years_range %}
+                  {% set researcher_count = researcher_counts[year] %}
+                  {{ researcher_count }},
+                {% endfor %}
+              ]
+            },
+            {
+              name: 'Professor',
+              type: 'bar',
+              tooltip: {
+                valueFormatter: function (value) {
+                  return value + '';
+                }
+              },
+              data: [
+                {% for year in years_range %}
+                  {% set professor_count = professor_counts[year] %}
+                  {{ professor_count }},
+                {% endfor %}
+              ]
+            },
+            {
+              name: 'Assistant',
+              type: 'bar',
+              tooltip: {
+                valueFormatter: function (value) {
+                  return value + '';
+                }
+              },
+              data: [
+                {% for year in years_range %}
+                  {% set assistant_count = assistant_counts[year] %}
+                  {{ assistant_count }},
+                {% endfor %}
+              ]
+            },
+            {
+              name: 'Associate',
+              type: 'bar',
+              tooltip: {
+                valueFormatter: function (value) {
+                  return value + '';
+                }
+              },
+              data: [
+                {% for year in years_range %}
+                  {% set associate_count = associate_counts[year] %}
+                  {{ associate_count }},
+                {% endfor %}
+              ]
+            },
+            {
+              name: 'Visiting',
+              type: 'bar',
+              tooltip: {
+                valueFormatter: function (value) {
+                  return value + '';
+                }
+              },
+              data: [
+                {% for year in years_range %}
+                  {% set visiting_count = visiting_counts[year] %}
+                  {{ visiting_count }},
+                {% endfor %}
+              ]
+            },
+            {
+              name: 'Emeritus',
+              type: 'bar',
+              tooltip: {
+                valueFormatter: function (value) {
+                  return value + '';
+                }
+              },
+              data: [
+                {% for year in years_range %}
+                  {% set emeritus_count = emeritus_counts[year] %}
+                  {{ emeritus_count }},
+                {% endfor %}
+              ]
+            }
+          ]
+          };
+
+              if (option && typeof option === 'object') {
+                myChart.setOption(option);
+              }
+
+              window.addEventListener('resize', myChart.resize);
+            </script>
+              
+
+              </div>
+
+            </div>
+          </div><!-- End -->
+
+          <!-- Faculty TYPES -->
+          <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+
+              <div class="card-body">
+                <h5 class="card-title">Faculty Type</h5>
+
+                <div id="container2" style="height: 400px;"></div>
+          
+            <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+            
+            <script type="text/javascript">
+              var dom = document.getElementById('container2');
+              var myChart = echarts.init(dom, null, {
+                renderer: 'canvas',
+                useDirtyRect: false
+              });
+              var app = {};
+            
+              var option;
+            
+              option = {
+                tooltip: {
+                  trigger: 'axis',
+                  axisPointer: {
+                    type: 'shadow'
+                  }
+                },
+                xAxis: {
+                  type: 'category',
+                  data: ['Instructors: {{instructor_percentage}}%', 
+                  'Lecturers: {{lecturer_percentage}}%', 
+                  'Researchers: {{researcher_percentage}}%', 
+                  'Professors: {{professor_percentage}}%', 
+                  'Assistants: {{assistant_percentage}}%',
+                  'Associates: {{associate_percentage}}%',
+                  'Visitings: {{visiting_percentage}}%',
+                  'Emeritus: {{emeritus_percentage}}%',]
+                },
+                yAxis: {
+                  name: 'Quantity',
+                  type: 'value',
+                  min: 0,
+                  max: {{total_faculty}} + 5,
+                },
+                series: [
+                  {
+                    data: [
+                      { value: {{instructor}}, itemStyle: { color: '#ff7f50' } },
+                      { value: {{lecturer}}, itemStyle: { color: '#87cefa' } },
+                      { value: {{researcher}}, itemStyle: { color: '#32cd32' } },
+                      { value: {{professor}}, itemStyle: { color: '#da70d6' } },
+                      { value: {{assistant}}, itemStyle: { color: '#6495ed' } },
+                      { value: {{associate}}, itemStyle: { color: '#ff69b4' } },
+                      { value: {{visiting}}, itemStyle: { color: '#ba55d3' } },
+                      { value: {{emeritus}}, itemStyle: { color: '#cd5c5c' } }
+                    ],
+                    type: 'bar'
+                  }
+                ]
+              };
+            
+              if (option && typeof option === 'object') {
+                myChart.setOption(option);
+              }
+            
+              // Function to display modal with faculty information in a table format
+                function showModal(title, quantity, content) {
+                  $('#modalTitle').text(title);
+                  $('#modalQuantity').text(`${quantity}`);
+
+                  const modalBody = $('#modalContent');
+                  modalBody.empty(); // Clear modal content
+
+                  if (Array.isArray(content) && content.length > 0) {
+                    const table = $('<table>').addClass('table'); // Create table with Bootstrap styling
+
+                    // Create table header
+                    const tableHeader = $('<thead>').html(`
+                      <tr>
+                        <th>ID</th>
+                        <th>Profile Pic</th>
+                        <th>Full name</th>
+                        <th>Units</th>
+                      </tr>
+                    `);
+                    table.append(tableHeader);
+
+                    // Create table body
+                    const tableBody = $('<tbody>');
+
+                    // Ensure content is an array of objects and iterate through faculty data to create table rows
+                    if (content.every(faculty => typeof faculty === 'object')) {
+                      content.forEach(faculty => {
+                        const row = $('<tr>').html(`
+                          <td><a href="/faculty-member/${faculty.FacultyId}">${faculty.FacultyId}</a></td>
+                          <td><img src="https://lh3.googleusercontent.com/d/${faculty.ProfilePic}" alt="Profile Pic" style="width:90px;height:80px; border-radius: 10px 10px 10px 10px"></td>
+                          <td>${faculty.FirstName} ${faculty.LastName}</td>
+                          <td>${faculty.Units}</td>
+                        `);
+                        tableBody.append(row);
+                      });
+
+                      table.append(tableBody);
+                      modalBody.append(table); // Append table to modal body
+                    } else {
+                      modalBody.text('Invalid faculty information format.');
+                    }
+                  } else {
+                    modalBody.text('No faculty information available for this category.');
+                  }
+
+                  $('#myModal').modal('show');
+                }
+
+              // Function to handle the bar click event
+              myChart.on('click', function(params) {
+                if (params.componentType === 'series') {
+                  const clickedCategory = params.name.split(':')[0].trim();
+
+                  // Filter faculty data based on Faculty Types
+                  const facultyInCategory = Object.values(facultyAccountIds).filter(faculty => {
+                    if (clickedCategory === 'Instructors') {
+                      return faculty.FacultyType === 'Instructor';
+                    } else if (clickedCategory === 'Lecturers') {
+                      return faculty.FacultyType === 'Lecturer';
+                    } else if (clickedCategory === 'Researchers') {
+                      return faculty.FacultyType === 'Researcher';
+                    } else if (clickedCategory === 'Professors') {
+                      return faculty.FacultyType === 'Professor';
+                    } else if (clickedCategory === 'Assistants') {
+                      return faculty.FacultyType === 'Assistant Professor';
+                    } else if (clickedCategory === 'Associates') {
+                      return faculty.FacultyType === 'Associate Professor';
+                    } else if (clickedCategory === 'Visitings') {
+                      return faculty.FacultyType === 'Visiting Professor';
+                    } else if (clickedCategory === 'Emeritus') {
+                      return faculty.FacultyType === 'Emeritus Professor';
+                    }
+                    
+                    return false;
+                  });
+
+                  if (facultyInCategory.length > 0) {
+                    showModal(clickedCategory, facultyInCategory.length, facultyInCategory);
+                  } else {
+                    showModal(clickedCategory, 0, []); // Show modal with empty content if no data
+                  }
+                }
+              });
+            
+              window.addEventListener('resize', myChart.resize);
+            </script>
+              
+              </div>
+
+            </div>
+          </div><!-- End -->
+    
+          <!-- Faculty Members -->
+          <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+
+              <div class="card-body">
+                <h5 class="card-title">Faculty Members</h5>
+                <h6 class="card-title">Click the ID of a faculty member to view more information.</h6>
+
+                <table class="table table-borderless datatable">
+                  <thead>
+                    <tr>
+                      <th scope="col">Faculty ID</th>
+                      <th scope="col">Profile Pic</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Rank</th>
+                      <th scope="col">Units</th>
+                      <th scope="col">Account Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for faculty_id in FacultyIds %}
+                    {% set faculty_info = api_data['Faculties'][faculty_id] %}
+                    <tr>
+                      <td><a href="/faculty-member/{{ faculty_id }}">{{ faculty_id }}</a></td>
+                      <td><img src="https://lh3.googleusercontent.com/d/{{ faculty_info['ProfilePic'] }}" alt="Profile Pic" style="width:90px;height:80px; border-radius: 10px 10px 10px 10px"></td>
+                      <td>{{ faculty_info['FirstName']}} {{faculty_info['LastName']}}</td>
+                      <td>{{ faculty_info['FacultyType'] }}</td>
+                      <td>{{ faculty_info['Rank'] }}</td>
+                      <td class="fw-bold">{{ faculty_info['Units'] }}</td>
+                      {% if faculty_info['Status'] == "Active" %}
+                      <td><h6 class="badge bg-success" style="width:158px;height:20px;">Active</h6></td>
+                      {% elif faculty_info['Status'] == "Locked" %}
+                      <td><h6 class="badge bg-warning" style="width:158px;height:20px;">Locked</h6></td>
+                      {% elif faculty_info['Status'] == "Disabled" %}
+                      <td><h6 class="badge bg-danger" style="width:158px;height:20px;">Disabled</h6></td>
+                      {% elif faculty_info['Status'] == "Deactivated" %}
+                      <td><h6 class="badge bg-secondary" style="width:158px;height:20px;">Deactivated</h6></td>
+                      {% else  %}
+                      <td><h6 class="badge bg-light text-dark" style="width:158px;height:20px;">Unknown</h6></td>
+                      {% endif %}
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+
+              </div>
+
+            </div>
+          </div><!-- End Recent Sales -->
+
+        </div>
+      </div><!-- End Left side columns -->
+
+      <script>
+        $(document).ready(function () {
+         
+          // Function to update the content and chart data
+          function updateContent(data) {
+            $('#total_researches_placeholder').text(data.total_researches);
+            $('#total_projects_placeholder').text(data.total_projects);
+          }
+      
+          // Function to simulate loading dots
+          function startLoadingDots() {
+            var dots = 1;
+            setInterval(function () {
+              $('#loadingDots').text('Scanning' + '.'.repeat(dots));
+              $('#loadingDots2').text('Scanning' + '.'.repeat(dots));
+              dots = (dots % 3) + 1; // Reset dots after 3 iterations
+            }, 500); // Adjust the interval as needed
+          }
+      
+          // Fetch data using Ajax
+          function fetchData() {
+            startLoadingDots(); // Start loading dots
+            $.ajax({
+              url: '/api/FISFaculty/Researches',
+              method: 'GET',
+              dataType: 'json',
+              success: function (data) {
+                updateContent(data);
+              },
+              error: function (xhr, status, error) {
+                // Handle errors if needed
+                console.error('Error fetching data:', error);
+              }
+            });
+          }
+      
+          // Initial data load on page load
+          fetchData();
+      
+        });
+      </script>
+
+    </div>
+  </section>
+
+</main><!-- End #main -->  
+
+
+{% endblock %}
+
+
+
+<script>
+  // Load the relativeTime plugin for dayjs
+  dayjs.extend(window.dayjs_plugin_relativeTime);
+
+  // Function to calculate custom human-readable time difference using dayjs
+  function calculateTimeDifference(dateTime) {
+    const diffInSeconds = dayjs().diff(dayjs(dateTime), 'seconds');
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInSeconds / 3600);
+    const diffInDays = Math.floor(diffInSeconds / 86400);
+
+    if (diffInSeconds < 60) {
+      return diffInSeconds + 's ago';
+    } else if (diffInMinutes < 60) {
+      return diffInMinutes + 'm ago';
+    } else if (diffInHours < 24) {
+      return diffInHours + 'h ago';
+    } else if (diffInDays < 7) {
+      return diffInDays + 'd ago';
+    } else if (diffInDays < 30) {
+      return Math.floor(diffInDays / 7) + 'w ago';
+    } else if (diffInDays < 365) {
+      return Math.floor(diffInDays / 30) + 'mo ago';
+    } else {
+      return Math.floor(diffInDays / 365) + 'y ago';
+    }
+  }
+  
+  // Variable to track whether "Show all" link has been added
+  var showAllLinkAdded = false;
+
+  // Function to fetch and display pending notifications
+  function fetchAndDisplayPendingNotifications() {
+    $.ajax({
+      url: '/api/Admin/Notifications',
+      type: 'GET',
+      dataType: 'json',
+      success: function (data) {
+        // Handle the response and update the HTML
+        var pendingRequests = data.requests.filter(function (request) {
+          return request.Status.toLowerCase() === 'pending' || request.Type.toLowerCase() === 'mandatory';
+        });
+        
+        var newTitle = "{% block title %}Admin Page{% endblock %}";
+        
+        if (pendingRequests.length > 0) {
+          // Sort pending notifications by DateTime in descending order
+          pendingRequests.sort(function (a, b) {
+            return new Date(b.DateTime) - new Date(a.DateTime);
+          });
+          
+          document.getElementById("notification-count-title").innerText = '(' + pendingRequests.length + ')' + ' ' + newTitle;
+          
+          // Update the notification count
+          $('#notification-count').text(pendingRequests.length);
+          $('#notification-count-text').text(pendingRequests.length);
+
+          // Clear existing pending notifications
+          $('.notifications .notification-item').remove();
+
+          // Loop through the latest 4 pending notifications and append them to the HTML
+          for (let index = 0; index < Math.min(4, pendingRequests.length); index++) {
+            var notification = pendingRequests[index];
+
+            var notificationItem = $('<li class="notification-item">');
+
+            var ProfileIcon = $('<img src="https://lh3.googleusercontent.com/d/'+notification.Profile_Pic+'" alt="Profile" class="rounded-circle" style="width:50px;height:50px;margin-right: 15px;"></img>');
+            var notificationContent = $('<div>');
+            var notificationTitle = $('<h4>').text(notification.Notification);
+            var identifierInfo = notification.Notif_By + ' (' + notification.IdentifierType + ': ' + notification.IdentifierId + ')';
+            var notificationDescription = $('<p>').text(identifierInfo + ' ' + calculateTimeDifference(notification.DateTime));
+
+            notificationContent.append(notificationTitle, notificationDescription);
+            notificationItem.append(ProfileIcon, notificationContent);
+            $('.notifications').append(notificationItem);
+
+          }
+
+        } else {
+          // Handle the case when there are no pending notifications
+          
+          document.getElementById("notification-count-title").innerText = newTitle;
+
+          $('.notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">You have no notifications.</h6>');
+        }
+      },
+      error: function () {
+        // Handle the error case
+        
+          document.getElementById("notification-count-title").innerText = newTitle;
+        $('.notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">No notifications available.</h6>');
+      }
+    });
+  }
+
+  // Initial fetch and display
+  fetchAndDisplayPendingNotifications();
+
+  // Reload pending notifications every minute
+  setInterval(fetchAndDisplayPendingNotifications, 60000);
+</script>
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy;<strong><span>Copyright PUPQCFIS 2023.</span></strong>. All Rights Reserved
+    </div>
+    
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+  <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{{ url_for('static', filename='javascript/homepage/main.js')}}"></script>
+  <script src="{{ url_for('static', filename='javascript/homepage/PDM-Basic-Details/uploadprofile.js')}}"></script> {# UPLOAD PROFILE JS #}
+ {#  <script src="{{ url_for('static', filename='javascript/homepage/refresh_token.js')}}"></script> REFRESH TOKEN JS #}
+
+</body>
+
+</html>

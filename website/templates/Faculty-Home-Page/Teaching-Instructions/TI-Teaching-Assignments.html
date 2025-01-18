@@ -1,0 +1,274 @@
+{% extends "/Faculty-Home-Page/Teaching-Instructions/TI-Advising-Mentoring.html" %}{% block title %}Teaching Assignments{% endblock %} {% block Advising_Mentoring%}
+<div class="pagetitle">
+  <h1>Teaching Assignments</h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">Homepage</li>
+      <li class="breadcrumb-item">{{User}}</li>
+      <li class="breadcrumb-item active">Teaching Instructions</li>
+    </ol>
+  </nav>
+</div><!-- End Page Title -->
+
+<section class="section">
+  <div class="row">
+    <div class="card">
+      <div class="card-body profile-card pt-4 d-flex flex-col align-items-start">
+        <img src="https://lh3.googleusercontent.com/d/{{profile_pic}}" alt="Profile" class="rounded-circle" style="width:150px; height:150px;">
+        <div class="mx-md-3" style="position:relative;left:30px;">
+          <div class="w-100">
+            <h4 class="my-0">{{user.FirstName}} {{user.MiddleInitial}} {{user.LastName}}</h4>
+            <small class="text-muted mt-sm-1">{{user.Rank}}</small>
+          </div>
+
+          <style>
+            .responsive-table {
+              display: flex;
+              flex-wrap: wrap;
+              margin: -10px; /* Adjust margin as needed */
+            }
+          
+            .responsive-table td {
+              flex: 1;
+              padding: 10px; /* Adjust padding as needed */
+              box-sizing: border-box;
+            }
+          
+            .responsive-table h6 {
+              margin: 0;
+            }
+            .btnprinter-container {
+              text-align: right;
+            }
+          
+            .btnprinter {
+              width: 50px;
+              background-color: transparent;
+              border: none;
+              padding: 0;
+              cursor: pointer;
+            }
+          
+            .btnprinter i {
+              font-size: 24px; /* You can adjust the font size as needed */
+              color: #000; /* You can set the color as needed */
+            }
+          </style>
+
+          <div class="d-block mt-md-3">
+            <h5><strong>COURSES</strong></h5>
+            <table class="responsive-table">
+              {% if course_names_dict %}
+              <tr>
+                <td><h6>{{ course_names_dict.a }}</h6></td>
+                <td style="padding: 0 2em;"><h6>{{ course_names_dict.b }}</h6></td>
+                <td style="padding: 0 2em;"><h6></h6></td>
+              </tr>
+              <tr>
+                <td><h6>{{course_names_dict.c}}</h6></td>
+                <td style="padding: 0 2em;"><h6></h6></td>
+              </tr>
+              <tr>
+                <td><h6>{{course_names_dict.d}}</h6></td>
+                <td style="padding: 0 2em;"><h6></h6></td>
+              </tr>
+            {% else %}
+              <tr>
+                <td><h6></h6></td>
+                <td style="padding: 0 2em;"><h6></h6></td>
+                <td style="padding: 0 2em;"><h6></h6></td>
+              </tr>
+              <tr>
+                <td><h6></h6></td>
+                <td style="padding: 0 2em;"><h6></h6></td>
+              </tr>
+              <tr>
+                <td><h6></h6></td>
+                <td style="padding: 0 2em;"><h6></h6></td>
+              </tr>
+     
+              {% endif %} 
+            </table>
+            <br>
+          </div>
+      </div>
+    </div>
+    </div>
+
+          <div class="card">
+            <div class="card-body">
+              <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                <h5><strong>FACULTY LOADS</strong></h5>
+              </div>
+              
+         <!--
+         <form class="row g-3" action="/TI-Teaching-Assignments" method="POST" id="yourFormId">
+            <div>
+              <label for="acadYearSelect">Select Academic Year:</label><br>
+              <select id="acadyear" name="acad_year" aria-label="State" required>
+                {% for data in acad_year.data %}
+                  {% if data.id != None %}
+                    <option value="{{data.id}}">{{ data.name }}</option>
+                  {% else %}
+                    
+                  {% endif %}
+                {% endfor %}  
+              </select>
+          </div>
+          <br>
+          <div>
+              <label for="semesterSelect">Select Semester:</label><br>
+              <select id="semester" name="semester" aria-label="State" required>
+                {% for data in semester.data %}
+                  {% if data.id != None %}
+                    <option value="{{data.id}}">{{ data.name }}</option>
+                  {% else %}
+                    
+                  {% endif %}
+                {% endfor %}  
+              </select>
+          </div>
+
+          <div class="col-md-2">
+            <div class="d-grid gap-2 mt-3">
+                <button type="submit" class="btn btn-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512" style="fill:#ffffff;position:relative; bottom:2px"><path d="M433.941 129.941l-83.882-83.882A48 48 0 0 0 316.118 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h352c26.51 0 48-21.49 48-48V163.882a48 48 0 0 0-14.059-33.941zM224 416c-35.346 0-64-28.654-64-64 0-35.346 28.654-64 64-64s64 28.654 64 64c0 35.346-28.654 64-64 64zm96-304.52V212c0 6.627-5.373 12-12 12H76c-6.627 0-12-5.373-12-12V108c0-6.627 5.373-12 12-12h228.52c3.183 0 6.235 1.264 8.485 3.515l3.48 3.48A11.996 11.996 0 0 1 320 111.48z"/></svg>
+                  Select</button>
+            </div>
+            <br><br>
+        </div>
+        
+
+        </form>
+
+        <script>
+          document.getElementById('yourFormId').addEventListener('submit', function (event) {
+            var selectElement = document.getElementById('select');
+            
+            if (selectElement.value === '') {
+              alert('Please select a value for Academic Year & Semester');
+              event.preventDefault(); 
+            }
+          });
+        </script>
+          <br><br><br>
+        -->   
+
+
+          <div class="card-body profile-card pt-4 d-flex flex-column align-items-end">
+            <div class="btnprinter-container">
+              <button id="btnPrintDetail1" class="btnprinter"><i class="bi bi-printer"></i></button>
+            </div>
+            <br>
+
+          </div>  
+
+              <table id="table1" class="display">
+                <thead>
+                    <tr>
+                        <th>Room Name</th>
+                        <th>Course Code</th>
+                        <th>Course Description</th>
+                        <th>Class Name</th>
+                        <th>Units</th>
+                        <th>Lecture</th>
+                        <th>Lab</th>
+                        <th>Semester</th>
+                        <th>Academic Year</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in api_data.data %}
+                        {% if data.facultyid == user.FacultyId %}
+                            <tr>
+                                <td>{{ data.roomname }}</td>
+                                <td>{{ data.course_code }}</td>
+                                <td>{{ data.course_description }}</td>
+                                <td>{{ data.classname }}</td>
+                                <td>{{ data.units }}</td>
+                                <td>{{ data.lec }}</td>
+                                <td>{{ data.lab }}</td>
+                                
+                                {% for sem in semester.data %}
+                                    {% if sem.id == data.semester_id %}
+                                        <td>{{ sem.name }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% for year in acad_year.data %}
+                                    {% if year.id == data.acadyear_id %}
+                                        <td>{{ year.name }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+          </div>
+
+        </div>
+
+    </section>
+
+  </main><!-- End #main -->
+
+  <script>
+    $(document).ready(function() {
+      // Function to initialize DataTable for a given table ID
+      function initializeDataTable(tableId, buttonId, title, customExportColumns) {
+        var dataTable = $(tableId).DataTable({
+          dom: 'BPlfrtip',
+          responsive: true,
+          columnDefs: [
+            {
+              searchPanes: {
+                show: true
+              },
+              targets: [0]
+            },
+            {
+              searchPanes: {
+                show: false
+              },
+              targets: [2]
+            }
+          ],
+          buttons: [
+            {
+              extend: 'print',
+              class: 'buttons-print',
+              title: title, // Set the title for each table
+              messageBottom: null,
+              exportOptions: {
+                columns: customExportColumns
+              },
+              text: 'Print'
+            }
+          ]
+        });
+  
+         // Initially hide the DataTables print button
+        dataTable.buttons('.buttons-print').nodes().addClass('d-none');
+  
+        $('#' + buttonId).on('click', function() {
+          // Trigger the DataTables print button click
+          dataTable.buttons('.buttons-print').trigger();
+        });
+      }
+  
+      // Customize your export options for each table
+      var exportColumnsTable1 = [ 0, 1, 2, 3, 4, 5, 6 , 7, 8 ];
+      var exportColumnsTable2 = [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ];
+  
+      // Initialize DataTables for each table
+      initializeDataTable('#table1', 'btnPrintDetail1', 'Teaching Assignments Schedules', exportColumnsTable1);
+      initializeDataTable('#table2', 'btnPrintDetail2', 'Teaching Assignments Activities', exportColumnsTable2);
+    });
+    
+  </script>
+
+{% endblock %}
+
+      
