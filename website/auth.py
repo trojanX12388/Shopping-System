@@ -16,7 +16,7 @@ load_dotenv()
 # IMPORT LOCAL FUNCTIONS
 from .API.authentication import *
 from .Token.token_gen import *
-from .Token.token_check import Check_Token, SysCheck_Token
+# from .Token.token_check import Check_Token, SysCheck_Token
 
 # IMPORT SMTP EMAILING FUNCTIONS
 
@@ -29,7 +29,7 @@ from .models import db
 from sqlalchemy import update
 
 # LOADING MODEL CLASSES
-from .models import FISFaculty, FISAdmin, FISLoginToken, FISSystemAdmin, FISUser_Log
+from .models import FISFaculty
 
 
 # LOAD JWT MODULE
@@ -275,7 +275,7 @@ def reset_entry():
 
 @auth.route("/faculty-home-page")
 @login_required
-@Check_Token
+# @Check_Token
 def facultyH():
         
     # INITIALIZING DATA FROM USER LOGGED IN ACCOUNT    
