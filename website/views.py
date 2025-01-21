@@ -23,7 +23,7 @@ def home():
         return render_template("base.html")
 
 # FACULTY LOGIN PAGE
-@views.route("/faculty-login")
+@views.route("/client-login")
 def facultyL():
     # CHECKING ACTIVE SESSIONS
     if current_user.__class__.__name__ == "FISFaculty":     
@@ -37,7 +37,7 @@ def facultyL():
     
     # IF NO ACTIVE SESSION, REDIRECT TO MAIN PAGE
     else:
-        return render_template("Faculty-Login-Page/index.html")
+        return render_template("Client-Login-Page/index.html")
 
 # ADMIN PAGE
 

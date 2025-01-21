@@ -91,13 +91,13 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         # Assuming the user ID is unique across both Faculty and Admin tables
-        # sysadmin_user = FISSystemAdmin.query.get(str(user_id))
-        # if sysadmin_user:
-        #     return sysadmin_user
+        sysadmin_user = MSAccount.query.get(str(user_id))
+        if sysadmin_user:
+            return sysadmin_user
         
-        # admin_user = FISAdmin.query.get(int(user_id))
-        # if admin_user:
-        #     return admin_user
+        admin_user = MSAccount.query.get(int(user_id))
+        if admin_user:
+            return admin_user
         
         faculty_user = MSAccount.query.get(int(user_id))
         if faculty_user:

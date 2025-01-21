@@ -83,7 +83,7 @@ class MSOrder(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)  # DataID
     MSId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=True)
-    ProductSerial = db.Column(db.String)
+    ProductId = db.Column(db.Integer, db.ForeignKey('MSProduct.id'), nullable=True)
     OrderId = db.Column(db.Numeric)
     OrderCount = db.Column(db.Numeric)
     OrderStatus = db.Column(db.String(50))
@@ -96,7 +96,7 @@ class MSOrder(db.Model):
         return {
             'id': self.id,
             'MSId': self.MSId,
-            'ProductSerial': self.ProductSerial,
+            'ProductId': self.ProductId,
             'OrderId': self.OrderId,
             'OrderCount': self.OrderCount,
             'OrderStatus': self.OrderStatus,
@@ -116,7 +116,7 @@ class MSCart(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)  # DataID
     MSId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=True)
-    ProductSerial = db.Column(db.String)
+    ProductId = db.Column(db.Integer, db.ForeignKey('MSProduct.id'), nullable=True)
     ItemCount = db.Column(db.Numeric)
     is_delete = db.Column(db.Boolean, default=False) 
 
@@ -124,7 +124,7 @@ class MSCart(db.Model):
         return {
             'id': self.id,
             'MSId': self.MSId,
-            'ProductSerial': self.ProductSerial,
+            'ProductId': self.ProductId,
             'ItemCount': self.ItemCount,
             'is_delete': self.is_delete
         }
@@ -222,7 +222,7 @@ class MSUser_Log(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)  # DataID
     MSId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=True)
-    Type = db.Column(db.String(50), nullable=False)
+    Type = db.Column(db.String(50), nullable=True)
     DateTime = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
     Status = db.Column(db.String(50), default="success")
     Log = db.Column(db.String(50))
@@ -255,89 +255,59 @@ def init_db(app):
             db.create_all()
             # create_sample_data()
         
-# #=====================================================================================================
-# # INSERTING DATA
-# def create_sample_data():
+#=====================================================================================================
+# INSERTING DATA
+def create_sample_data():
         
-#  # Create and insert FISFaculty
+ # Create and insert FISFaculty
  
-# #     faculty_sample1 = FISFaculty(
-# #         FacultyId='2020-00072-D-1',
-# #         FacultyType='Full Time',
-# #         Rank='Associate Professor II',
-# #         Units = 8,
-# #         Name='Alma Matter',
-# #         FirstName='Palma',
-# #         LastName='Matter',
-# #         MiddleName='Bryant',
-# #         MiddleInitial='B',
-# #         NameExtension='',
-# #         BirthDate= datetime.now(timezone.utc),
-# #         DateHired= datetime.now(timezone.utc),
-# #         Degree='Bachelor of Science in Computer Science',
-# #         Remarks='',
-# #         FacultyCode=91801,
-# #         Honorific='N/A',
-# #         Age=35,
-# #         Email='alma123@gmail.com',
-# #         Password=generate_password_hash('alma123'),
-# #         # Add more attributes here
-# #         )
+    client_sample1 = MSAccount(
+        MSId='10001',
+        Type='Client',
+        FirstName='Palma',
+        LastName='Matter',
+        MiddleName='Bryant',
+        ContactNumber='09354510521',
+        Address='41 Morning Star St. Brgy. San Isidro, Taytay Rizal',
+        BirthDate= datetime.now(timezone.utc),
+        ProfilePic='palma.jpg',
+        Age=35,
+        Gender=2,
+
+        Email='palma123@gmail.com',
+        Password=generate_password_hash('palma123'),
+        Status='Deactivated',
+        # Add more attributes here
+        )
     
-# #     faculty_sample2 = FISFaculty(
-# #         FacultyId='2020-00073-D-1',
-# #         FacultyType='Part Time',
-# #         Rank='Instructor I',
-# #         Units = 6,
-# #         Name='Andrew Bardoquillo',
-# #         FirstName='Andrew',
-# #         LastName='Bardoquillo',
-# #         MiddleName='Lucero',
-# #         MiddleInitial='L',
-# #         NameExtension='',
-# #         BirthDate= datetime.now(timezone.utc),
-# #         DateHired= datetime.now(timezone.utc),
-# #         Degree='Master in Business Administration',
-# #         Remarks='',
-# #         FacultyCode=51295,
-# #         Honorific='N/A',
-# #         Age=26,
-# #         Email='robertandrewb.up@gmail.com',
-# #         Password=generate_password_hash('plazma@123'),
-# #         # Add more attributes here
-# #         ) 
+    client_sample2 = MSAccount(
+         MSId='10002',
+        Type='Client',
+        FirstName='Jonathan',
+        LastName='Selaste',
+        MiddleName='Kerakas',
+        ContactNumber='09354510522',
+        Address='44 Morning Star St. Brgy. San Isidro, Taytay Rizal',
+        BirthDate= datetime.now(timezone.utc),
+        ProfilePic='jonathan.jpg',
+        Age=25,
+        Gender=1,
+
+        Email='jonathan123@gmail.com',
+        Password=generate_password_hash('jonathan123'),
+        Status='Locked',
+        # Add more attributes here
+        )
     
-# #     faculty_sample3 = FISFaculty(
-# #         FacultyId='2020-00076-D-4',
-# #         FacultyType='Full Time',
-# #         Rank='Instructor III',
-# #         Units = 12,
-# #         Name='Jason Derbis',
-# #         FirstName='Jason',
-# #         LastName='Derbis',
-# #         MiddleName='Lucero',
-# #         MiddleInitial='L',
-# #         NameExtension='Jr.',
-# #         BirthDate= datetime.now(timezone.utc),
-# #         DateHired= datetime.now(timezone.utc),
-# #         Degree='Master In Information Technology',
-# #         Remarks='N/A',
-# #         FacultyCode=81214,
-# #         Honorific='N/A',
-# #         Age=29,
-# #         Email='sample123@gmail.com',
-# #         Password=generate_password_hash('plazma@123'),
-# #         # Add more attributes here
-# #         ) 
   
-#     # # ADD  DATA
+    # ADD  DATA
     
-#     # db.session.add(admin_sample1)
-#     # db.session.add(admin_sample2)
+    db.session.add(client_sample1)
+    db.session.add(client_sample2)
  
-#     # # COMMIT 
+    # COMMIT 
     
-#     # db.session.commit()
-#     # db.session.close()
+    db.session.commit()
+    db.session.close()
     
     

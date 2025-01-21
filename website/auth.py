@@ -258,7 +258,7 @@ def clientL():
            flash('Unknown Account', category='error')  
     else:
         flash('Invalid Credentials! Please Try again...', category='error')                 
-    return render_template("Faculty-Login-Page/index.html")
+    return render_template("Client-Login-Page/index.html")
 
 
 
@@ -356,7 +356,7 @@ def facultyF():
     # CHECKING IF ENTERED EMAIL IS NOT IN THE DATABASE
     if request.method == 'POST':
         if not User:
-            return render_template("Faculty-Login-Page/Emailnotfound.html", Email=Email) 
+            return render_template("Client-Login-Page/Emailnotfound.html", Email=Email) 
         else:
             token = jwt.encode({
                     'user': request.form['resetpass'],
@@ -388,7 +388,7 @@ def facultyF():
             
             msg.body = (accesstoken)
             mail.send(msg)
-            return render_template("Faculty-Login-Page/index.html", sentreset=1) 
+            return render_template("Client-Login-Page/index.html", sentreset=1) 
 
 # -------------------------------------------------------------
 
@@ -442,7 +442,7 @@ def facultyRP():
             db.session.close()
             return redirect(url_for('auth.facultyL')) 
     
-    return render_template("Faculty-Login-Page/resetpass.html", Email=Email) 
+    return render_template("Client-Login-Page/resetpass.html", Email=Email) 
 
 
 # -------------------------------------------------------------
