@@ -25,6 +25,7 @@ class MSAccount(db.Model, UserMixin):
     Age = db.Column(db.Numeric, nullable=False)
     Gender = db.Column(db.Integer) # Gender # 1 if Male 2 if Female
 
+    Email = db.Column(db.String(256))  
     Password = db.Column(db.String(256), nullable=False)  
     Status = db.Column(db.String(50), default="Deactivated")
     Login_Attempt = db.Column(db.Integer, default=12) 
@@ -35,27 +36,38 @@ class MSAccount(db.Model, UserMixin):
     MSOrder = db.relationship('MSOrder')
     MSCart = db.relationship('MSCart')
     MSVoucher = db.relationship('MSVoucher')
+    MSUser_Log = db.relationship('MSUser_Log')
 
     # LOGIN TOKEN
     MSLoginToken = db.relationship('MSLoginToken')
+    
 
 
     def to_dict(self):
         return {
             'MSId': self.MSId,
-            'MSType': self.MSType,
-            'FirstName': self.MSFirstName,
-            'LastName': self.MSLastName,
-            'MiddleName': self.MSMiddleName,
-            'ContactNumber': self.MSContactNumber,
-            'Address': self.MSAddress,
-            'BirthDate': self.MSBirthDate,
-            'ProfilePic': self.MSProfilePic,
-            'Age': self.MSAge,
+            'MSType': self.Type,
+            'FirstName': self.FirstName,
+            'LastName': self.LastName,
+            'MiddleName': self.MiddleName,
+            'ContactNumber': self.ContactNumber,
+            'Address': self.Address,
+            'BirthDate': self.BirthDate,
+            'ProfilePic': self.ProfilePic,
+            'Age': self.Age,
+            'Gender': self.Gender,
+            
+            'Email': self.Email,
+            'Password': self.Password,
+            'Status': self.Status,
+            'Login_Attempt': self.Login_Attempt,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at,
             
             'MSOrder': self.MSOrder,
             'MSCart': self.MSCart,
             'MSVoucher': self.MSVoucher,
+            'MSUser_Log': self.MSUser_Log,
             
             'MSLoginToken': self.MSLoginToken, 
         }
@@ -84,8 +96,94 @@ class MSOrder(db.Model):
         return {
             'id': self.id,
             'MSId': self.MSId,
-            'access_token': self.access_token,
-            'refresh_token': self.refresh_token,
+            'ProductSerial': self.ProductSerial,
+            'OrderId': self.OrderId,
+            'OrderCount': self.OrderCount,
+            'OrderStatus': self.OrderStatus,
+            'OrderDate': self.OrderDate,
+            'OrderReceive': self.OrderReceive,
+            'OrderVoucher': self.OrderVoucher,
+            'is_delete': self.is_delete
+        }
+        
+    def get_id(self):
+        return str(self.id)  # Convert to string to ensure compatibility
+    
+# MS CART
+  
+class MSCart(db.Model):
+    __tablename__ = 'MSCart'
+
+    id = db.Column(db.Integer, primary_key=True)  # DataID
+    MSId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=True)
+    ProductSerial = db.Column(db.String)
+    ItemCount = db.Column(db.Numeric)
+    is_delete = db.Column(db.Boolean, default=False) 
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'MSId': self.MSId,
+            'ProductSerial': self.ProductSerial,
+            'ItemCount': self.ItemCount,
+            'is_delete': self.is_delete
+        }
+        
+    def get_id(self):
+        return str(self.id)  # Convert to string to ensure compatibility
+    
+# MS VOUCHER
+  
+class MSVoucher(db.Model):
+    __tablename__ = 'MSVoucher'
+
+    id = db.Column(db.Integer, primary_key=True)  # DataID
+    MSId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=True)
+    VoucherName = db.Column(db.String)
+    VoucherDiscount = db.Column(db.Numeric)
+    VoucherCode = db.Column(db.String)
+    is_delete = db.Column(db.Boolean, default=False) 
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'MSId': self.MSId,
+            'VoucherName': self.VoucherName,
+            'VoucherDiscount': self.VoucherDiscount,
+            'VoucherCode': self.VoucherCode,
+            'is_delete': self.is_delete
+        }
+        
+    def get_id(self):
+        return str(self.id)  # Convert to string to ensure compatibility
+    
+# MS PRODUCT
+  
+class MSProduct(db.Model):
+    __tablename__ = 'MSProduct'
+
+    id = db.Column(db.Integer, primary_key=True)  # DataID
+    MSId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=True)
+    ProductName = db.Column(db.String)
+    ProductSerial = db.Column(db.String)
+    ProductImage = db.Column(db.String)
+    ProductInventory = db.Column(db.String)
+    ProductPrice = db.Column(db.Float)
+    ProductSale = db.Column(db.Float)
+    ProductStock = db.Column(db.Numeric)
+    is_delete = db.Column(db.Boolean, default=False) 
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'MSId': self.MSId,
+            'ProductName': self.ProductName,
+            'ProductSerial': self.ProductSerial,
+            'ProductImage': self.ProductImage,
+            'ProductInventory': self.ProductInventory,
+            'ProductPrice': self.ProductPrice,
+            'ProductSale': self.ProductSale,
+            'ProductStock': self.ProductStock,
             'is_delete': self.is_delete
         }
         
@@ -115,13 +213,45 @@ class MSLoginToken(db.Model):
         
     def get_id(self):
         return str(self.id)  # Convert to string to ensure compatibility
+
+
+# USER LOGS
+  
+class MSUser_Log(db.Model):
+    __tablename__ = 'MSUser_Log'
+
+    id = db.Column(db.Integer, primary_key=True)  # DataID
+    MSId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=True)
+    Type = db.Column(db.String(50), nullable=False)
+    DateTime = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
+    Status = db.Column(db.String(50), default="success")
+    Log = db.Column(db.String(50))
+    is_delete = db.Column(db.Boolean, default=False) 
     
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'MSId': self.MSId,
+            'Type': self.Type,
+            'DateTime': self.DateTime,
+            'Status': self.Status,
+            'Log': self.Log,
+            'is_delete': self.is_delete
+        }
+        
+    def get_id(self):
+        return str(self.id)  # Convert to string to ensure compatibility  
+    
+
+
+
 
 def init_db(app):
     db.init_app(app)
     with app.app_context():
         inspector = inspect(db.engine)
-        if not inspector.has_table('FISMandatoryRequirements'):
+        if not inspector.has_table('MSAccount'):
             db.create_all()
             # create_sample_data()
         

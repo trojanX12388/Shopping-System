@@ -58,7 +58,7 @@ def create_app():
     init_db(app)
     
     # LOADING MODEL CLASSES
-    from .models import FISFaculty
+    from .models import MSAccount
     
     # IMPORTING ROUTES
     from .views import views
@@ -99,7 +99,7 @@ def create_app():
         # if admin_user:
         #     return admin_user
         
-        faculty_user = FISFaculty.query.get(int(user_id))
+        faculty_user = MSAccount.query.get(int(user_id))
         if faculty_user:
             return faculty_user
         

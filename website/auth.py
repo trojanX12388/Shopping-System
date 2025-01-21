@@ -29,7 +29,7 @@ from .models import db
 from sqlalchemy import update
 
 # LOADING MODEL CLASSES
-from .models import FISFaculty
+from .models import MSAccount, MSLoginToken, MSUser_Log
 
 
 # LOAD JWT MODULE
@@ -90,8 +90,8 @@ auth = Blueprint('auth', __name__)
 
 # FACULTY PAGE ROUTE
 
-@auth.route('/faculty-login', methods=['GET', 'POST'])
-def facultyL():
+@auth.route('/client-login', methods=['GET', 'POST'])
+def clientL():
     if 'entry' not in session:
         session['entry'] = 3  # Set the maximum number of allowed attempts initially
 
@@ -100,7 +100,7 @@ def facultyL():
         Password = request.form.get('password')
 
         entry = session['entry']
-        User = FISFaculty.query.filter_by(Email=Email).first()
+        User = MSAccount.query.filter_by(Email=Email).first()
 
         if not User:
             flash('Incorrect Email or Password!', category='error')
@@ -113,36 +113,36 @@ def facultyL():
         elif User.Status == "Deactivated":
 
             if User.Login_Attempt != 2:
-                u = update(FISFaculty).values({"Login_Attempt": User.Login_Attempt - 1})
-                u = u.where(FISFaculty.FacultyId == User.FacultyId)
+                u = update(MSAccount).values({"Login_Attempt": User.Login_Attempt - 1})
+                u = u.where(MSAccount.MSId == User.MSId)
                 db.session.execute(u)
                 db.session.commit()
 
                 if check_password_hash(User.Password, Password):
                     login_user(User, remember=False)
-                    access_token = generate_access_token(User.FacultyId)
-                    refresh_token = generate_refresh_token(User.FacultyId)
+                    access_token = generate_access_token(User.MSId)
+                    refresh_token = generate_refresh_token(User.MSId)
 
-                    u = update(FISFaculty).values({"Login_Attempt": 5,
+                    u = update(MSAccount).values({"Login_Attempt": 5,
                                                    "Status": "Active",})
-                    u = u.where(FISFaculty.FacultyId == User.FacultyId)
+                    u = u.where(MSAccount.MSId == User.MSId)
                     db.session.execute(u)
                     db.session.commit()
                         
-                    login_token = FISLoginToken.query.filter_by(FacultyId=current_user.FacultyId).first()
+                    login_token = MSLoginToken.query.filter_by(MSId=current_user.MSId).first()
                     if login_token:
-                        u = update(FISLoginToken).values({"access_token": access_token,"refresh_token": refresh_token,})
-                        u = u.where(FISLoginToken.FacultyId == User.FacultyId)
+                        u = update(MSLoginToken).values({"access_token": access_token,"refresh_token": refresh_token,})
+                        u = u.where(MSLoginToken.MSId == User.MSId)
                         db.session.execute(u)
                         db.session.commit()
                     else:
-                        login_token = FISLoginToken(access_token=access_token, refresh_token=refresh_token, FacultyId=current_user.FacultyId)
+                        login_token = MSLoginToken(access_token=access_token, refresh_token=refresh_token, MSId=current_user.MSId)
                         db.session.add(login_token)
                         db.session.commit()
                     
                     
-                    add_log = FISUser_Log(
-                        FacultyId=current_user.FacultyId,
+                    add_log = MSUser_Log(
+                        MSId=current_user.MSId,
                         Status= "success",
                         Log = "Activated",
                     )
@@ -165,14 +165,14 @@ def facultyL():
                         return redirect(url_for('auth.facultyL'))
             
             else:
-                u = update(FISFaculty)
+                u = update(MSAccount)
                 u = u.values({"Status": "Locked",})
-                u = u.where(FISFaculty.FacultyId == User.FacultyId)
+                u = u.where(MSAccount.MSId == User.MSId)
                 db.session.execute(u)
                 db.session.commit()
                 
-                add_log = FISUser_Log(
-                        FacultyId=User.FacultyId,
+                add_log = MSUser_Log(
+                        MSId=User.MSId,
                         Status= "alert",
                         Log = "Locked",
                     )
@@ -187,34 +187,34 @@ def facultyL():
         elif User.Status == "Active":
 
             if User.Login_Attempt != 0:
-                u = update(FISFaculty).values({"Login_Attempt": User.Login_Attempt - 1})
-                u = u.where(FISFaculty.FacultyId == User.FacultyId)
+                u = update(MSAccount).values({"Login_Attempt": User.Login_Attempt - 1})
+                u = u.where(MSAccount.MSId == User.MSId)
                 db.session.execute(u)
                 db.session.commit()
 
                 if check_password_hash(User.Password, Password):
                     login_user(User, remember=False)
-                    access_token = generate_access_token(User.FacultyId)
-                    refresh_token = generate_refresh_token(User.FacultyId)
+                    access_token = generate_access_token(User.MSId)
+                    refresh_token = generate_refresh_token(User.MSId)
 
-                    u = update(FISFaculty).values({"Login_Attempt": 5})
-                    u = u.where(FISFaculty.FacultyId == User.FacultyId)
+                    u = update(MSAccount).values({"Login_Attempt": 5})
+                    u = u.where(MSAccount.MSId == User.MSId)
                     db.session.execute(u)
                     db.session.commit()
                         
-                    login_token = FISLoginToken.query.filter_by(FacultyId=current_user.FacultyId).first()
+                    login_token = MSLoginToken.query.filter_by(MSId=current_user.MSId).first()
                     if login_token:
-                        u = update(FISLoginToken).values({"access_token": access_token,"refresh_token": refresh_token,})
-                        u = u.where(FISLoginToken.FacultyId == User.FacultyId)
+                        u = update(MSLoginToken).values({"access_token": access_token,"refresh_token": refresh_token,})
+                        u = u.where(MSLoginToken.MSId == User.MSId)
                         db.session.execute(u)
                         db.session.commit()
                     else:
-                        login_token = FISLoginToken(access_token=access_token, refresh_token=refresh_token, FacultyId=current_user.FacultyId)
+                        login_token = MSLoginToken(access_token=access_token, refresh_token=refresh_token, MSId=current_user.MSId)
                         db.session.add(login_token)
                         db.session.commit()
                     
-                    add_log = FISUser_Log(
-                        FacultyId=current_user.FacultyId,
+                    add_log = MSUser_Log(
+                        MSId=current_user.MSId,
                         Status= "success",
                         Log = "Logged In",
                     )
@@ -236,14 +236,14 @@ def facultyL():
                         return redirect(url_for('auth.facultyL'))
             
             else:
-                u = update(FISFaculty)
+                u = update(MSAccount)
                 u = u.values({"Status": "Locked",})
-                u = u.where(FISFaculty.FacultyId == User.FacultyId)
+                u = u.where(MSAccount.MSId == User.MSId)
                 db.session.execute(u)
                 db.session.commit()
                 
-                add_log = FISUser_Log(
-                        FacultyId=User.FacultyId,
+                add_log = MSUser_Log(
+                        MSId=User.MSId,
                         Status= "alert",
                         Log = "Locked",
                     )
@@ -279,7 +279,7 @@ def reset_entry():
 def facultyH():
         
     # INITIALIZING DATA FROM USER LOGGED IN ACCOUNT    
-        username = FISFaculty.query.filter_by(FacultyId=current_user.FacultyId).first() 
+        username = MSAccount.query.filter_by(MSId=current_user.MSId).first() 
         
         if username.ProfilePic == None:
             ProfilePic=profile_default
@@ -315,12 +315,12 @@ def Logout():
     
     
     # # REVOKE USER TOKEN FROM ALL BROWSERS
-    # token_list = current_user.FISLoginToken  # This returns a list of FISLoginToken objects
+    # token_list = current_user.MSLoginToken  # This returns a list of MSLoginToken objects
     # if token_list:
     #     # Access the first token from the list
     #     token_id = token_list[0].id  # Assuming you want the first token
-    #     user_token = FISLoginToken.query.filter_by(id=token_id, FacultyId=current_user.FacultyId).first()
-    #     # Now 'user_token' should contain the specific FISLoginToken object
+    #     user_token = MSLoginToken.query.filter_by(id=token_id, MSId=current_user.MSId).first()
+    #     # Now 'user_token' should contain the specific MSLoginToken object
     #     if user_token:
     #         db.session.delete(user_token)
     #         db.session.commit()
@@ -328,8 +328,8 @@ def Logout():
     # else:
     #     pass
     
-    add_log = FISUser_Log(
-                        FacultyId=current_user.FacultyId,
+    add_log = MSUser_Log(
+                        MSId=current_user.MSId,
                         Status= "info",
                         Log = "Logged Out",
                     )
@@ -351,7 +351,7 @@ def Logout():
 @auth.route('/request-reset-pass', methods=["POST"])
 def facultyF():
     Email = request.form['resetpass']
-    User = FISFaculty.query.filter_by(Email=Email).first()
+    User = MSAccount.query.filter_by(Email=Email).first()
     
     # CHECKING IF ENTERED EMAIL IS NOT IN THE DATABASE
     if request.method == 'POST':
@@ -434,9 +434,9 @@ def facultyRP():
     if request.method == 'POST':
         if password1 == password2:
             # Update
-            u = update(FISFaculty)
+            u = update(MSAccount)
             u = u.values({"Password": generate_password_hash(password1)})
-            u = u.where(FISFaculty.Email == Email)
+            u = u.where(MSAccount.Email == Email)
             db.session.execute(u)
             db.session.commit()
             db.session.close()
