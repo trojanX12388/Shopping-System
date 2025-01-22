@@ -78,12 +78,35 @@
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
 
+    <script>
+  document.addEventListener('click', function (event) {
+  const sidebarToggleButton = document.querySelector('.toggle-sidebar-btn');
+  const bodyElement = document.querySelector('body'); // Select the <body> element
+  const sidebarContainer = document.querySelector('#sidebar'); // The sidebar container
+
+  // Only execute if in mobile view (adjust the width as needed, e.g., 768px)
+  if (window.innerWidth <= 768) {
+    // Check if the sidebar is visible by checking the class on <body>
+    const isSidebarVisible = bodyElement.classList.contains('toggle-sidebar');
+
+    // Check if the click is outside the sidebar, the toggle button, and the sidebar is visible
+    if (
+      isSidebarVisible && // Sidebar is currently visible
+      !sidebarContainer.contains(event.target) && // Click is not inside the sidebar
+      !sidebarToggleButton.contains(event.target) // Click is not on the toggle button
+    ) {
+      sidebarToggleButton.click(); // Programmatically click the toggle button
+    }
+  }
+});
+    </script>
+
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
 
         <li class="nav-item dropdown">
           <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-            <i class="bi bi-bell"></i>
+            <i class="bi bi-cart4"></i>
             <span class="badge bg-danger badge-number" id="notification-count">0</span>
           </a><!-- End Notification Icon -->
         
@@ -185,14 +208,14 @@
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="/faculty-home-page">
-          <i class="bi bi-house-fill"></i>
+          <i class="bi bi-shop-window"></i>
           <span>STORE</span>
         </a>
       </li><!-- End HOMEPAGE Nav -->
 
       <li class="nav-item"><!-- PERSONAL DATA MANAGEMENT Nav -->
         <a class="nav-link collapsed" data-bs-target="#PDM-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-person-fill"></i><span>CATEGORIES</span><i class="bi bi-chevron-down ms-auto"></i>
+          <i class="bi bi-card-text"></i><span>CATEGORIES</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="PDM-nav" class="nav-content collapse {{ PDM }}" data-bs-parent="#sidebar-nav">
           <li>
@@ -210,7 +233,7 @@
 
       <li class="nav-item"><!-- TEACHING INSTRUCTIONS Nav -->
         <a class="nav-link collapsed" data-bs-target="#teaching-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-book-fill"></i><span>ORDERS</span><i class="bi bi-chevron-down ms-auto"></i>
+          <i class="bi bi-receipt"></i><span>ORDERS</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="teaching-nav" class="nav-content collapse {{ TI }}" data-bs-parent="#sidebar-nav">
           <li>
@@ -228,7 +251,7 @@
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="/Mandatory-Requirements">
-          <i class="bi bi-exclamation-octagon-fill"></i>
+          <i class="bi bi-bag-check"></i>
           <span>SOLD</span>
           <span id="mandatory-requirements-warning" style="display: none; color: red;"> <!-- Add this span with an appropriate style -->
             <i class="bi bi-exclamation-triangle-fill"></i> Warning!
@@ -238,7 +261,7 @@
       
       <li class="nav-item">
         <a class="nav-link collapsed" href="/Professional-Development">
-          <i class="bi bi-file-earmark-person-fill"></i>
+          <i class="bi bi-box-seam"></i>
           <span>MY PRODUCTS</span>
         </a>
       </li><!-- End PROFESSIONAL DEVELOPMENT Nav -->
@@ -253,7 +276,7 @@
           <div class="col-md-12 text-center">
             <img src="{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" alt="PUPFIS LOGO" class="rounded mx-auto d-block" style="width: 80px;height: 80px;"/>
             <br>
-            <p style="font-size: small; color: #2e2d2d;">Mae Shop | Philippines Quezon City</p>
+            <p style="font-size: small; color: #2e2d2d;">EntrApp | Philippines Quezon City</p>
             <p style="font-size: smaller; color: #0099ff;">#123-456-789 <break><a href="mailto:entrapp3c@gmail.com">entrapp3c@gmail.com</a></p>
             
           </div>
@@ -267,7 +290,378 @@
 
       <main id="main" class="main">
 
-   
+        
+        <section class="section dashboard">
+          <div class="row">
+    
+            <!-- Left side columns -->
+            <div class="col-lg-8">
+              <div class="row">
+    
+                <!-- Top Selling -->
+                <div class="col-12">
+                  <div class="card top-selling overflow-auto">
+    
+                    <div class="filter">
+                      <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                        <li class="dropdown-header text-start">
+                          <h6>Filter</h6>
+                        </li>
+    
+                        <li><a class="dropdown-item" href="#">Today</a></li>
+                        <li><a class="dropdown-item" href="#">This Month</a></li>
+                        <li><a class="dropdown-item" href="#">This Year</a></li>
+                      </ul>
+                    </div>
+    
+                    <div class="card-body pb-0">
+                      <h5 class="card-title">Top Selling <span>| Today</span></h5>
+    
+                      <table class="table table-borderless">
+                        <thead>
+                          <tr>
+                            <th scope="col">Preview</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Sold</th>
+                            <th scope="col">Revenue</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <th scope="row"><a href="#"><img src="assets/img/product-1.jpg" alt=""></a></th>
+                            <td><a href="#" class="text-primary fw-bold">Ut inventore ipsa voluptas nulla</a></td>
+                            <td>$64</td>
+                            <td class="fw-bold">124</td>
+                            <td>$5,828</td>
+                          </tr>
+                          <tr>
+                            <th scope="row"><a href="#"><img src="assets/img/product-2.jpg" alt=""></a></th>
+                            <td><a href="#" class="text-primary fw-bold">Exercitationem similique doloremque</a></td>
+                            <td>$46</td>
+                            <td class="fw-bold">98</td>
+                            <td>$4,508</td>
+                          </tr>
+                          <tr>
+                            <th scope="row"><a href="#"><img src="assets/img/product-3.jpg" alt=""></a></th>
+                            <td><a href="#" class="text-primary fw-bold">Doloribus nisi exercitationem</a></td>
+                            <td>$59</td>
+                            <td class="fw-bold">74</td>
+                            <td>$4,366</td>
+                          </tr>
+                          <tr>
+                            <th scope="row"><a href="#"><img src="assets/img/product-4.jpg" alt=""></a></th>
+                            <td><a href="#" class="text-primary fw-bold">Officiis quaerat sint rerum error</a></td>
+                            <td>$32</td>
+                            <td class="fw-bold">63</td>
+                            <td>$2,016</td>
+                          </tr>
+                          <tr>
+                            <th scope="row"><a href="#"><img src="assets/img/product-5.jpg" alt=""></a></th>
+                            <td><a href="#" class="text-primary fw-bold">Sit unde debitis delectus repellendus</a></td>
+                            <td>$79</td>
+                            <td class="fw-bold">41</td>
+                            <td>$3,239</td>
+                          </tr>
+                        </tbody>
+                      </table>
+    
+                    </div>
+    
+                  </div>
+                </div><!-- End Top Selling -->
+    
+              </div>
+            </div><!-- End Left side columns -->
+    
+            <!-- Right side columns -->
+            <div class="col-lg-4">
+    
+              <!-- Recent Activity -->
+              <div class="card">
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+    
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+    
+                <div class="card-body">
+                  <h5 class="card-title">Recent Activity <span>| Today</span></h5>
+    
+                  <div class="activity">
+    
+                    <div class="activity-item d-flex">
+                      <div class="activite-label">32 min</div>
+                      <i class="bi bi-circle-fill activity-badge text-success align-self-start"></i>
+                      <div class="activity-content">
+                        Quia quae rerum <a href="#" class="fw-bold text-dark">explicabo officiis</a> beatae
+                      </div>
+                    </div><!-- End activity item-->
+    
+                    <div class="activity-item d-flex">
+                      <div class="activite-label">56 min</div>
+                      <i class="bi bi-circle-fill activity-badge text-danger align-self-start"></i>
+                      <div class="activity-content">
+                        Voluptatem blanditiis blanditiis eveniet
+                      </div>
+                    </div><!-- End activity item-->
+    
+                    <div class="activity-item d-flex">
+                      <div class="activite-label">2 hrs</div>
+                      <i class="bi bi-circle-fill activity-badge text-primary align-self-start"></i>
+                      <div class="activity-content">
+                        Voluptates corrupti molestias voluptatem
+                      </div>
+                    </div><!-- End activity item-->
+    
+                    <div class="activity-item d-flex">
+                      <div class="activite-label">1 day</div>
+                      <i class="bi bi-circle-fill activity-badge text-info align-self-start"></i>
+                      <div class="activity-content">
+                        Tempore autem saepe <a href="#" class="fw-bold text-dark">occaecati voluptatem</a> tempore
+                      </div>
+                    </div><!-- End activity item-->
+    
+                    <div class="activity-item d-flex">
+                      <div class="activite-label">2 days</div>
+                      <i class="bi bi-circle-fill activity-badge text-warning align-self-start"></i>
+                      <div class="activity-content">
+                        Est sit eum reiciendis exercitationem
+                      </div>
+                    </div><!-- End activity item-->
+    
+                    <div class="activity-item d-flex">
+                      <div class="activite-label">4 weeks</div>
+                      <i class="bi bi-circle-fill activity-badge text-muted align-self-start"></i>
+                      <div class="activity-content">
+                        Dicta dolorem harum nulla eius. Ut quidem quidem sit quas
+                      </div>
+                    </div><!-- End activity item-->
+    
+                  </div>
+    
+                </div>
+              </div><!-- End Recent Activity -->
+    
+              <!-- Budget Report -->
+              <div class="card">
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+    
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+    
+                <div class="card-body pb-0">
+                  <h5 class="card-title">Budget Report <span>| This Month</span></h5>
+    
+                  <div id="budgetChart" style="min-height: 400px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);" class="echart" _echarts_instance_="ec_1737554284586"><div style="position: relative; width: 273px; height: 400px; padding: 0px; margin: 0px; border-width: 0px;"><canvas data-zr-dom-id="zr_0" width="273" height="400" style="position: absolute; left: 0px; top: 0px; width: 273px; height: 400px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas></div></div>
+    
+                  <script>
+                    document.addEventListener("DOMContentLoaded", () => {
+                      var budgetChart = echarts.init(document.querySelector("#budgetChart")).setOption({
+                        legend: {
+                          data: ['Allocated Budget', 'Actual Spending']
+                        },
+                        radar: {
+                          // shape: 'circle',
+                          indicator: [{
+                              name: 'Sales',
+                              max: 6500
+                            },
+                            {
+                              name: 'Administration',
+                              max: 16000
+                            },
+                            {
+                              name: 'Information Technology',
+                              max: 30000
+                            },
+                            {
+                              name: 'Customer Support',
+                              max: 38000
+                            },
+                            {
+                              name: 'Development',
+                              max: 52000
+                            },
+                            {
+                              name: 'Marketing',
+                              max: 25000
+                            }
+                          ]
+                        },
+                        series: [{
+                          name: 'Budget vs spending',
+                          type: 'radar',
+                          data: [{
+                              value: [4200, 3000, 20000, 35000, 50000, 18000],
+                              name: 'Allocated Budget'
+                            },
+                            {
+                              value: [5000, 14000, 28000, 26000, 42000, 21000],
+                              name: 'Actual Spending'
+                            }
+                          ]
+                        }]
+                      });
+                    });
+                  </script>
+    
+                </div>
+              </div><!-- End Budget Report -->
+    
+              <!-- Website Traffic -->
+              <div class="card">
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+    
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+    
+                <div class="card-body pb-0">
+                  <h5 class="card-title">Website Traffic <span>| Today</span></h5>
+    
+                  <div id="trafficChart" style="min-height: 400px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); position: relative;" class="echart" _echarts_instance_="ec_1737554284587"><div style="position: relative; width: 273px; height: 400px; padding: 0px; margin: 0px; border-width: 0px; cursor: default;"><canvas data-zr-dom-id="zr_0" width="273" height="400" style="position: absolute; left: 0px; top: 0px; width: 273px; height: 400px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas></div><div class="" style="position: absolute; display: block; border-style: solid; white-space: nowrap; z-index: 9999999; box-shadow: rgba(0, 0, 0, 0.2) 1px 2px 10px; transition: opacity 0.2s cubic-bezier(0.23, 1, 0.32, 1), visibility 0.2s cubic-bezier(0.23, 1, 0.32, 1), transform 0.4s cubic-bezier(0.23, 1, 0.32, 1); background-color: rgb(255, 255, 255); border-width: 1px; border-radius: 4px; color: rgb(102, 102, 102); font: 14px / 21px &quot;Microsoft YaHei&quot;; padding: 10px; top: 0px; left: 0px; transform: translate3d(0px, 227px, 0px); border-color: rgb(84, 112, 198); pointer-events: none; visibility: hidden; opacity: 0;"><div style="margin: 0px 0 0;line-height:1;"><div style="font-size:14px;color:#666;font-weight:400;line-height:1;">Access From</div><div style="margin: 10px 0 0;line-height:1;"><div style="margin: 0px 0 0;line-height:1;"><span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#5470c6;"></span><span style="font-size:14px;color:#666;font-weight:400;margin-left:2px">Search Engine</span><span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">1,048</span><div style="clear:both"></div></div><div style="clear:both"></div></div><div style="clear:both"></div></div></div></div>
+    
+                  <script>
+                    document.addEventListener("DOMContentLoaded", () => {
+                      echarts.init(document.querySelector("#trafficChart")).setOption({
+                        tooltip: {
+                          trigger: 'item'
+                        },
+                        legend: {
+                          top: '5%',
+                          left: 'center'
+                        },
+                        series: [{
+                          name: 'Access From',
+                          type: 'pie',
+                          radius: ['40%', '70%'],
+                          avoidLabelOverlap: false,
+                          label: {
+                            show: false,
+                            position: 'center'
+                          },
+                          emphasis: {
+                            label: {
+                              show: true,
+                              fontSize: '18',
+                              fontWeight: 'bold'
+                            }
+                          },
+                          labelLine: {
+                            show: false
+                          },
+                          data: [{
+                              value: 1048,
+                              name: 'Search Engine'
+                            },
+                            {
+                              value: 735,
+                              name: 'Direct'
+                            },
+                            {
+                              value: 580,
+                              name: 'Email'
+                            },
+                            {
+                              value: 484,
+                              name: 'Union Ads'
+                            },
+                            {
+                              value: 300,
+                              name: 'Video Ads'
+                            }
+                          ]
+                        }]
+                      });
+                    });
+                  </script>
+    
+                </div>
+              </div><!-- End Website Traffic -->
+    
+              <!-- News & Updates Traffic -->
+              <div class="card">
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+    
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+    
+                <div class="card-body pb-0">
+                  <h5 class="card-title">News &amp; Updates <span>| Today</span></h5>
+    
+                  <div class="news">
+                    <div class="post-item clearfix">
+                      <img src="assets/img/news-1.jpg" alt="">
+                      <h4><a href="#">Nihil blanditiis at in nihil autem</a></h4>
+                      <p>Sit recusandae non aspernatur laboriosam. Quia enim eligendi sed ut harum...</p>
+                    </div>
+    
+                    <div class="post-item clearfix">
+                      <img src="assets/img/news-2.jpg" alt="">
+                      <h4><a href="#">Quidem autem et impedit</a></h4>
+                      <p>Illo nemo neque maiores vitae officiis cum eum turos elan dries werona nande...</p>
+                    </div>
+    
+                    <div class="post-item clearfix">
+                      <img src="assets/img/news-3.jpg" alt="">
+                      <h4><a href="#">Id quia et et ut maxime similique occaecati ut</a></h4>
+                      <p>Fugiat voluptas vero eaque accusantium eos. Consequuntur sed ipsam et totam...</p>
+                    </div>
+    
+                    <div class="post-item clearfix">
+                      <img src="assets/img/news-4.jpg" alt="">
+                      <h4><a href="#">Laborum corporis quo dara net para</a></h4>
+                      <p>Qui enim quia optio. Eligendi aut asperiores enim repellendusvel rerum cuder...</p>
+                    </div>
+    
+                    <div class="post-item clearfix">
+                      <img src="assets/img/news-5.jpg" alt="">
+                      <h4><a href="#">Et dolores corrupti quae illo quod dolor</a></h4>
+                      <p>Odit ut eveniet modi reiciendis. Atque cupiditate libero beatae dignissimos eius...</p>
+                    </div>
+    
+                  </div><!-- End sidebar recent posts-->
+    
+                </div>
+              </div><!-- End News & Updates -->
+    
+            </div><!-- End Right side columns -->
+    
+          </div>
+        </section>
+       
 
       </main> 
  
@@ -318,7 +712,7 @@
           return request.Status.toLowerCase() === 'pending' || request.Type.toLowerCase() === 'mandatory';
         });
 
-        var newTitle = "{% block title %}Mae Shop{% endblock %}";
+        var newTitle = "{% block title %}EntrApp{% endblock %}";
 
         if (pendingRequests.length > 0) {
           // Sort pending notifications by DateTime in descending order
@@ -357,7 +751,7 @@
           // Handle the case when there are no pending notifications
           document.getElementById("notification-count-title").innerText = newTitle;
 
-          $('.notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">You have no notifications.</h6>');
+          $('.notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">You have no items in cart. Add items from the store.</h6>');
         }
       },
       error: function () {
@@ -379,7 +773,7 @@
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
     <div class="copyright">
-      &copy;<strong><span>Copyright MAE SHOP 2025.</span></strong>. All Rights Reserved
+      &copy;<strong><span>Copyright ENTRAPP 2025.</span></strong>. All Rights Reserved
     </div>
     
   </footer><!-- End Footer -->
