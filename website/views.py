@@ -9,8 +9,8 @@ views = Blueprint('views', __name__)
 @views.route("/")
 def home():
     # CHECKING ACTIVE SESSIONS
-    if current_user.__class__.__name__ == "FISFaculty":     
-        return redirect(url_for('auth.facultyH'))
+    if current_user.__class__.__name__ == "MSAccount":     
+        return redirect(url_for('auth.clientH'))
     
     elif current_user.__class__.__name__ == "FISAdmin":     
         return redirect(url_for('admin.adminH'))
@@ -26,8 +26,8 @@ def home():
 @views.route("/client-login")
 def facultyL():
     # CHECKING ACTIVE SESSIONS
-    if current_user.__class__.__name__ == "FISFaculty":     
-        return redirect(url_for('auth.facultyH'))
+    if current_user.__class__.__name__ == "MSAccount":     
+        return redirect(url_for('auth.clientH'))
     
     elif current_user.__class__.__name__ == "FISAdmin":     
         return redirect(url_for('admin.adminH'))
@@ -44,8 +44,8 @@ def facultyL():
 @views.route("/admin-login")
 def adminL():
     # CHECKING ACTIVE SESSIONS
-    if current_user.__class__.__name__ == "FISFaculty":     
-        return redirect(url_for('auth.facultyH'))
+    if current_user.__class__.__name__ == "MSAccount":     
+        return redirect(url_for('auth.clientH'))
     
     elif current_user.__class__.__name__ == "FISAdmin":     
         return redirect(url_for('admin.adminH'))
@@ -67,7 +67,7 @@ def sysadminL():
     session['sysadminid'] = None
     
     if current_user.__class__.__name__ == "FISFaculty":     
-        return redirect(url_for('auth.facultyH'))
+        return redirect(url_for('auth.clientH'))
     
     elif current_user.__class__.__name__ == "FISAdmin":     
         return redirect(url_for('admin.adminH'))
@@ -88,7 +88,7 @@ def sysadminOTP():
     if is_otp_gained == True and  id != None :
         # CHECKING ACTIVE SESSIONS
         if current_user.__class__.__name__ == "FISFaculty":     
-            return redirect(url_for('auth.facultyH'))
+            return redirect(url_for('auth.clientH'))
         
         elif current_user.__class__.__name__ == "FISAdmin":     
             return redirect(url_for('admin.adminH'))

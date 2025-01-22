@@ -153,7 +153,7 @@ def clientL():
                      
                     db.session.close()    
                     session['entry'] = 3
-                    return redirect(url_for('auth.facultyH'))
+                    return redirect(url_for('auth.clientH'))
 
                 else:
                     entry -= 1
@@ -162,7 +162,7 @@ def clientL():
                     else:
                         session['entry'] = entry
                         flash('Your Account is Deactivated, enter the correct password to activate.', category='error')
-                        return redirect(url_for('auth.facultyL'))
+                        return redirect(url_for('auth.clientL'))
             
             else:
                 u = update(MSAccount)
@@ -182,7 +182,7 @@ def clientL():
                 
                 db.session.close()
                 flash('Your Account has been locked due to many incorrect attempts.', category='error')
-                return redirect(url_for('auth.facultyL'))
+                return redirect(url_for('auth.clientL'))
         
         elif User.Status == "Active":
 
@@ -224,7 +224,7 @@ def clientL():
                         
                     db.session.close()    
                     session['entry'] = 3
-                    return redirect(url_for('auth.facultyH'))
+                    return redirect(url_for('auth.clientH'))
 
                 else:
                     entry -= 1
@@ -233,7 +233,7 @@ def clientL():
                     else:
                         session['entry'] = entry
                         flash('Invalid Credentials! Please Try again...', category='error')
-                        return redirect(url_for('auth.facultyL'))
+                        return redirect(url_for('auth.clientL'))
             
             else:
                 u = update(MSAccount)
@@ -253,7 +253,7 @@ def clientL():
                 
                 db.session.close()
                 flash('Your Account has been locked due to many incorrect attempts.', category='error')
-                return redirect(url_for('auth.facultyL'))
+                return redirect(url_for('auth.clientL'))
         else:
            flash('Unknown Account', category='error')  
     else:
@@ -276,7 +276,7 @@ def reset_entry():
 @auth.route("/faculty-home-page")
 @login_required
 # @Check_Token
-def facultyH():
+def clientH():
         
     # INITIALIZING DATA FROM USER LOGGED IN ACCOUNT    
         username = MSAccount.query.filter_by(MSId=current_user.MSId).first() 
@@ -342,7 +342,7 @@ def Logout():
     session['entry'] = 3
     
     flash('Logged Out Successfully!', category='success')
-    return redirect(url_for('auth.facultyL')) 
+    return redirect(url_for('auth.clientL')) 
 
 
 # -------------------------------------------------------------
@@ -440,7 +440,7 @@ def facultyRP():
             db.session.execute(u)
             db.session.commit()
             db.session.close()
-            return redirect(url_for('auth.facultyL')) 
+            return redirect(url_for('auth.clientL')) 
     
     return render_template("Client-Login-Page/resetpass.html", Email=Email) 
 

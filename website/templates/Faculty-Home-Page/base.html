@@ -73,7 +73,7 @@
     <div class="d-flex align-items-center justify-content-between">
       <a href="/faculty-home-page" class="logo d-flex align-items-center">
         <img src="{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" alt="PUPQC LOGO">
-        <span class="d-none d-lg-block">Faculty Page</span>
+        <span class="d-none d-lg-block">{{User}}</span>
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
@@ -128,7 +128,7 @@
             <li>
               <a class="dropdown-item d-flex align-items-center" href="/PDM-Basic-Details">
                 <i class="bi bi-person"></i>
-                <span>My Profile</span>
+                <span>My Account</span>
               </a>
             </li>
 
@@ -164,7 +164,7 @@
           <li>
             <a class="dropdown-item d-flex align-items-center" href="/logout" onclick="logout()">
                   <i class="bi bi-box-arrow-right"></i>
-                  <span>Sign Out</span>
+                  <span>Logout</span>
               </a>
           </li>
 
@@ -322,143 +322,24 @@
           </li>
         </ul>
       </li><!-- End TEACHING INSTRUCTION Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/Mandatory-Requirements">
+          <i class="bi bi-exclamation-octagon-fill"></i>
+          <span>MANDATORY REQUIREMENTS</span>
+          <span id="mandatory-requirements-warning" style="display: none; color: red;"> <!-- Add this span with an appropriate style -->
+            <i class="bi bi-exclamation-triangle-fill"></i> Warning!
+          </span>
+        </a>
+      </li><!-- End MANDATORY REQUIREMENTS Nav -->
       
       <li class="nav-item">
-        <a class="nav-link collapsed" href="/Committee-Administrative-Roles">
-          <i class="bi bi-people-fill"></i>
-          <span>FACULTY ROLES</span>
-        </a>
-      </li><!-- End COMMITTEE & ADMINISTRATIVE ROLES Nav -->
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="/Attendance-Management">
-          <i class="bi bi-calendar-check-fill"></i>
-          <span>ATTENDANCE MANAGEMENT</span>
-        </a>
-      </li><!-- End ATTENDANCE MANAGEMENT Nav -->
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="/Leave-Absence-Management">
-          <i class="bi bi-person-dash-fill"></i>
-          <span>LEAVE OF ABSENCE MANAGEMENT</span>
-        </a>
-      </li><!-- End LEAVE OF ABSENCE MANAGEMENT Nav -->
-
-      <li class="nav-item"><!-- SCHEDULE MANAGEMENT Nav -->
-        <a class="nav-link collapsed" href="/SM-Class-Schedule">
-          <i class="bi bi-clock-fill"></i><span>SCHEDULE MANAGEMENT</span>
-        </a>
-      </li><!-- End SCHEDULE MANAGEMENT Nav -->
-
-      <li class="nav-item"><!-- RESEARCH INNOVATION FOR CREATIVE WORK Nav -->
-        <a class="nav-link collapsed" href="/RP-Research-Report">
-          <i class="bi bi-lightbulb-fill"></i><span>RESEARCH INNOVATION FOR CREATIVE WORK</span>
-        </a>
-      </li>
-        <!-- <i class="bi bi-chevron-down ms-auto"></i>
-            <ul id="research-nav" class="nav-content collapse {{ RP }}" data-bs-parent="#sidebar-nav">
-      <li>
-            <a href="/RP-Research-Utilization" class="{{activate_RU}}">
-              <i class="bi bi-circle"></i><span>Research Utilization</span>
-            </a>
-          </li> 
-        --> 
-       <!--    <li>
-            <a href="/RP-Research-Report" class="{{activate_R}}">
-              <i class="bi bi-circle"></i><span>Research Report</span>
-            </a>
-          </li>
-        </ul>
-      </li>
-      --> 
-      <!-- End RESEARCH INNOVATION FOR CREATIVE WORK Nav -->
-
-      <!--
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="/Awards-Recognitions">
-          <i class="bi bi-trophy-fill"></i>
-          <span>AWARDS & RECOGNITIONS</span>
-        </a>
-      </li> End AWARDS & RECOGNITIONS Nav 
-    -->
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="/Feedback-Surveys">
-          <i class="bi bi-chat-right-dots-fill"></i>
-          <span>SELF EVALUATION</span>
-        </a>
-      </li>
- 
-     <li class="nav-item">
         <a class="nav-link collapsed" href="/Professional-Development">
           <i class="bi bi-file-earmark-person-fill"></i>
           <span>PROFESSIONAL DEVELOPMENT</span>
         </a>
       </li><!-- End PROFESSIONAL DEVELOPMENT Nav -->
-
-      <!-- EXTENSION PROJECTS Nav -->
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="/Extension-Projects">
-          <i class="bi bi-puzzle-fill"></i>
-          <span>EXTENSION PROJECTS</span>
-        </a>
-      </li><!-- End AWARDS & RECOGNITIONS Nav -->
-
-    <!--
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#announcement-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-chat-left-quote-fill"></i><span>ANNOUNCEMENT & FORUM</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="announcement-nav" class="nav-content collapse {{ AF }}" data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="/AF-Announcements" class="{{activate_A}}">
-              <i class="bi bi-circle"></i><span>Announcements</span>
-            </a>
-          </li>
-          <li>
-            <a href="/AF-Forum" class="{{activate_F}}">
-              <i class="bi bi-circle"></i><span>Forum</span>
-            </a>
-          </li>
-        </ul>
-      </li>
-    -->
       
-    <li class="nav-item">
-      <a class="nav-link collapsed" href="/Mandatory-Requirements">
-        <i class="bi bi-exclamation-octagon-fill"></i>
-        <span>MANDATORY REQUIREMENTS</span>
-        <span id="mandatory-requirements-warning" style="display: none; color: red;"> <!-- Add this span with an appropriate style -->
-          <i class="bi bi-exclamation-triangle-fill"></i> Warning!
-        </span>
-      </a>
-    </li><!-- End MANDATORY REQUIREMENTS Nav -->
-
-     <!--   <li class="nav-item">
-        <a class="nav-link collapsed" href="/Records">
-          <i class="bi bi-file-earmark-text-fill"></i>
-          <span>RECORDS</span>
-        </a>
-      </li>End RECORDS Nav --> 
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="/Medical-Information">
-          <i><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-pulse-fill" viewBox="0 0 16 16">
-            <path d="M1.475 9C2.702 10.84 4.779 12.871 8 15c3.221-2.129 5.298-4.16 6.525-6H12a.5.5 0 0 1-.464-.314l-1.457-3.642-1.598 5.593a.5.5 0 0 1-.945.049L5.889 6.568l-1.473 2.21A.5.5 0 0 1 4 9H1.475Z"/>
-            <path d="M.88 8C-2.427 1.68 4.41-2 7.823 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C11.59-2 18.426 1.68 15.12 8h-2.783l-1.874-4.686a.5.5 0 0 0-.945.049L7.921 8.956 6.464 5.314a.5.5 0 0 0-.88-.091L3.732 8H.88Z"/>
-          </svg></i>
-          <span>MEDICAL INFORMATION</span>
-        </a>
-      </li><!-- End MEDICAL INFORMATION Nav -->
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="/Request">
-          <i class="bi bi-stickies-fill"></i>
-          <span>REQUEST</span>
-        </a>
-      </li><!-- End REQUEST Nav -->
-
     </ul>
     <br>
     <br>
@@ -478,17 +359,17 @@
 
   </aside><!-- End Sidebar-->
 
-{% block content %} <!-- PAGE BODY CONTENT -->
+{% block content %}  PAGE BODY CONTENT 
 
       <main id="main" class="main">
 
-      {% include "/Faculty-Home-Page/Announcement/Announcement.html" %}  <!-- Announcement -->
+   
 
-      </main><!-- End #main -->
+      </main> 
  
 {% endblock %}
 
-
+  
 
 <script>
   // Load the relativeTime plugin for dayjs
