@@ -21,7 +21,7 @@ class MSAccount(db.Model, UserMixin):
     ContactNumber = db.Column(db.String(11))
     Address = db.Column(db.String())
     BirthDate = db.Column(db.Date())
-    ProfilePic = db.Column(db.String(50))
+    ProfilePic = db.Column(db.String(50), default="1VikMpsCn5FpqbXd1Wny_EqOW92T8pFBt")
     Age = db.Column(db.Numeric, nullable=False)
     Gender = db.Column(db.Integer) # Gender # 1 if Male 2 if Female
 
@@ -37,6 +37,7 @@ class MSAccount(db.Model, UserMixin):
     MSCart = db.relationship('MSCart')
     MSVoucher = db.relationship('MSVoucher')
     MSUser_Log = db.relationship('MSUser_Log')
+    MSUser_Notifications = db.relationship('MSUser_Notifications')
 
     # LOGIN TOKEN
     MSLoginToken = db.relationship('MSLoginToken')
@@ -68,6 +69,7 @@ class MSAccount(db.Model, UserMixin):
             'MSCart': self.MSCart,
             'MSVoucher': self.MSVoucher,
             'MSUser_Log': self.MSUser_Log,
+            'MSUser_Notifications': self.MSUser_Notifications,
             
             'MSLoginToken': self.MSLoginToken, 
         }
@@ -244,7 +246,42 @@ class MSUser_Log(db.Model):
         return str(self.id)  # Convert to string to ensure compatibility  
     
 
+# ------------------------------------------------
+# NOTIFICATION TABLE
+  
+class MSUser_Notifications(db.Model):
+    __tablename__ = 'MSUser_Notifications'
 
+    id = db.Column(db.Integer, primary_key=True)  # DataID
+    MSId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=True)  # 
+    notif_by = db.Column(db.Integer)
+    notifier_type = db.Column(db.String(50))  
+    DateTime = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
+    updated_at = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
+    Status = db.Column(db.String(50), default="pending")
+    Type = db.Column(db.String(50))
+    Notification = db.Column(db.String)
+    is_delete = db.Column(db.Boolean, default=False) 
+    
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'MSId': self.MSId,
+            'notif_by': self.notif_by,
+            'notifier_type': self.notifier_type,
+            'DateTime': self.DateTime,
+            'updated_at': self.updated_at,
+            'Status': self.Status,
+            'Type': self.Type,
+            'Notification': self.Notification,
+            'is_delete': self.is_delete
+        }
+        
+    def get_id(self):
+        return str(self.id)  # Convert to string to ensure compatibility  
+
+# ------------------------------------------------
 
 
 def init_db(app):
@@ -259,8 +296,7 @@ def init_db(app):
 # INSERTING DATA
 def create_sample_data():
         
- # Create and insert FISFaculty
- 
+ # Create and insert MSAccount
     client_sample1 = MSAccount(
         MSId='10001',
         Type='Client',
@@ -270,7 +306,7 @@ def create_sample_data():
         ContactNumber='09354510521',
         Address='41 Morning Star St. Brgy. San Isidro, Taytay Rizal',
         BirthDate= datetime.now(timezone.utc),
-        ProfilePic='palma.jpg',
+        ProfilePic='1VikMpsCn5FpqbXd1Wny_EqOW92T8pFBt',
         Age=35,
         Gender=2,
 
@@ -289,7 +325,7 @@ def create_sample_data():
         ContactNumber='09354510522',
         Address='44 Morning Star St. Brgy. San Isidro, Taytay Rizal',
         BirthDate= datetime.now(timezone.utc),
-        ProfilePic='jonathan.jpg',
+        ProfilePic='1VikMpsCn5FpqbXd1Wny_EqOW92T8pFBt',
         Age=25,
         Gender=1,
 
@@ -304,10 +340,10 @@ def create_sample_data():
     
     db.session.add(client_sample1)
     db.session.add(client_sample2)
- 
-    # COMMIT 
     
+    # COMMIT 
+        
     db.session.commit()
     db.session.close()
-    
+
     

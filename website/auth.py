@@ -16,7 +16,7 @@ load_dotenv()
 # IMPORT LOCAL FUNCTIONS
 from .API.authentication import *
 from .Token.token_gen import *
-# from .Token.token_check import Check_Token, SysCheck_Token
+from .Token.token_check import Check_Token
 
 # IMPORT SMTP EMAILING FUNCTIONS
 
@@ -76,7 +76,7 @@ gauth = GoogleAuth()
 drive = GoogleDrive(gauth)
 
 # Default Profile Pic
-profile_default='14wkc8rPgd8NcrqFoRFO_CNyrJ7nhmU08'
+profile_default='1VikMpsCn5FpqbXd1Wny_EqOW92T8pFBt'
 
 # -------------------------------------------------------------
 # WEB AUTH ROUTES URL
@@ -275,7 +275,7 @@ def reset_entry():
 
 @auth.route("/faculty-home-page")
 @login_required
-# @Check_Token
+@Check_Token
 def clientH():
         
     # INITIALIZING DATA FROM USER LOGGED IN ACCOUNT    

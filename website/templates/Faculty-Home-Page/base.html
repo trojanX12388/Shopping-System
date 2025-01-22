@@ -180,7 +180,7 @@
   <aside id="sidebar" class="sidebar">
 
 
-    
+
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
@@ -416,7 +416,7 @@
           return request.Status.toLowerCase() === 'pending' || request.Type.toLowerCase() === 'mandatory';
         });
 
-        var newTitle = "{% block title %}Faculty Page{% endblock %}";
+        var newTitle = "{% block title %}Mae Shop{% endblock %}";
 
         if (pendingRequests.length > 0) {
           // Sort pending notifications by DateTime in descending order
@@ -473,44 +473,6 @@
   // Reload pending notifications every minute
   setInterval(fetchAndDisplayPendingNotifications, 60000);
 </script>
-
-
-
-
-<script>
-  // Function to fetch and display pending notifications
-  function checkMandatoryRequirements() {
-    $.ajax({
-      url: '/Mandatory-Requirements/api/get-record',
-      type: 'GET',
-      dataType: 'json',
-      success: function (data) {
-        // Check if both year and FacultyId are not null
-        if (data.record.length > 0 && data.record[0].year !== null && data.record[0].FacultyId !== null) {
-          // Hide the warning sign
-          $('#mandatory-requirements-warning').hide();
-        } else {
-          // Show the warning sign
-          $('#mandatory-requirements-warning').show();
-        }
-
-        // Rest of your existing code to handle pending notifications...
-      },
-      error: function () {
-        // Handle the error case
-        // Hide the warning sign on error
-        $('#mandatory-requirements-warning').hide();
-      }
-    });
-  }
-
-  // Initial fetch and display
-  checkMandatoryRequirements();
-
-  // Reload pending notifications every minute
-  setInterval(checkMandatoryRequirements, 60000);
-</script>
-
 
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">

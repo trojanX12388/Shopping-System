@@ -78,10 +78,10 @@ def create_app():
     # from .modules.SystemAdmin import sysadmin
     # app.register_blueprint(sysadmin, url_prefix='/')
     
-    # # NOTIFICATION API ROUTES
+    # NOTIFICATION API ROUTES
     
-    # from .modules.Notifications import notification
-    # app.register_blueprint(notification, url_prefix='/')
+    from .modules.Notifications import notification
+    app.register_blueprint(notification, url_prefix='/')
     
     # LOADING LOGIN MANAGER CACHE
     login_manager = LoginManager()
