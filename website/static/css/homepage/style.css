@@ -6,19 +6,19 @@
 
 body {
   font-family: 'Inter';
-  background: #c187d3;
+  background: #ee843d;
   color: #f1cdcd;
 }
 
 a {
-  color: #8a369b;
+  color: #8d4808;
   text-decoration: none;
 }
 p {
   margin: 0;
 }
 a:hover {
-  color: #b73dc7;
+  color: #df7716;
   text-decoration: none;
 }
 
@@ -70,7 +70,7 @@ h6 {
   right: 15px;
   bottom: 15px;
   z-index: 99999;
-  background: #931497;
+  background: rgb(133, 65, 2);
   width: 40px;
   height: 40px;
   border-radius: 4px;
@@ -84,7 +84,7 @@ h6 {
 }
 
 .back-to-top:hover {
-  background: #d026fa;
+  background: #db7420;
   color: #F2F5F9;
 }
 
@@ -141,7 +141,7 @@ h6 {
 }
 
 .dropdown-menu .dropdown-item:hover {
-  background-color: #6e2a83;
+  background-color: #db893b;
 }
 
 @media (min-width: 768px) {
@@ -149,7 +149,7 @@ h6 {
     content: "";
     width: 13px;
     height: 13px;
-    background: #d146ec;
+    background: #ec8a2f;
     position: absolute;
     top: -7px;
     right: 20px;
@@ -219,8 +219,8 @@ h6 {
 
 .card-header,
 .card-footer {
-  border-color: #ebeef4;
-  background-color: #F2F5F9;
+  border-color: #d48e33;
+  background-color: #e07925;
   color: #798eb3;
   padding: 15px;
 }
@@ -229,12 +229,12 @@ h6 {
   padding: 20px 0 15px 0;
   font-size: 18px;
   font-weight: 500;
-  color: #012970;
+  color: #703701;
   font-family: "Inter";
 }
 
 .card-title span {
-  color: #1F2739;
+  color: #392b1f;
   font-size: 14px;
   font-weight: 400;
 }
@@ -324,24 +324,24 @@ h6 {
 
 /* Bordered Tabs */
 .nav-tabs-bordered {
-  border-bottom: 2px solid #d655f0;
+  border-bottom: 2px solid #f88f2c;
 }
 
 .nav-tabs-bordered .nav-link {
   margin-bottom: -2px;
   border: none;
-  color: #6c296e;
+  color: #b87040;
 }
 
 .nav-tabs-bordered .nav-link:hover,
 .nav-tabs-bordered .nav-link:focus {
-  color: #f141f1;
+  color: #dd8d43;
 }
 
 .nav-tabs-bordered .nav-link.active {
   background-color: #F2F5F9;
-  color: #dc41f1;
-  border-bottom: 2px solid #eb41f1;
+  color: #f19041;
+  border-bottom: 2px solid #e48731;
 }
 
 /*--------------------------------------------------------------
@@ -374,7 +374,7 @@ h6 {
   z-index: 997;
   height: 60px;
   box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1);
-  background-color: #f0d1ee;
+  background-color: #fdbd81;
   padding-left: 20px;
   /* Toggle Sidebar Button */
   /* Search Bar */
@@ -602,8 +602,8 @@ h6 {
   padding: 20px;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: #1F2739 transparent;
-  background-color: #ecc9ec;
+  scrollbar-color: #68380b transparent;
+  background-color: #e6a467;
 }
 
 .main-profile {
@@ -639,7 +639,7 @@ h6 {
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-  background-color: #cbaacf;
+  background-color: #f88f2c;
 }
 
 @media (min-width: 1200px) {
@@ -699,7 +699,7 @@ h6 {
   font-weight: 600;
   color: #FFFFFF;
   transition: 0.3;
-  background: #703777;
+  background: #46270a;
   padding: 10px 15px;
   border-radius: 4px;
 }
@@ -712,7 +712,7 @@ h6 {
 
 .sidebar-nav .nav-link.collapsed {
   color: #eef1f7;
-  background: #6c3074;
+  background: #974a0a;
 }
 
 .sidebar-nav .nav-link.collapsed i {
@@ -721,7 +721,7 @@ h6 {
 
 .sidebar-nav .nav-link:hover {
   color: #FFFFFF;
-  background: #a364af;
+  background: #e68d28;
 }
 
 .sidebar-nav .nav-link:hover i {
@@ -741,7 +741,7 @@ h6 {
   padding: 5px 0 0 0;
   margin: 0;
   list-style: none;
-  background-color: #ecc9ec;
+  background-color: #e6a467;
   color: #000000;
 }
 
@@ -765,11 +765,11 @@ h6 {
 
 .sidebar-nav .nav-content a:hover,
 .sidebar-nav .nav-content a.active {
-  color: #b934be;
+  color: rgb(107, 57, 0);
 }
 
 .sidebar-nav .nav-content a.active i {
-  background-color: #582326;
+  background-color: #693800;
 }
 
 /*--------------------------------------------------------------
@@ -1257,7 +1257,7 @@ select {
 # Footer
 --------------------------------------------------------------*/
 .footer {
-  background-color: #b448ab;
+  background-color: #ad5909;
   padding: 20px 0;
   font-size: 14px;
   transition: all 0.3s;

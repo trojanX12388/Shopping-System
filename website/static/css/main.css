@@ -17,7 +17,7 @@
 
 body, html {
 	height: 100%;
-  background-color: #f3aff0 !important; 
+  background-color: #f88f2c !important; 
 	
 }
 
@@ -40,7 +40,7 @@ a:focus {
 
 a:hover {
 	text-decoration: none;
-  color: #df66d9;
+  color: #e68f3e;
 }
 
 /*---------------------------------------------*/
@@ -151,8 +151,8 @@ iframe {
 
 /*==================================================================
 [ Background ]*/
-.bg1 {background: #d485f3;}
-.bg2 {background: #d971f3;}
+.bg1 {background: #f88f2c;}
+.bg2 {background: #d67f2e;}
 .bg3 {background: #cd201f;}
 
 
