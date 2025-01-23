@@ -22,7 +22,6 @@ class MSAccount(db.Model, UserMixin):
     Address = db.Column(db.String())
     BirthDate = db.Column(db.Date())
     ProfilePic = db.Column(db.String(50), default="1VikMpsCn5FpqbXd1Wny_EqOW92T8pFBt")
-    Age = db.Column(db.Numeric, nullable=False)
     Gender = db.Column(db.Integer) # Gender # 1 if Male 2 if Female
 
     Email = db.Column(db.String(256))  

@@ -1,0 +1,287 @@
+{% extends "base.html" %}{% block title %}Create Account{% endblock %} {% block content%}
+
+  <body>
+
+    <div class="limiter">
+      <div class="container-login100">
+        <div class="wrap-login100">
+          <div class="login100-pic js-tilt" data-tilt>
+            <img src="{{url_for('static', filename='images/login/img-01.png')}}" alt="IMG">
+          </div>
+  
+          <form class="login100-form validate-form" method="POST" action"/client-create" autocomplete="off"> 
+            <input autocomplete="false" name="hidden" type="text" style="display:none;">
+            <!-- Center the image and set its size -->
+            <div class="text-center">
+              <img src="{{url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" alt="IMG" class="img-fluid" style="width: 50px; height: auto; position: relative; bottom: 20px;">
+            </div>
+            <span class="login100-form-title">
+              Create Account
+            </span>
+
+            {# DISPLAY NOTIFICATION ERROR  #} 
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% if category == 'error' %}
+                        <div class="alert alert-danger alert-dismissible fade show d-flex justify-content-between" role="alert" style="z-index:1;">
+                            <div>{{ message }}</div>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="closeNotification(this)">
+                                <span aria-hidden="true" class="close-icon">&times;</span>
+                            </button>
+                        </div>
+                    {% elif category == 'success' %}
+                        <div class="alert alert-success alert-dismissible fade show d-flex justify-content-between" role="alert" style="z-index:1;">
+                            <div>{{ message }}</div>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="closeNotification(this)">
+                                <span aria-hidden="true" class="close-icon">&times;</span>
+                            </button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+  
+          <script>
+            function closeNotification(button) {
+                // Find the parent notification element and remove it
+                var notification = button.closest('.alert');
+                notification.remove();
+            }
+        </script>
+            
+            <div class="wrap-input100 validate-input" data-validate = "Input is required">
+              <input type="text" name="fname" class="input100" autocomplete="off" placeholder="First Name">
+              <span class="focus-input100"></span>
+              <span class="symbol-input100">
+                <i class="fa fa-user" aria-hidden="true"></i>
+              </span>
+            </div>
+
+            <div class="wrap-input100 validate-input" data-validate = "Input is required">
+              <input type="text" name="lname" class="input100" autocomplete="off" placeholder="Last Name">
+              <span class="focus-input100"></span>
+              <span class="symbol-input100">
+                <i class="fa fa-user" aria-hidden="true"></i>
+              </span>
+            </div>
+
+            <div class="wrap-input100 " >
+              <input type="text" name="mname" class="input100" autocomplete="off" placeholder="Middle Name">
+              <span class="focus-input100"></span>
+              <span class="symbol-input100">
+                <i class="fa fa-user" aria-hidden="true"></i>
+              </span>
+            </div>
+
+            <div class="wrap-input100">
+              <select name="gender" class="input100" autocomplete="off">
+                <option value="1">Male</option>
+                <option value="2">Female</option>
+              </select>
+              <span class="focus-input100"></span>
+              <span class="symbol-input100">
+                <i class="fa fa-user" aria-hidden="true"></i>
+              </span>
+            </div>
+
+            <br>
+
+            <div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+              <input type="text" name="email" class="input100" autocomplete="off" placeholder="Email">
+              <span class="focus-input100"></span>
+              <span class="symbol-input100">
+                <i class="fa fa-envelope" aria-hidden="true"></i>
+              </span>
+            </div>
+
+            <div class="wrap-input100 validate-input" data-validate = "Input is required">
+              <input 
+                type="tel" 
+                id="phone" 
+                name="phone" 
+                class="input100" 
+                autocomplete="off" 
+                placeholder="Contact Number">
+              
+              <span class="focus-input100"></span>
+              <span class="symbol-input100">
+                <i class="fa fa-phone" aria-hidden="true"></i>
+              </span>
+              
+            </div>
+            <span id="error-message" style="color: red; font-size: 12px;"></span>
+
+            <script>
+              document.getElementById("phone").addEventListener("input", function (e) {
+              const phoneInput = e.target.value;
+
+              // Remove non-numeric characters
+              const sanitizedInput = phoneInput.replace(/\D/g, '');
+              
+              // Limit input to 11 digits
+              if (sanitizedInput.length > 11) {
+                e.target.value = sanitizedInput.slice(0, 11);
+              } else {
+                e.target.value = sanitizedInput;
+              }
+
+              // Validate the length
+              const errorMessage = document.getElementById("error-message");
+              if (sanitizedInput.length !== 10 && sanitizedInput.length !== 11) {
+                errorMessage.textContent = "Contact number must be 10 or 11 digits. (+63)";
+              } else {
+                errorMessage.textContent = "";
+              }
+            });
+            </script>
+
+            <div class="wrap-input100 validate-input" data-validate="Input is required">
+              <input type="date" name="bday" class="input100" autocomplete="off" placeholder="Birth Date">
+              <span class="focus-input100"></span>
+              <span class="symbol-input100">
+                <i class="fa fa-calendar" aria-hidden="true"></i>
+              </span>
+            </div>
+
+            <br>
+  
+            <div class="wrap-input100 validate-input" data-validate="Input is required">
+              <input type="password" id="password" name="password" class="input100" autocomplete="off" placeholder="Password">
+              <span class="focus-input100"></span>
+              <span class="symbol-input100">
+                <i class="fa fa-lock" aria-hidden="true"></i>
+              </span>
+            </div>
+            
+            <div class="wrap-input100 validate-input" data-validate="Input is required">
+              <input type="password" id="password2" name="password2" class="input100" autocomplete="off" placeholder="Confirm Password">
+              <span class="focus-input100"></span>
+              <span class="symbol-input100">
+                <i class="fa fa-lock" aria-hidden="true"></i>
+              </span>
+            </div>
+            
+            <span id="password-error" style="color: red; font-size: 12px;"></span>
+
+            <script>
+              document.getElementById("password2").addEventListener("input", function () {
+              const password = document.getElementById("password").value;
+              const confirmPassword = document.getElementById("password2").value;
+              const errorMessage = document.getElementById("password-error");
+
+              if (confirmPassword !== password) {
+                errorMessage.textContent = "Passwords do not match.";
+              } else {
+                errorMessage.textContent = "";
+              }
+            });
+
+            document.getElementById("password").addEventListener("input", function () {
+              const password = document.getElementById("password").value;
+              const confirmPassword = document.getElementById("password2").value;
+              const errorMessage = document.getElementById("password-error");
+
+              if (confirmPassword && confirmPassword !== password) {
+                errorMessage.textContent = "Passwords do not match.";
+              } else {
+                errorMessage.textContent = "";
+              }
+            });
+            </script>
+            
+  
+            <div class="col-12 my-md-3">
+              <div class="container-login100-form-btn">
+                <button class="login100-form-btn" type="submit">
+                  Signup
+                </button>
+              </div>
+             </div>
+
+  
+            <div class="text-center p-t-12">
+              <span class="txt1">
+                Fill up the form to create new account.
+              </span>
+            </div>
+
+            
+        
+            <div class="text-center p-t-136">
+              <a class="txt2" href="/client-login">
+                Back to Login page
+                <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
+              </a>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+    {# SUCCESS MODAL #}  
+
+<button type="hidden" id="success" href="#successmodal" class="trigger-btn" data-toggle="modal" style="display:none;"></button>
+
+<div id="successmodal" class="modal fade" data-backdrop="static"> 
+  <div class="modal-dialog modal-confirm">
+    <div class="modal-content text-center">
+      <div class="modal-header h5 text-white bg-success justify-content-center">				
+        <h4 class="modal-title w-100">EntrApp Account Successfully Created!</h4>	
+      </div>
+      <div class="modal-body px-10">
+        <p class="text-center">Your EntrApp account is successfully created. Please check your webmail to verify your account.</p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <a href="/client-login" class="btn btn-primary w-50 btn-success">OK</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# EXISTING EMAIL MODAL #}  
+
+<button type="hidden" id="existing" href="#existingmodal" class="trigger-btn" data-toggle="modal" style="display:none;"></button>
+
+<div id="existingmodal" class="modal fade" data-backdrop="static"> 
+  <div class="modal-dialog modal-confirm">
+    <div class="modal-content text-center">
+      <div class="modal-header h5 text-white bg-danger justify-content-center">				
+        <h4 class="modal-title w-100">Email is already existing! Try other email.</h4>	
+      </div>
+      <div class="modal-body px-10">
+        <p class="text-center">Your email is already used for an account. Please try new email to signup.</p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <a href="/client-create" class="btn btn-primary w-50 btn-info">OK</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if sentreset == 1 %}
+<script>
+  window.onload = function(){
+    document.getElementById('success').click();
+  }
+</script>
+{% endif %}
+
+
+
+{% if sentreset == 2 %}
+<script>
+  window.onload = function(){
+    document.getElementById('existing').click();
+  }
+</script>
+{% endif %}
+
+
+
+</body>
+
+  {% endblock %}

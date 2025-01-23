@@ -11,6 +11,10 @@
   
           <form class="login100-form validate-form" id="loginForm" method="POST" action"/client-login" autocomplete="off"> 
             <input autocomplete="false" name="hidden" type="text" style="display:none;">
+           <!-- Center the image and set its size -->
+            <div class="text-center">
+              <img src="{{url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" alt="IMG" class="img-fluid" style="width: 50px; height: auto; position: relative; bottom: 20px;">
+            </div>
             <span class="login100-form-title">
               Login Account
             </span>
@@ -71,7 +75,7 @@
             
         
             <div class="text-center p-t-136">
-              <a class="txt2" href="#">
+              <a class="txt2" href="/client-create">
                 Create your Account
                 <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
               </a>
@@ -89,7 +93,7 @@
     aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
    <div class="modal-dialog" style="width: 350px;">
        <div class="modal-content text-center">
-           <div class="modal-header h5 text-white bg-danger justify-content-center">
+           <div class="modal-header h5 text-black bg-warning justify-content-center">
                EntrApp Account Reset Password
            </div>
            <div class="modal-body px-10">
@@ -102,7 +106,7 @@
                    <input name="resetpass" type="email" id="typeEmail" class="form-control my-3" required/>
                    <label class="form-label" for="typeEmail">Email input</label>
                </div>
-               <button type="submit" class="btn btn-primary w-50 btn-danger">Reset Password</button>
+               <button type="submit" class="btn btn-primary w-50 btn-warning ">Reset Password</button>
            </div>
               </form>
        </div>

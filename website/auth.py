@@ -44,6 +44,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
+from sqlalchemy.exc import IntegrityError  # Import this for catching database integrity errors
+import traceback 
 
 engine=create_engine(os.getenv('DATABASE_URI'), pool_pre_ping=True, pool_size=10, max_overflow=20, pool_recycle=1800)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -83,6 +85,25 @@ profile_default='1VikMpsCn5FpqbXd1Wny_EqOW92T8pFBt'
 auth = Blueprint('auth', __name__)
 
 # -------------------------------------------------------------
+
+# -------------------------------------------------------------
+
+# calculate age in years
+from datetime import date
+
+def calculateAgeFromString(birthdate_str):
+    birthdate = datetime.datetime.strptime(birthdate_str, "%Y-%m-%d").date()
+    today = date.today()
+    
+    try:
+        birthday = birthdate.replace(year=today.year)
+    except ValueError:
+        birthday = birthdate.replace(year=today.year, month=birthdate.month + 1, day=1)
+    
+    if birthday > today:
+        return today.year - birthdate.year - 1
+    else:
+        return today.year - birthdate.year
 
 
 
@@ -271,8 +292,73 @@ def reset_entry():
     return jsonify({'message': 'Entry reset successfully'})
 
 # -------------------------------------------------------------
+# CLIENT HOME PAGE ROUTE
+
+@auth.route("/client-create", methods=['GET', 'POST'])
+def clientC():
+    if request.method == 'POST':
+        FirstName = request.form.get('fname')
+        LastName = request.form.get('lname')
+        MidName = request.form.get('mname')
+        Gender = request.form.get('gender')
+
+        Email = request.form.get('email')
+        Contact = request.form.get('phone')
+        Birthday = request.form.get('bday')
+
+        Password = request.form.get('password')
+        CPassword = request.form.get('password2')
+
+
+        # Check if email already exists
+        existing_email = MSAccount.query.filter_by(Email=Email).first()
+        if existing_email:
+            return render_template("Client-Login-Page/create-account.html", sentreset=2) 
+        else:
+            # CHECK IF NEW AND CONFIRMATION ARE THE SAME
+            if not Password == CPassword:
+                flash("Password do not match.", category="error")
+                return redirect(url_for('auth.clientC'))
+            else:
+                # Proceed to add the record
+                try:
+                    max_id = db.session.query(func.max(MSAccount.MSId)).scalar()
+
+                    # Increment the maximum ID to get the new ID
+                    new_client_id = max_id + 1 if max_id is not None else 1
+
+                    add_record = MSAccount(
+                        MSId=new_client_id,
+                        Type="Client",
+                        Password=generate_password_hash(Password),
+                        FirstName=FirstName,
+                        LastName=LastName,
+                        MiddleName=MidName,
+                        Gender=Gender,
+                        BirthDate=Birthday,
+                        Email=Email,
+                        ContactNumber = Contact
+                    )
+                    
+                    db.session.add(add_record)
+                    db.session.commit()
+                    
+                    db.session.close()
+                    
+                    
+                    return render_template("Client-Login-Page/create-account.html", sentreset=1) 
+                except IntegrityError as e:
+                        # Catch database integrity errors, like unique constraint violations
+                        db.session.rollback()
+                        flash('An error occurred while adding the Entrapp account. Please try again.', category='error')
+                        traceback.print_exc()  # Print detailed error information to console
+            
+        
+    
+    return render_template("Client-Login-Page/create-account.html")
+# -------------------------------------------------------------
  
-# FACULTY HOME PAGE ROUTE
+# CLIENT HOME PAGE ROUTE
 
 @auth.route("/faculty-home-page")
 @login_required
@@ -371,11 +457,11 @@ def facultyF():
             
             Email = request.form['resetpass']
             msg = Message( 
-                            'Reset Faculty Password', 
-                            sender=("PUPQC FIS", "fis.pupqc2023@gmail.com"),
+                            'Reset EntrApp Account Password', 
+                            sender=("ENTRAPP", "entrapp3c@gmail.com"),
                             recipients = [Email] 
                         ) 
-            assert msg.sender == "PUPQC FIS <fis.pupqc2023@gmail.com>"
+            assert msg.sender == "ENTRAPP <entrapp3c@gmail.com>"
             
             recover_url = url_for(
                     'auth.facultyRP',
