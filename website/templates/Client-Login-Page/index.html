@@ -2,103 +2,95 @@
 
   <body>
 
-    <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
     <div class="limiter">
-      <div class="row justify-content-center">
-        <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
-
-          <form id="loginForm" method="POST" action"/client-login" autocomplete="off"> 
-             
-            <input autocomplete="false" name="hidden" type="text" style="display:none;">
-            <div class="d-flex justify-content-center py-4">
-              <a href="/" class="logo d-flex align-items-center w-auto text-decoration-none">
-                <img src="{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" alt="PUPFIS LOGO" class="rounded mx-auto d-block"  style="width:50px;height:50px;"s/>
-                <div >
-                  <h4 class="d-flex align-items-end ms-sm-1">EntrApp</h4>
-                </div>
-              </a>
-            </div><!-- End Logo -->
-
-            <div class="card mb-3" style="border-width:3px;">
-
-              <div class="card-body">
-
-                <div class="pt-4 pb-2">
-                  <h5 class="card-title text-center pb-0 fs-4">Client Login</h5>
-                </div>
-
-                  <div class="col-12 my-md-3">
-                    <label for="yourUsername" class="form-label"><strong>Email</strong></label>
-                    <div class="input-group has-validation" data-validate = "Valid email is required: example@webmail.com">
-                      <input type="text" name="email" class="form-control" id="email" autocomplete="off" placeholder="Enter your Email" required>
-                      <div class="invalid-feedback">Please enter your webmail.</div>
-                    </div>
-                  </div>
-
-                  <div class="col-12 my-md-3" data-validate="Password is required">
-                    <div class="d-flex justify-content-between">
-                      <label for="yourPassword" class="form-label d-flex"><strong>Password</strong></label>
-                    </div>
-                    <input type="password" name="password" class="form-control" id="password" autocomplete="off" placeholder="Enter your Password" required>
-                    <div class="invalid-feedback">Please enter your password!</div>
-                  </div>
-
-                  <div class="col-12 my-md-3" data-validate="Password is required">
-                    <div class="d-flex justify-content-end">
-                      <a href="#" class="text-muted text-decoration-noned-flex" data-target="#exampleModal" data-toggle="modal" >I forgot password</a>
-                    </div>
-                  </div>
-
-                  <div class="col-12 my-md-3">
-                     {# TOO MANY ATTEMPTS TIMER#} 
-                     <span id="manyAttempt" style="display: none; color: #8B0000;">Many incorrect attempt... Please wait for <span id="countdownDisplay" style="font-size: 14px;"></span> seconds before trying again.</span>
-                    <button class="btn btn-primary w-100" type="submit" id="submitBtn"><strong>Login</strong></button>
-                  </div>
-
-                  <div class="col-12">
-                  <a href="/" class="bi bi-arrow-left">
-                    <button type="button" class="btn btn-danger w-100"><strong>Back</strong>
-                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"></path>
-                    </button>
-                  </a>
-                </div>
-                </form>
-
+      <div class="container-login100">
+        <div class="wrap-login100">
+          <div class="login100-pic js-tilt" data-tilt>
+            <img src="{{url_for('static', filename='images/login/img-01.png')}}" alt="IMG">
           </div>
-        </div>
+  
+          <form class="login100-form validate-form" id="loginForm" method="POST" action"/client-login" autocomplete="off"> 
+            <input autocomplete="false" name="hidden" type="text" style="display:none;">
+            <span class="login100-form-title">
+              Login Account
+            </span>
+  
+            <div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+              <input type="text" name="email" class="input100" id="email" autocomplete="off" placeholder="Email">
+              <span class="focus-input100"></span>
+              <span class="symbol-input100">
+                <i class="fa fa-envelope" aria-hidden="true"></i>
+              </span>
+            </div>
+  
+            <div class="wrap-input100 validate-input" data-validate = "Password is required">
+              <input type="password" name="password" class="input100" id="password" autocomplete="off"  placeholder="Password">
+              <span class="focus-input100"></span>
+              <span class="symbol-input100">
+                <i class="fa fa-lock" aria-hidden="true"></i>
+              </span>
+            </div>
+            
+  
+            <div class="col-12 my-md-3">
+              {# TOO MANY ATTEMPTS TIMER#} 
+              <span id="manyAttempt" style="display: none; color: #8B0000;">Many incorrect attempt... Please wait for <span id="countdownDisplay" style="font-size: 14px;"></span> seconds before trying again.</span>
+              {# DISPLAY NOTIFICATION ERROR  #} 
 
-             {# DISPLAY NOTIFICATION ERROR  #} 
-
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-              {% for category, message in messages%}
-                {% if category == 'error' %}
-                <div class="alert alert-danger alter-dismissable fade show" role="alert" style="z-index:1;">
-                {{ message }}
-                <button type="button" class="close" data-dismiss="alert">
-                  <span aria-hidden="true">&times;</span>
+              {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages%}
+                  {% if category == 'error' %}
+                  <div class="alert alert-danger alter-dismissable fade show" role="alert" style="z-index:1;">
+                  {{ message }}
+                  <button type="button" class="close" data-dismiss="alert">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              {% endwith %}
+              <div class="container-login100-form-btn">
+                <button class="login100-form-btn" type="submit" id="submitBtn">
+                  Login
                 </button>
               </div>
-              
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
-            {% endwith %}
-
+             </div>
   
-          <div class="login100-more" style="background-image: url({{url_for('static', filename='images/Default-Images/pupqc-statue.png')}});">
-          </div>
+            <div class="text-center p-t-12">
+              <span class="txt1">
+                Forgot
+              </span>
+              <a class="txt2" href="#" data-target="#exampleModal" data-toggle="modal" >
+                Password?
+              </a>
+            </div>
+
+            
+        
+            <div class="text-center p-t-136">
+              <a class="txt2" href="#">
+                Create your Account
+                <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
+              </a>
+            </div>
+
+          </form>
         </div>
       </div>
     </div>
 
+
+     
     <!--Reset Password Modal-->
     <div class="modal top fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
     aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
    <div class="modal-dialog" style="width: 350px;">
        <div class="modal-content text-center">
            <div class="modal-header h5 text-white bg-danger justify-content-center">
-               Faculty Account Reset Password
+               EntrApp Account Reset Password
            </div>
            <div class="modal-body px-10">
                <p class="py-2">
@@ -119,7 +111,7 @@
 
 {# SUCCESS MODAL #}  
 
-<button type="hidden" id="success" href="#successmodal" class="trigger-btn" data-toggle="modal"></button>
+<button type="hidden" id="success" href="#successmodal" class="trigger-btn" data-toggle="modal" style="display:none;"></button>
 
 <div id="successmodal" class="modal fade" data-backdrop="static"> 
   <div class="modal-dialog modal-confirm">
@@ -128,7 +120,7 @@
         <h4 class="modal-title w-100">Successfully Sent!</h4>	
       </div>
       <div class="modal-body px-10">
-        <p class="text-center">Your link to reset your Faculty Account Password was confirmed. Please check your webmail.</p>
+        <p class="text-center">Your link to reset your EntrApp Account Password was confirmed. Please check your webmail.</p>
       </div>
       <div class="modal-footer justify-content-center">
         <a href="/client-login" class="btn btn-primary w-50 btn-success">OK</a>
@@ -147,7 +139,7 @@
 </script>
 {% endif %}
 
-</section>
-  </body>
+
+</body>
 
   {% endblock %}
