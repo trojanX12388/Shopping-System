@@ -88,15 +88,8 @@ auth = Blueprint('auth', __name__)
 
 # -------------------------------------------------------------
 
-# TEST LOGIN
 
-@auth.route("/test")
-def test():
-                                
-    return render_template("index.html")
-
-
-# FACULTY PAGE ROUTE
+# CLIENT PAGE ROUTE
 
 @auth.route('/client-login', methods=['GET', 'POST'])
 def clientL():
