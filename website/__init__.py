@@ -69,9 +69,9 @@ def create_app():
     app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(API, url_prefix='/')
     
-    #  # IMPORTING MODULES
-    # from .modules.PDM import PDM
-    # app.register_blueprint(PDM, url_prefix='/')
+     # IMPORTING MODULES
+    from .modules.Products import products
+    app.register_blueprint(products, url_prefix='/')
     
     # # SYSTEM ADMIN ROUTES
     

@@ -78,7 +78,7 @@ gauth = GoogleAuth()
 drive = GoogleDrive(gauth)
 
 # Default Profile Pic
-profile_default='1VikMpsCn5FpqbXd1Wny_EqOW92T8pFBt'
+profile_default=os.getenv("profile_default") 
 
 # -------------------------------------------------------------
 # WEB AUTH ROUTES URL
@@ -360,7 +360,7 @@ def clientC():
  
 # CLIENT HOME PAGE ROUTE
 
-@auth.route("/faculty-home-page")
+@auth.route("/client-home-page")
 @login_required
 @Check_Token
 def clientH():
@@ -373,7 +373,7 @@ def clientH():
         else:
             ProfilePic=username.ProfilePic
                                 
-        return render_template("Faculty-Home-Page/base.html", 
+        return render_template("Client-Home-Page/base.html", 
                                User= username.FirstName + " " + username.LastName,
                                user= current_user,
                                profile_pic=ProfilePic)

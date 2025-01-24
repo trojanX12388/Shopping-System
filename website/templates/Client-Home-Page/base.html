@@ -71,7 +71,7 @@
   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="/faculty-home-page" class="logo d-flex align-items-center">
+      <a href="/client-home-page" class="logo d-flex align-items-center">
         <img src="{{ url_for('static', filename='images/Default-Images/pupqc-logo.png')}}" alt="PUPQC LOGO">
         <span class="d-none d-lg-block">{{User}}</span>
       </a>
@@ -112,7 +112,7 @@
         
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
             <li class="dropdown-header">
-              You have <span id="notification-count-text">0</span> Notifications
+              You have <span id="notification-count-text">0</span> Item/s
               <a href="/Faculty-Notifications"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
             </li>
             <li>
@@ -207,7 +207,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="/faculty-home-page">
+        <a class="nav-link collapsed" href="/client-home-page">
           <i class="bi bi-shop-window"></i>
           <span>STORE</span>
         </a>
@@ -260,7 +260,7 @@
       </li><!-- End MANDATORY REQUIREMENTS Nav -->
       
       <li class="nav-item">
-        <a class="nav-link collapsed" href="/Professional-Development">
+        <a class="nav-link collapsed" href="/products">
           <i class="bi bi-box-seam"></i>
           <span>MY PRODUCTS</span>
         </a>
@@ -758,7 +758,7 @@
         // Handle the error case
         document.getElementById("notification-count-title").innerText = newTitle;
         
-        $('.notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">No notifications available.</h6>');
+        $('.notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">No Items available.</h6>');
       }
     });
   }
