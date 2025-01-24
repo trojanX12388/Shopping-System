@@ -386,7 +386,7 @@ def clientH():
 
 @auth.route("/login-denied")
 def login_denied():
-    return redirect(url_for('views.home'))
+    return redirect(url_for('auth.clientL'))
 
 @auth.route("/access-denied")
 def login_error_modal():
@@ -443,7 +443,7 @@ def facultyF():
     # CHECKING IF ENTERED EMAIL IS NOT IN THE DATABASE
     if request.method == 'POST':
         if not User:
-            return render_template("Client-Login-Page/Emailnotfound.html", Email=Email) 
+            return render_template("Client-Login-Page/emailnotfound.html", Email=Email) 
         else:
             token = jwt.encode({
                     'user': request.form['resetpass'],
