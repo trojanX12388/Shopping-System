@@ -35,6 +35,7 @@ class MSAccount(db.Model, UserMixin):
     MSOrder = db.relationship('MSOrder')
     MSCart = db.relationship('MSCart')
     MSVoucher = db.relationship('MSVoucher')
+    MSProduct = db.relationship('MSProduct')
     MSUser_Log = db.relationship('MSUser_Log')
     MSUser_Notifications = db.relationship('MSUser_Notifications')
 
@@ -67,6 +68,7 @@ class MSAccount(db.Model, UserMixin):
             'MSOrder': self.MSOrder,
             'MSCart': self.MSCart,
             'MSVoucher': self.MSVoucher,
+            'MSProduct': self.MSProduct,
             'MSUser_Log': self.MSUser_Log,
             'MSUser_Notifications': self.MSUser_Notifications,
             
@@ -157,7 +159,62 @@ class MSVoucher(db.Model):
         
     def get_id(self):
         return str(self.id)  # Convert to string to ensure compatibility
-    
+
+# MS STORE
+  
+class MSStore(db.Model):
+    __tablename__ = 'MSStore'
+
+    id = db.Column(db.Integer, primary_key=True)  # DataID
+    StoreName = db.Column(db.String)
+    Image = db.Column(db.String)
+    Visits = db.Column(db.Numeric)
+    is_delete = db.Column(db.Boolean, default=False) 
+
+    MSProduct = db.relationship('MSProduct', back_populates='MSStore')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'StoreName': self.StoreName,
+            'Image': self.Image,
+            'Visits': self.Visits,
+            'is_delete': self.is_delete
+        }
+        
+    def get_id(self):
+        return str(self.id)  # Convert to string to ensure compatibility
+
+# MS STORE
+  
+class MSRating(db.Model):
+    __tablename__ = 'MSRating'
+
+    id = db.Column(db.Integer, primary_key=True)  # DataID
+    MSId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=True)
+    ProductId = db.Column(db.Integer, db.ForeignKey('MSProduct.id'), nullable=True)
+    Rate1 = db.Column(db.Numeric)
+    Rate2 = db.Column(db.Numeric)
+    Rate3 = db.Column(db.Numeric)
+    Rate4 = db.Column(db.Numeric)
+    Rate5 = db.Column(db.Numeric)
+    is_delete = db.Column(db.Boolean, default=False) 
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'MSId': self.MSId,
+            'ProductId': self.ProductId,
+            'Rate1': self.Rate1,
+            'Rate2': self.Rate2,
+            'Rate3': self.Rate3,
+            'Rate4': self.Rate4,
+            'Rate5': self.Rate5,
+            'is_delete': self.is_delete
+        }
+    def get_id(self):
+        return str(self.id)  # Convert to string to ensure compatibility
+
 # MS PRODUCT
   
 class MSProduct(db.Model):
@@ -165,26 +222,35 @@ class MSProduct(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)  # DataID
     MSId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=True)
+    StoreId = db.Column(db.Integer, db.ForeignKey('MSStore.id'), nullable=True)
     ProductName = db.Column(db.String)
+    ProductDescription = db.Column(db.String)
     ProductSerial = db.Column(db.String)
     ProductImage = db.Column(db.String)
     ProductInventory = db.Column(db.String)
+    ProductViews = db.Column(db.Numeric)
     ProductPrice = db.Column(db.Float)
     ProductSale = db.Column(db.Float)
     ProductStock = db.Column(db.Numeric)
     is_delete = db.Column(db.Boolean, default=False) 
+
+    MSStore = db.relationship('MSStore', back_populates='MSProduct')
+
 
     def to_dict(self):
         return {
             'id': self.id,
             'MSId': self.MSId,
             'ProductName': self.ProductName,
+            'ProductDescription': self.ProductDescription,
             'ProductSerial': self.ProductSerial,
             'ProductImage': self.ProductImage,
             'ProductInventory': self.ProductInventory,
+            'ProductViews': self.ProductViews,
             'ProductPrice': self.ProductPrice,
             'ProductSale': self.ProductSale,
             'ProductStock': self.ProductStock,
+            'MSStore': self.MSStore,
             'is_delete': self.is_delete
         }
         
