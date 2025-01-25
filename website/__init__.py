@@ -74,6 +74,8 @@ def create_app():
     app.register_blueprint(products, url_prefix='/')
     from .modules.Store import Store
     app.register_blueprint(Store, url_prefix='/')
+    from .modules.Chat import Chat
+    app.register_blueprint(Chat, url_prefix='/')
     
     # # SYSTEM ADMIN ROUTES
     
@@ -92,14 +94,6 @@ def create_app():
     
     @login_manager.user_loader
     def load_user(user_id):
-        # Assuming the user ID is unique across both Faculty and Admin tables
-        sysadmin_user = MSAccount.query.get(str(user_id))
-        if sysadmin_user:
-            return sysadmin_user
-        
-        admin_user = MSAccount.query.get(int(user_id))
-        if admin_user:
-            return admin_user
         
         faculty_user = MSAccount.query.get(int(user_id))
         if faculty_user:

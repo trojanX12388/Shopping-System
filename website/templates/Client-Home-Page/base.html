@@ -247,6 +247,13 @@
           <span>MY PRODUCTS</span>
         </a>
       </li><!-- End PROFESSIONAL DEVELOPMENT Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="/chat">
+          <i class="bi bi-box-seam"></i>
+          <span>CHAT</span>
+        </a>
+      </li><!-- End CHAT Nav -->
       
     </ul>
     <br>
@@ -389,11 +396,11 @@
 
             var notificationItem = $('<li class="notification-item">');
 
-            var ProfileIcon = $('<img src="https://lh3.googleusercontent.com/d/'+notification.Profile_Pic+'" alt="Profile" class="rounded-circle" style="width:50px;height:50px;margin-right: 15px;"></img>');
+            var ProfileIcon = $('<img src="https://lh3.googleusercontent.com/d/'+notification.ProductImage+'" alt="Profile" class="rounded-circle" style="width:50px;height:50px;margin-right: 15px;"></img>');
             var notificationContent = $('<div>');
             var notificationTitle = $('<h4>').text(notification.Notification);
-            var identifierInfo = notification.Notif_By + ' (' + notification.IdentifierType + ': ' + notification.IdentifierId + ')';
-            var notificationDescription = $('<p>').text(identifierInfo + ' ' + calculateTimeDifference(notification.DateTime));
+              var identifierInfo = '₱ ' + notification.Price;
+            var notificationDescription = identifierInfo;
 
             notificationContent.append(notificationTitle, notificationDescription);
             notificationItem.append(ProfileIcon, notificationContent);

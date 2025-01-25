@@ -32,17 +32,16 @@ class MSAccount(db.Model, UserMixin):
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     # RELATIONSHIP TABLES
-    MSOrder = db.relationship('MSOrder')
-    MSCart = db.relationship('MSCart')
-    MSVoucher = db.relationship('MSVoucher')
-    MSProduct = db.relationship('MSProduct')
-    MSUser_Log = db.relationship('MSUser_Log')
-    MSUser_Notifications = db.relationship('MSUser_Notifications')
+    MSOrder = db.relationship('MSOrder',back_populates='MSAccount')
+    MSRating = db.relationship('MSRating',back_populates='MSAccount')
+    MSVoucher = db.relationship('MSVoucher',back_populates='MSAccount')
+    MSProduct = db.relationship('MSProduct',back_populates='MSAccount')
+    
+    MSUser_Log = db.relationship('MSUser_Log',back_populates='MSAccount')
+    MSCart = db.relationship('MSCart',back_populates='MSAccount')
 
     # LOGIN TOKEN
-    MSLoginToken = db.relationship('MSLoginToken')
-    
-
+    MSLoginToken = db.relationship('MSLoginToken',back_populates='MSAccount')
 
     def to_dict(self):
         return {
@@ -67,10 +66,12 @@ class MSAccount(db.Model, UserMixin):
             
             'MSOrder': self.MSOrder,
             'MSCart': self.MSCart,
+            'MSRating': self.MSRating,
             'MSVoucher': self.MSVoucher,
             'MSProduct': self.MSProduct,
             'MSUser_Log': self.MSUser_Log,
-            'MSUser_Notifications': self.MSUser_Notifications,
+            'MSCart': self.MSCart,
+            'MSMessage': self.MSMessage,
             
             'MSLoginToken': self.MSLoginToken, 
         }
@@ -94,6 +95,7 @@ class MSOrder(db.Model):
     OrderReceive = db.Column(db.DateTime)
     OrderVoucher = db.Column(db.String)
     is_delete = db.Column(db.Boolean, default=False) 
+    MSAccount = db.relationship('MSAccount', back_populates='MSOrder')
 
     def to_dict(self):
         return {
@@ -106,29 +108,7 @@ class MSOrder(db.Model):
             'OrderDate': self.OrderDate,
             'OrderReceive': self.OrderReceive,
             'OrderVoucher': self.OrderVoucher,
-            'is_delete': self.is_delete
-        }
-        
-    def get_id(self):
-        return str(self.id)  # Convert to string to ensure compatibility
-    
-# MS CART
-  
-class MSCart(db.Model):
-    __tablename__ = 'MSCart'
-
-    id = db.Column(db.Integer, primary_key=True)  # DataID
-    MSId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=True)
-    ProductId = db.Column(db.Integer, db.ForeignKey('MSProduct.id'), nullable=True)
-    ItemCount = db.Column(db.Numeric)
-    is_delete = db.Column(db.Boolean, default=False) 
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'MSId': self.MSId,
-            'ProductId': self.ProductId,
-            'ItemCount': self.ItemCount,
+            'MSOrder': self.MSAccount,
             'is_delete': self.is_delete
         }
         
@@ -146,6 +126,7 @@ class MSVoucher(db.Model):
     VoucherDiscount = db.Column(db.Numeric)
     VoucherCode = db.Column(db.String)
     is_delete = db.Column(db.Boolean, default=False) 
+    MSAccount = db.relationship('MSAccount', back_populates='MSVoucher')
 
     def to_dict(self):
         return {
@@ -154,6 +135,7 @@ class MSVoucher(db.Model):
             'VoucherName': self.VoucherName,
             'VoucherDiscount': self.VoucherDiscount,
             'VoucherCode': self.VoucherCode,
+            'MSVoucher': self.MSAccount,
             'is_delete': self.is_delete
         }
         
@@ -168,7 +150,7 @@ class MSStore(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # DataID
     StoreName = db.Column(db.String)
     Image = db.Column(db.String)
-    Visits = db.Column(db.Numeric)
+    Visits = db.Column(db.Numeric,default=0)
     is_delete = db.Column(db.Boolean, default=False) 
 
     MSProduct = db.relationship('MSProduct', back_populates='MSStore')
@@ -186,7 +168,7 @@ class MSStore(db.Model):
     def get_id(self):
         return str(self.id)  # Convert to string to ensure compatibility
 
-# MS STORE
+# MS RATING
   
 class MSRating(db.Model):
     __tablename__ = 'MSRating'
@@ -202,6 +184,7 @@ class MSRating(db.Model):
     is_delete = db.Column(db.Boolean, default=False) 
 
     MSProduct = db.relationship('MSProduct', back_populates='MSRating')
+    MSAccount = db.relationship('MSAccount', back_populates='MSRating')
 
     def to_dict(self):
         return {
@@ -214,6 +197,7 @@ class MSRating(db.Model):
             'Rate4': self.Rate4,
             'Rate5': self.Rate5,
             'MSProduct': self.MSProduct,
+            'MSAccount': self.MSAccount,
             'is_delete': self.is_delete
         }
     def get_id(self):
@@ -232,15 +216,16 @@ class MSProduct(db.Model):
     ProductSerial = db.Column(db.String)
     ProductImage = db.Column(db.String)
     ProductInventory = db.Column(db.String)
-    ProductViews = db.Column(db.Numeric)
+    ProductViews = db.Column(db.Numeric, default=0)
     ProductPrice = db.Column(db.Float)
     ProductSale = db.Column(db.Float)
     ProductStock = db.Column(db.Numeric)
     is_delete = db.Column(db.Boolean, default=False) 
 
+    MSAccount = db.relationship('MSAccount', back_populates='MSProduct')
     MSStore = db.relationship('MSStore', back_populates='MSProduct')
     MSRating = db.relationship('MSRating', back_populates='MSProduct')
-
+    MSCart = db.relationship('MSCart', back_populates='MSProduct')
     def to_dict(self):
         return {
             'id': self.id,
@@ -256,6 +241,7 @@ class MSProduct(db.Model):
             'ProductStock': self.ProductStock,
             'MSStore': self.MSStore,
             'MSRating': self.MSRating,
+            'MSCart': self.MSCart,
             'is_delete': self.is_delete
         }
         
@@ -274,12 +260,15 @@ class MSLoginToken(db.Model):
     refresh_token = db.Column(db.String)
     is_delete = db.Column(db.Boolean, default=False) 
 
+    MSAccount = db.relationship('MSAccount', back_populates='MSLoginToken')
+
     def to_dict(self):
         return {
             'id': self.id,
             'MSId': self.MSId,
             'access_token': self.access_token,
             'refresh_token': self.refresh_token,
+            'MSAccount': self.MSAccount,
             'is_delete': self.is_delete
         }
         
@@ -299,6 +288,8 @@ class MSUser_Log(db.Model):
     Status = db.Column(db.String(50), default="success")
     Log = db.Column(db.String(50))
     is_delete = db.Column(db.Boolean, default=False) 
+
+    MSAccount = db.relationship('MSAccount', back_populates='MSUser_Log')
     
     
     def to_dict(self):
@@ -309,7 +300,8 @@ class MSUser_Log(db.Model):
             'DateTime': self.DateTime,
             'Status': self.Status,
             'Log': self.Log,
-            'is_delete': self.is_delete
+            'is_delete': self.is_delete,
+            'MSAccount': self.MSAccount
         }
         
     def get_id(self):
@@ -317,13 +309,14 @@ class MSUser_Log(db.Model):
     
 
 # ------------------------------------------------
-# NOTIFICATION TABLE
+# # MS CART
   
-class MSUser_Notifications(db.Model):
-    __tablename__ = 'MSUser_Notifications'
+class MSCart(db.Model):
+    __tablename__ = 'MSCart'
 
     id = db.Column(db.Integer, primary_key=True)  # DataID
     MSId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=True)  # 
+    ProductId = db.Column(db.Integer, db.ForeignKey('MSProduct.id'), nullable=True)  # 
     notif_by = db.Column(db.Integer)
     notifier_type = db.Column(db.String(50))  
     DateTime = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
@@ -333,11 +326,14 @@ class MSUser_Notifications(db.Model):
     Notification = db.Column(db.String)
     is_delete = db.Column(db.Boolean, default=False) 
     
-    
+    MSAccount = db.relationship('MSAccount', back_populates='MSCart')
+    MSProduct = db.relationship('MSProduct', back_populates='MSCart')
+
     def to_dict(self):
         return {
             'id': self.id,
             'MSId': self.MSId,
+            'ProductId': self.ProductId,
             'notif_by': self.notif_by,
             'notifier_type': self.notifier_type,
             'DateTime': self.DateTime,
@@ -345,14 +341,30 @@ class MSUser_Notifications(db.Model):
             'Status': self.Status,
             'Type': self.Type,
             'Notification': self.Notification,
+            'MSAccount': self.MSAccount,
+            'MSProduct': self.MSProduct,
             'is_delete': self.is_delete
         }
         
     def get_id(self):
         return str(self.id)  # Convert to string to ensure compatibility  
 
-# ------------------------------------------------
+    
+class MSMessage(db.Model):
+    __tablename__ = 'MSMessage'
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=False)
+    content = db.Column(db.String(255), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Explicitly specify the foreign keys to each relationship
+    sender = db.relationship('MSAccount', foreign_keys=[sender_id], backref=db.backref('sent_messages', lazy='dynamic'))
+    receiver = db.relationship('MSAccount', foreign_keys=[receiver_id], backref=db.backref('received_messages', lazy='dynamic'))
 
+    def __repr__(self):
+        return f'<Message from {self.sender.FirstName} to {self.receiver.FirstName}: {self.content}>'
+        
 
 def init_db(app):
     db.init_app(app)

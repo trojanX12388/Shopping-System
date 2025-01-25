@@ -32,7 +32,7 @@ from website.models import db
 from sqlalchemy import update
 
 # LOADING MODEL CLASSES
-from website.models import MSAccount, MSUser_Notifications
+from website.models import MSAccount, MSCart, MSProduct
 
 
 # LOAD JWT MODULE
@@ -88,7 +88,7 @@ notification = Blueprint('notification', __name__)
 def notificationFaculty_func():
     
     # Fetch all data from FISRequests
-    requests = MSUser_Notifications.query.filter_by(MSId=current_user.MSId).all() 
+    requests = MSCart.query.filter_by(MSId=current_user.MSId).all() 
     
     # Create a list to store the selected fields for each log entry
     formatted_requests = []
@@ -100,78 +100,29 @@ def notificationFaculty_func():
         # Fetch FirstName from MSAccount or FISAdmin based on identifier_type
         notifier_name = None
         
-        if request.notifier_type == "Admin":
-    
-            identifier_entry = FISAdmin.query.filter_by(AdminId=request.notif_by).first()
-
-            if identifier_entry:
-                notifier_name = identifier_entry.FirstName + " " + identifier_entry.LastName
-            
-            
-            # Create a dictionary with the required data
-            formatted_request = {
-                'id': request.id,
-                'DateTime': request.DateTime.strftime("%Y-%m-%d %H:%M:%S"),  # Format datetime as string
-                'Status': request.Status,
-                'Type': request.Type,
-                'Notification': request.Notification,
-                'Notif_By': notifier_name,
-                'Profile_Pic': identifier_entry.ProfilePic,
-                'IdentifierId': request.notif_by,
-                'IdentifierType': request.notifier_type,
-                'updated_at': request.updated_at.strftime("%Y-%m-%d %H:%M:%S"), 
-            }
-
-            formatted_requests.append(formatted_request)
-            
-        elif request.notifier_type == "Faculty":
-    
-            identifier_entry = MSAccount.query.filter_by(MSId=request.notif_by).first()
-
-            if identifier_entry:
-                notifier_name = identifier_entry.FirstName + " " + identifier_entry.LastName
-            
-            
-            # Create a dictionary with the required data
-            formatted_request = {
-                'id': request.id,
-                'DateTime': request.DateTime.strftime("%Y-%m-%d %H:%M:%S"),  # Format datetime as string
-                'Status': request.Status,
-                'Type': request.Type,
-                'Notification': request.Notification,
-                'Notif_By': notifier_name,
-                'Profile_Pic': identifier_entry.ProfilePic,
-                'IdentifierId': request.notif_by,
-                'IdentifierType': request.notifier_type,
-                'updated_at': request.updated_at.strftime("%Y-%m-%d %H:%M:%S"), 
-            }
-
-            formatted_requests.append(formatted_request)
         
-        else:
-    
-            identifier_entry = FISSystemAdmin.query.first()
+        identifier_entry = MSAccount.query.filter_by(MSId=request.notif_by).first()
 
-            if identifier_entry:
-                notifier_name = identifier_entry.name
+
+        if identifier_entry:
+                notifier_name = identifier_entry.FirstName + " " + identifier_entry.LastName
             
             
-            # Create a dictionary with the required data
-            formatted_request = {
+        # Create a dictionary with the required data
+        formatted_request = {
                 'id': request.id,
                 'DateTime': request.DateTime.strftime("%Y-%m-%d %H:%M:%S"),  # Format datetime as string
                 'Status': request.Status,
                 'Type': request.Type,
                 'Notification': request.Notification,
-                'Notif_By': notifier_name,
-                'Profile_Pic': identifier_entry.ProfilePic,
-                'IdentifierId': 'System',
+                'Price': request.MSProduct.ProductPrice,
+                'ProductImage': request.MSProduct.ProductImage,
                 'IdentifierType': request.notifier_type,
                 'updated_at': request.updated_at.strftime("%Y-%m-%d %H:%M:%S"), 
             }
 
-            formatted_requests.append(formatted_request)
-
+        formatted_requests.append(formatted_request)
+        
     # Create a dictionary with the required data
     api_response_data = {
         'requests': formatted_requests

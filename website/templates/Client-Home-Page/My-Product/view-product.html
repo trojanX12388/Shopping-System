@@ -1,0 +1,134 @@
+{% extends "/Client-Home-Page/base.html" %}{% block title %}{{ product.ProductName }}{% endblock %} {% block content%}
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+
+<!-- Include DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+<!-- Include DataTables Buttons CSS and JS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.3.5/css/buttons.dataTables.min.css">
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.html5.min.js"></script>
+
+<!-- Include DataTables Print Button JS -->
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.print.min.js"></script>
+
+<!-- Add Font Awesome CDN -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>{{ product.ProductName }}</h1>
+  </div><!-- End Page Title -->
+
+  <section class="section">
+    <div class="d-flex flex-column flex-md-row align-items-center">
+      <!-- Image on the left side for larger screens -->
+      <img src="https://lh3.googleusercontent.com/d/{{product.ProductImage}}"
+           alt="Product Image"
+           class="img-fluid rounded mb-3 mb-md-0"
+           style="max-width: 250px; max-height: 250px; object-fit: cover;">
+    
+      <!-- Product Description -->
+      <div class="card ms-md-3 flex-fill">
+        <div class="card-body">
+          <h5 class="card-title">Description</h5>
+          <p>{{ product.ProductDescription }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Details Section -->
+<div class="card mt-2">
+  <div class="card-body">
+    <div class="product-details">
+      <h5 class="card-title">Product Details</h5>
+      <!-- Profile Picture in the top-right corner -->
+      <img 
+        src="https://lh3.googleusercontent.com/d/{{product.MSAccount.ProfilePic}}" 
+        alt="Seller Profile Picture" 
+        class="img-fluid rounded-circle position-absolute top-0 end-0 m-2" 
+        style="width: 50px; height: 50px; object-fit: cover; border: 2px solid #ddd;"
+      >
+      <p class="mb-1"><strong>Seller:</strong> {{ product.MSAccount.FirstName }}  {{ product.MSAccount.LastName }}</p>
+      <p class="mb-1"><strong>Price:</strong> ₱{{ product.ProductPrice }}</p>
+      <p class="mb-1"><strong>Stocks:</strong> {{ product.ProductStock }}</p>
+      <p class="mb-2">
+        <strong>Rating:</strong><br>
+        {% if product.average_rating is not none %}
+          <span class="stars">
+            {% for i in range(1, 6) %}
+              {% if i <= product.average_rating %}
+                <i class="fas fa-star text-warning"></i>  <!-- Full star in yellow -->
+              {% elif i - 0.5 <= product.average_rating %}
+                <i class="fas fa-star-half-alt text-warning"></i>  <!-- Half star in yellow -->
+              {% else %}
+                <i class="far fa-star text-warning"></i>  <!-- Empty star in yellow -->
+              {% endif %}
+            {% endfor %}
+          </span>
+        {% else %}
+          No ratings yet
+        {% endif %}
+      </p>
+
+      <!-- Quantity Input -->
+      <div class="row mb-3">
+        <div class="col-md-4 col-6">
+          <label for="quantity" class="form-label"><strong>Quantity:</strong></label>
+          <input 
+            type="number" 
+            id="quantity" 
+            name="quantity" 
+            class="form-control" 
+            min="1" 
+            max="{{ product.ProductStock }}" 
+            value="1" 
+            required 
+          >
+        </div>
+      </div>
+
+      <!-- Action buttons (Add to Cart and Purchase) -->
+      <div class="row mb-1">
+        <div class="col text-end">
+          <form action="/products/add-to-cart" method="POST" enctype="multipart/form-data" accept-charset="utf-8">
+            <input type="hidden" name="prid" value="{{product.id}}"></input>
+            <input type="hidden" name="prname" value="{{product.ProductName}}"></input>
+            <input type="hidden" name="prowner" value="{{product.MSAccount.MSId}}"></input>
+            <button type="submit" class="btn btn-primary">
+            <i class="fa fa-cart-plus"></i> Add to cart
+          </button>
+        </form>
+        </div>
+      </div>
+      <div class="row mb-1">
+        <div class="col text-end">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">
+            <i class="fa fa-credit-card"></i> Purchase
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Visits Info Section -->
+    <div class="card-footer text-center bg-light">
+      <span class="me-2"><i class="bi bi-eye"></i></span> <!-- Eye icon -->
+      <span>{{ product.ProductViews }} Views</span> <!-- Display visits info -->
+    </div>
+  </section>
+  
+</main>
+
+{% endblock %}
+
+
+      
