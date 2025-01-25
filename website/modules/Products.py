@@ -150,7 +150,7 @@ def ProductsAdd():
         # PRODUCT IMAGE FOLDER ID
         folder = '1C2WKjnNSUIzKTaDeFUdPWariYEpLHWZz'
         
-        url = """{}""".format(file)
+        url = """data:image/png;base64,{}""".format(file)
                 
         filename, m = urlretrieve(url)
 

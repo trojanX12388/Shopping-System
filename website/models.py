@@ -179,6 +179,7 @@ class MSStore(db.Model):
             'StoreName': self.StoreName,
             'Image': self.Image,
             'Visits': self.Visits,
+            'MSProduct': self.MSProduct,
             'is_delete': self.is_delete
         }
         
@@ -200,6 +201,8 @@ class MSRating(db.Model):
     Rate5 = db.Column(db.Numeric)
     is_delete = db.Column(db.Boolean, default=False) 
 
+    MSProduct = db.relationship('MSProduct', back_populates='MSRating')
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -210,6 +213,7 @@ class MSRating(db.Model):
             'Rate3': self.Rate3,
             'Rate4': self.Rate4,
             'Rate5': self.Rate5,
+            'MSProduct': self.MSProduct,
             'is_delete': self.is_delete
         }
     def get_id(self):
@@ -235,7 +239,7 @@ class MSProduct(db.Model):
     is_delete = db.Column(db.Boolean, default=False) 
 
     MSStore = db.relationship('MSStore', back_populates='MSProduct')
-
+    MSRating = db.relationship('MSRating', back_populates='MSProduct')
 
     def to_dict(self):
         return {
@@ -251,6 +255,7 @@ class MSProduct(db.Model):
             'ProductSale': self.ProductSale,
             'ProductStock': self.ProductStock,
             'MSStore': self.MSStore,
+            'MSRating': self.MSRating,
             'is_delete': self.is_delete
         }
         

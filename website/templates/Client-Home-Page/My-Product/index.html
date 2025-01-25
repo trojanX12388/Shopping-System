@@ -91,9 +91,9 @@
 
   @media (max-width: 768px) {
     .modal-content {
-      width: 400px;
+      width: 380px;
       margin: 0 auto;
-      transform: translateX(-95px); /* Adjust this for left offset */
+      transform: translateX(-85px); /* Adjust this for left offset */
     }
   }
 
@@ -334,18 +334,25 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label for="inputNumber" class="col-sm-2 col-form-label">Selected Image <br><strong>PNG,JPG,BMP</strong></label>
+              <label for="inputNumber" class="col-sm-2 col-form-label">
+                Selected Image <br><strong>PNG, JPG, BMP</strong>
+              </label>
               <div class="col-sm-10">
-                <span id="fileNameDisplay"></span>
+                <span id="fileNameDisplay" style="display: block; margin-bottom: 5px;"></span>
                 <button type="button" id="btnup" class="btn btn-warning btn-sm" onclick="document.getElementById('fileup').click()">Browse File</button>
-                <input type="file" value="" name="fileup" id="fileup" hidden required></input>
-                <input type="text" id="base64" name="base64" hidden></input>
-                
+                <input type="file" value="" name="fileup" id="fileup" accept=".png,.jpg,.jpeg,.bmp" hidden required>
+                <input type="text" id="base64" name="base64" hidden>
               </div>
             </div>
             <div class="row mb-3">
               <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="d-flex justify-content-end">
+                <!-- close button -->
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
               </div>
             </div>
           </form><!-- End General Form Elements -->
@@ -409,7 +416,11 @@
 </script>
 
 <script>
-  $('#fileup').change(function () {
+  document.getElementById('fileup').addEventListener('change', async function () {
+      // Allowed file types
+      const allowedFileTypes = ['image/jpeg', 'image/png', 'image/bmp', 'image/jpg'];
+
+      // Function to convert file to base64
       async function toBase64(file) {
           return new Promise((resolve, reject) => {
               const reader = new FileReader();
@@ -419,20 +430,29 @@
           });
       }
 
-      async function Main() {
-          const fileInput = document.querySelector('#fileup');
-          const file = fileInput.files[0];
-          
-          // Display the file name
-          const fileNameDisplay = document.getElementById('fileNameDisplay');
-          fileNameDisplay.textContent = file.name;
+      const fileInput = document.getElementById('fileup');
+      const file = fileInput.files[0];
 
-          // Convert file to base64
-          const value = await toBase64(file);
-          document.getElementById("base64").setAttribute('value', value);
+      if (!file) {
+          alert('No file selected.');
+          return;
       }
 
-      Main();
+      // Validate file type
+      if (!allowedFileTypes.includes(file.type)) {
+          alert('Invalid file type. Please upload a PNG, JPG, JPEG, or BMP file.');
+          fileInput.value = ''; // Clear the input
+          document.getElementById('fileNameDisplay').textContent = ''; // Clear file name display
+          return;
+      }
+
+      // Display the file name
+      const fileNameDisplay = document.getElementById('fileNameDisplay');
+      fileNameDisplay.textContent = `Selected File: ${file.name}`;
+
+      // Convert file to base64
+      const base64Value = await toBase64(file);
+      document.getElementById("base64").value = base64Value;
   });
 </script>
 

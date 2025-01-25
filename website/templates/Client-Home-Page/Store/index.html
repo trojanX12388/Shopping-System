@@ -1,0 +1,80 @@
+{% extends "/Client-Home-Page/base.html" %}{% block title %}{{storename.StoreName}}{% endblock %} {% block content%}
+<!-- Add Font Awesome CDN -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>{{storename.StoreName}}</h1>
+  </div><!-- End Page Title -->
+
+  <section class="section dashboard">
+    <div class="container">
+      <div class="row gy-4"> <!-- Bootstrap row with spacing between items -->
+  
+        {% if msstore_products %}
+        {% for data in msstore_products %}
+            {% if data.id != None %}
+                <div class="col-lg-4 col-md-6 col-sm-12"> <!-- Adjust grid size -->
+                    <div class="card h-100"> <!-- Full height for equal height cards -->
+                        <div class="card-body pb-0 d-flex align-items-start"> <!-- Flexbox layout -->
+                            <!-- Product Image -->
+                            <div class="d-flex justify-content-center align-items-center me-3" style="width: 150px; height: 150px;">
+                                <!-- Flex container to center image -->
+                                <img src="https://lh3.googleusercontent.com/d/{{ data.ProductImage }}"
+                                     alt="Product Image"
+                                     class="img-fluid rounded"
+                                     style="max-width: 130px; max-height: 130px; object-fit: cover;">
+                            </div>
+    
+                            <!-- Product Details -->
+                            <div class="product-details">
+                                <h5 class="card-title mb-2">{{ data.ProductName }}</h5>
+                                <p class="mb-1"><strong>Price:</strong> ₱{{ data.ProductPrice }}</p>
+                                <p class="mb-1"><strong>Stocks:</strong> {{ data.ProductStock }}</p>
+                                <p class="mb-2">
+                                    <strong>Rating:</strong>
+                                    <br>
+                                    {% if data.average_rating is not none %}
+                                        <span class="stars">
+                                            {% for i in range(1, 6) %}
+                                                {% if i <= data.average_rating %}
+                                                    <i class="fas fa-star text-warning"></i>  <!-- Full star in yellow -->
+                                                {% elif i - 0.5 <= data.average_rating %}
+                                                    <i class="fas fa-star-half-alt text-warning"></i>  <!-- Half star in yellow -->
+                                                {% else %}
+                                                    <i class="far fa-star text-warning"></i>  <!-- Empty star in yellow -->
+                                                {% endif %}
+                                            {% endfor %}
+                                        </span>
+                                    {% else %}
+                                        No ratings yet
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+    
+                        <!-- Visits Info Section -->
+                        <div class="card-footer text-center bg-light">
+                            <span class="me-2"><i class="bi bi-eye"></i></span> <!-- Eye icon -->
+                            <span>{{ data.ProductViews }} Views</span> <!-- Display visits info -->
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <h5 class="card-title mb-2">NO PRODUCTS AVAILABLE IN THIS STORE.</h5>
+    {% endif %}
+  
+      </div>
+    </div>
+  </section>
+
+</main> 
+ 
+ 
+{% endblock %}
+
+
+      

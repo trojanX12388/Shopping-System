@@ -29,7 +29,7 @@ from .models import db
 from sqlalchemy import update
 
 # LOADING MODEL CLASSES
-from .models import MSAccount, MSLoginToken, MSUser_Log
+from .models import MSAccount, MSLoginToken, MSUser_Log, MSStore
 
 
 # LOAD JWT MODULE
@@ -372,10 +372,13 @@ def clientH():
             ProfilePic=profile_default
         else:
             ProfilePic=username.ProfilePic
-                                
+
+        msstore_data = MSStore.query.order_by(MSStore.id.asc()).all()
+     
         return render_template("Client-Home-Page/base.html", 
                                User= username.FirstName + " " + username.LastName,
                                user= current_user,
+                               store = msstore_data,
                                profile_pic=ProfilePic)
 
 
