@@ -129,6 +129,8 @@ def ChatH():
 
 
 @Chat.route('/get_messages/<int:sender_id>/<int:receiver_id>', methods=['GET'])
+@login_required
+@Check_Token
 def get_messages(sender_id, receiver_id):
     try:
         # Fetch messages between sender and receiver
@@ -162,6 +164,8 @@ def get_messages(sender_id, receiver_id):
 
 
 @Chat.route('/send_message', methods=['POST'])
+@login_required
+@Check_Token
 def send_message():
     data = request.get_json()
     sender_id = data['sender_id']
@@ -175,6 +179,8 @@ def send_message():
     return jsonify({'message': 'Message sent successfully!'})
 
 @Chat.route('/get_users', methods=['GET'])
+@login_required
+@Check_Token
 def get_users():
     users = MSAccount.query.all()  # Query to get all users
     user_list = [{
