@@ -403,23 +403,24 @@ def login_error_modal():
 @login_required
 def Logout():
     
-    
-    # # REVOKE USER TOKEN FROM ALL BROWSERS
-    # token_list = current_user.MSLoginToken  # This returns a list of MSLoginToken objects
-    # if token_list:
-    #     # Access the first token from the list
-    #     token_id = token_list[0].id  # Assuming you want the first token
-    #     user_token = MSLoginToken.query.filter_by(id=token_id, MSId=current_user.MSId).first()
-    #     # Now 'user_token' should contain the specific MSLoginToken object
-    #     if user_token:
-    #         db.session.delete(user_token)
-    #         db.session.commit()
-    #         db.session.close()
-    # else:
-    #     pass
+    MSId = current_user.MSId
+
+    # REVOKE USER TOKEN FROM ALL BROWSERS
+    token_list = current_user.MSLoginToken  # This returns a list of MSLoginToken objects
+    if token_list:
+        # Access the first token from the list
+        token_id = token_list[0].id  # Assuming you want the first token
+        user_token = MSLoginToken.query.filter_by(id=token_id, MSId=current_user.MSId).first()
+        # Now 'user_token' should contain the specific MSLoginToken object
+        if user_token:
+            db.session.delete(user_token)
+            db.session.commit()
+            db.session.close()
+    else:
+        pass
     
     add_log = MSUser_Log(
-                        MSId=current_user.MSId,
+                        MSId=MSId,
                         Status= "info",
                         Log = "Logged Out",
                     )
