@@ -95,21 +95,6 @@ def S_H():
     else:
         ProfilePic = username.ProfilePic
 
-    # Count notifications by status
-    received = pending = packing = delivering = cancelled = 0
-    for notif in current_user.MSPurchase:
-        if notif.status == 'received':
-            received += 1
-        elif notif.status == 'pending':
-            pending += 1
-        elif notif.status == 'packing':
-            packing += 1
-        elif notif.status == 'delivering':
-            delivering += 1
-        elif notif.status == 'cancelled':
-            cancelled += 1
-
-
     # Fetch pending purchases for products owned by the current user
     pending_purchases = MSPurchaseItem.query.join(MSPurchase, MSPurchaseItem.PurchaseId == MSPurchase.id) \
         .join(MSProduct, MSPurchaseItem.ProductId == MSProduct.id) \
@@ -142,6 +127,13 @@ def S_H():
         .join(MSAccount, MSPurchase.MSId == MSAccount.MSId) \
         .filter(MSPurchaseItem.ProductOwnerId == current_user.MSId, MSPurchase.status == 'cancelled') \
         .all()
+    
+    # Count notifications by status
+    pending = len(pending_purchases)
+    packing = len(packing_purchases)
+    delivering = len(delivering_purchases)
+    received = len(received_purchases)
+    cancelled = len(cancelled_purchases)
 
     return render_template(
         "Client-Home-Page/Sold/index.html",
