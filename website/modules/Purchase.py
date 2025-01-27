@@ -239,6 +239,7 @@ def confirm_purchase():
     return redirect(url_for("purchase.view_purchase", purchase_id=purchase_item.PurchaseId))
 
 
+
 @purchase.route("/purchase/update-status/<int:purchase_item_id>", methods=["POST"])
 @login_required
 @Check_Token
@@ -246,21 +247,32 @@ def update_status(purchase_item_id):
     # Get the purchase item based on the provided ID
     purchase_item = MSPurchaseItem.query.get(purchase_item_id)
     
+    # Check if the purchase item exists and belongs to the current user
     if not purchase_item or purchase_item.ProductOwnerId != current_user.MSId:
-        return "You are not the owner of this product."
+        return jsonify({"success": False, "message": "You are not the owner of this product."}), 403
 
-    # Get the new status from the form (e.g., pending, packing, delivering, delivered)
-    new_status = request.form.get("status")
+    # Get the new status from the request JSON data
+    new_status = request.json.get("status")
 
-    # Ensure the new status is valid
-    if new_status not in ["pending", "packing", "delivering", "delivered"]:
-        return "Invalid status."
+    # Validate the new status
+    if new_status not in ["pending", "packing", "delivering", "delivered", "cancelled", "received", "trash"]:
+        return jsonify({"success": False, "message": "Invalid status."}), 400
 
-    # Update the status of the purchase item
-    purchase_item.MSPurchase.status = new_status  # Update the parent purchase's status
-    db.session.commit()
+    try:
+        # Update the status of the purchase item
+        purchase_item.MSPurchase.status = new_status  # Update the parent purchase's status
+        db.session.commit()
 
-    return redirect(url_for("purchase.view_purchase", purchase_id=purchase_item.PurchaseId))
+        # Return a JSON response on success
+        return jsonify({
+            "success": True,
+            "message": "Status updated successfully.",
+            "new_status": new_status
+        }), 200
+
+    except Exception as e:
+        # Handle any unexpected errors
+        return jsonify({"success": False, "message": "An error occurred.", "error": str(e)}), 500
 
 
 

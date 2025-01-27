@@ -175,7 +175,7 @@ def purchase_notifications():
             'id': notification.id,
             'Notification': notification.message,  # Using 'Notification' for consistency with frontend
             'DateTime': notification.created_at.strftime("%Y-%m-%d %H:%M:%S"),  # Format the timestamp as a string
-            'Status': "pending",  # Assuming 'Status' is pending (change based on your logic)
+            'Status': notification.purchase_item.MSPurchase.status,  # Assuming 'Status' is pending (change based on your logic)
             'Price': notification.purchase_item.TotalPrice if product else None,  # Fetch the price of the related product if exists
             'Quantity': notification.purchase_item.Quantity if product else None,  # Fetch the price of the related product if exists
             'ProductImage': product.ProductImage if product else "sample_image_url",  # Use product's image URL

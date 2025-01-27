@@ -140,4 +140,20 @@
 
 </main>
 
+<script>
+  function updateTotalAmount() {
+    // Get the value of quantity input
+    var quantity = document.getElementById("quantity").value;
+
+    // Get the product price
+    var productPrice = parseFloat("{{ product.ProductPrice }}");
+
+    // Calculate the total amount
+    var totalAmount = quantity * productPrice;
+
+    // Update the total amount field with the calculated value
+    document.getElementById("total_amount").value = "₱" + totalAmount.toFixed(2);
+  }
+</script>
+
 {% endblock %}
