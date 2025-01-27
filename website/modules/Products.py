@@ -357,3 +357,45 @@ def ProductsAddTC():
 
 
 
+@products.route("/products/remove-from-cart", methods=['POST'])
+@login_required
+def ProductsRemoveFromCart():
+    # Get the product ID from the form data
+    prid = request.form.get('prid')
+    
+    # Query the cart to find the item associated with the product ID and current user
+    cart_item = MSCart.query.filter_by(ProductId=prid, MSId=current_user.MSId).first()
+    
+    if cart_item:
+        # Remove the item from the cart
+        db.session.delete(cart_item)
+        db.session.commit()
+    
+    # Redirect to the store page after removal
+    return redirect(url_for('purchase.C_H'))
+
+
+@products.route("/products/rate-product", methods=['POST'])
+@login_required
+def rate_product():
+    # Get product ID and rating from the form
+    prid = request.form.get('prid')
+    rating = request.form.get('rating')
+
+    # Check if the product and user exist
+    existing_rating = MSRating.query.filter_by(ProductId=prid, MSId=current_user.MSId).first()
+
+    if existing_rating:
+        # Update the existing rating
+        existing_rating.Rate1 = rating
+    else:
+        # Add a new rating record
+        new_rating = MSRating(
+            ProductId=prid,
+            MSId=current_user.MSId,
+            Rate1=rating
+        )
+        db.session.add(new_rating)
+
+    db.session.commit()
+    return redirect(url_for('purchase.C_H'))

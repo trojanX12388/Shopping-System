@@ -299,3 +299,87 @@ def view_purchase(purchase_id):
         User= username.FirstName + " " + username.LastName,
         profile_pic=ProfilePic,
     )
+
+
+@purchase.route("/cart", methods=['GET', 'POST'])
+@login_required
+@Check_Token
+def C_H():
+    # INITIALIZING DATA FROM USER LOGGED IN ACCOUNT    
+    username = MSAccount.query.filter_by(MSId=current_user.MSId).first()
+    
+    # Default profile picture if not set
+    if username.ProfilePic is None:
+        ProfilePic = profile_default
+    else:
+        ProfilePic = username.ProfilePic
+
+    # Query to get the count of each status
+    pending_purchases = MSPurchaseItem.query.join(MSPurchase, MSPurchaseItem.PurchaseId == MSPurchase.id) \
+        .join(MSProduct, MSPurchaseItem.ProductId == MSProduct.id) \
+        .join(MSAccount, MSPurchase.MSId == MSAccount.MSId) \
+        .filter(MSPurchase.MSId == current_user.MSId) \
+        .filter(MSPurchase.status == 'pending') \
+        .all()
+
+    packing_purchases = MSPurchaseItem.query.join(MSPurchase, MSPurchaseItem.PurchaseId == MSPurchase.id) \
+        .join(MSProduct, MSPurchaseItem.ProductId == MSProduct.id) \
+        .join(MSAccount, MSPurchase.MSId == MSAccount.MSId) \
+        .filter(MSPurchase.MSId == current_user.MSId) \
+        .filter(MSPurchase.status == 'packing') \
+        .all()
+
+    received_purchases = MSPurchaseItem.query.join(MSPurchase, MSPurchaseItem.PurchaseId == MSPurchase.id) \
+        .join(MSProduct, MSPurchaseItem.ProductId == MSProduct.id) \
+        .join(MSAccount, MSPurchase.MSId == MSAccount.MSId) \
+        .filter(MSPurchase.MSId == current_user.MSId) \
+        .filter(MSPurchase.status == 'received') \
+        .all()
+
+    delivering_purchases = MSPurchaseItem.query.join(MSPurchase, MSPurchaseItem.PurchaseId == MSPurchase.id) \
+        .join(MSProduct, MSPurchaseItem.ProductId == MSProduct.id) \
+        .join(MSAccount, MSPurchase.MSId == MSAccount.MSId) \
+        .filter(MSPurchase.MSId == current_user.MSId) \
+        .filter(MSPurchase.status == 'delivering') \
+        .all()
+    
+    cancelled_purchases = MSPurchaseItem.query.join(MSPurchase, MSPurchaseItem.PurchaseId == MSPurchase.id) \
+        .join(MSProduct, MSPurchaseItem.ProductId == MSProduct.id) \
+        .join(MSAccount, MSPurchase.MSId == MSAccount.MSId) \
+        .filter(MSPurchase.MSId == current_user.MSId) \
+        .filter(MSPurchase.status == 'cancelled') \
+        .all()
+    
+    purchased_items = MSPurchaseItem.query.join(MSPurchase, MSPurchaseItem.PurchaseId == MSPurchase.id) \
+        .join(MSProduct, MSPurchaseItem.ProductId == MSProduct.id) \
+        .join(MSAccount, MSPurchase.MSId == MSAccount.MSId) \
+        .filter(MSPurchase.MSId == current_user.MSId) \
+        .all()
+
+    # Count notifications by status
+    pending = len(pending_purchases)
+    packing = len(packing_purchases)
+    delivering = len(delivering_purchases)
+    received = len(received_purchases)
+    cancelled = len(cancelled_purchases)
+
+    purchase = len(purchased_items)
+
+    cart_items = MSCart.query.filter_by(MSId=current_user.MSId).all()
+    cart = len(cart_items)
+
+    return render_template(
+        "Client-Home-Page/Purchase/My-Purchase.html",
+        User=username.FirstName + " " + username.LastName,
+        user=current_user,
+        profile_pic=ProfilePic,
+        purchase = purchase,
+        cart = cart,
+        orders = pending + packing,
+        delivering = delivering,
+        received = received,
+        cancelled = cancelled,
+
+        purchased_items=purchased_items,
+    )
+        
