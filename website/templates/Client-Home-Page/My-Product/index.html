@@ -17,6 +17,10 @@
 <!-- Include DataTables Print Button JS -->
 <script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.print.min.js"></script>
 
+<!-- Add Font Awesome CDN -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+
 <main id="main" class="main">
 
   <div class="pagetitle">
@@ -169,13 +173,28 @@
               {{data.MSStore.StoreName}}
           </td>
             <td>
-              {{data.ProductPrice}}
+              ₱{{data.ProductPrice}}
           </td>
             <td>
               {{data.ProductStock}}
           </td>
-            <td>
-              
+          <td>
+            {% if data.average_rating is not none %}
+          <span class="stars">
+            {% for i in range(1, 6) %}
+              {% if i <= data.average_rating %}
+                <i class="fas fa-star text-warning"></i>  <!-- Full star in yellow -->
+              {% elif i - 0.5 < data.average_rating and i - 0.5 >= data.average_rating %}
+                <i class="fas fa-star-half-alt text-warning"></i>  <!-- Half star in yellow -->
+              {% else %}
+                <i class="far fa-star text-warning"></i>  <!-- Empty star in yellow -->
+              {% endif %}
+            {% endfor %}
+            ({{data.average_rating}})
+          </span>
+        {% else %}
+          No ratings yet
+        {% endif %}
           </td>
             <td>
               {{data.ProductViews}}
@@ -185,69 +204,126 @@
           </td>
             <td>
               <button type="submit" class="btn btn-outline-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#d{{data.id}}"><i class="bi bi-trash"></i></button>
-              <button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#{{data.id}}"><i class="bi bi-file-earmark-text"></i></button>
+              <button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#editModal{{data.id}}"><i class="bi bi-file-earmark-text"></i></button>
           </td>
           
           </tr>
 
           <!-- Edit Record Modal-->
-
-          <div class="modal fade" id="{{data.id}}" tabindex="-1">
-            <div class="modal-dialog modal-dialog modal-lg">
+          <div class="modal fade" id="editModal{{data.id}}" tabindex="-1">
+            <div class="modal-dialog modal-lg">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title">Edit Product Details</h5>
+                  <h5 class="modal-title">Edit Product Details (ID: {{data.id}})</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-
-          <form action="/products" method="POST" enctype="multipart/form-data" accept-charset="utf-8" class="row g-3">
-                  <br>
-
+                  <form action="/products" method="POST" enctype="multipart/form-data" accept-charset="utf-8" class="row g-3">
                     <div class="row mb-3">
-                      <label for="inputText" class="col-sm-2 col-form-label">Product Name</label>
+                      <label for="productName{{data.id}}" class="col-sm-2 col-form-label">Product Name</label>
                       <div class="col-sm-10">
-                        <input type="text" name="name" class="form-control text-wrap" value="{{data.ProductName}}" required>
+                        <input type="text" id="productName{{data.id}}" name="name" class="form-control text-wrap" value="{{data.ProductName}}" required>
                       </div>
                     </div>
                     <div class="row mb-3">
-                      <label for="inputPassword" class="col-sm-2 col-form-label">Description</label>
+                      <label for="description{{data.id}}" class="col-sm-2 col-form-label">Description</label>
                       <div class="col-sm-10">
-                        <textarea class="form-control" name="description" style="height: 100px" value="{{data.ProductDescription}}" required>{{data.ProductDescription}}</textarea>
+                        <textarea id="description{{data.id}}" class="form-control" name="description" style="height: 100px" required>{{data.ProductDescription}}</textarea>
                       </div>
                     </div>
                     <div class="row mb-3">
-                      <label for="inputText" class="col-sm-2 col-form-label">Quantity</label>
+                      <label for="quantity{{data.id}}" class="col-sm-2 col-form-label">Quantity</label>
                       <div class="col-sm-10">
-                        <input type="number" name="quantity" class="form-control text-wrap" value="{{data.ProductStock}}" required>
+                        <input type="number" id="quantity{{data.id}}" name="quantity" class="form-control text-wrap" value="{{data.ProductStock}}" required>
                       </div>
                     </div>
                     <div class="row mb-3">
-                      <label for="inputText" class="col-sm-2 col-form-label">Price</label>
+                      <label for="price{{data.id}}" class="col-sm-2 col-form-label">Price</label>
                       <div class="col-sm-10">
-                        <input type="number" name="price" class="form-control text-wrap" value="{{data.ProductPrice}}" required>
+                        <input type="number" id="price{{data.id}}" name="price" class="form-control text-wrap" value="{{data.ProductPrice}}" required>
                       </div>
                     </div>
                     <div class="row mb-3">
-                      <label for="inputText" class="col-sm-2 col-form-label">Select Store</label>
+                      <label for="store{{data.id}}" class="col-sm-2 col-form-label">Select Store</label>
                       <div class="col-sm-10">
-                        <select name="store" class="form-control text-wrap" style="height: 50px;">
-                          <option value="10001">CRAFTS BY AIRA</option>
-                          <option value="10002">AVRIELLE’S SWEETS</option>
-                          <option value="10003">ZION STORE</option>
+                        <select id="store{{ data.id }}" name="store" class="form-control text-wrap" style="height: 50px;">
+                          {% for store in stores %}
+                            <option value="{{ store.id }}" {% if data.StoreId == store.id %}selected{% endif %}>
+                              {{ store.StoreName }}
+                            </option>
+                          {% endfor %}
                         </select>
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <label for="fileup{{data.id}}" class="col-sm-2 col-form-label">
+                        Selected Image <br><strong>PNG, JPG, BMP</strong>
+                      </label>
+                      <div class="col-sm-10">
+                        <span id="fileNameDisplay{{data.id}}" style="display: block; margin-bottom: 5px;"></span>
+                        <button type="button" class="btn btn-warning btn-sm" onclick="document.getElementById('fileup{{data.id}}').click()">Browse File</button>
+                        <input type="file" id="fileup{{data.id}}" name="fileup" accept=".png,.jpg,.jpeg,.bmp" hidden >
+                        <input type="text" id="base64{{data.id}}" name="base64" hidden>
                       </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                  <input type="hidden" name="id" value="{{data.id}}"></input>
+                  <input type="hidden" name="id" value="{{data.id}}">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Cancel</button>
                   <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Update</button>
                 </div>
-          </form>
+                  </form>
               </div>
             </div>
-          </div><!-- End Edit Record Modal-->
+          </div>
+
+          <script>
+            document.querySelectorAll('.modal').forEach(modal => {
+              modal.addEventListener('shown.bs.modal', function () {
+                const modalId = modal.id.replace('editModal', '');
+                initializeFileUpload(modalId);
+              });
+            });
+          
+            function initializeFileUpload(modalId) {
+              const fileInput = document.getElementById(`fileup${modalId}`);
+              const fileNameDisplay = document.getElementById(`fileNameDisplay${modalId}`);
+              const base64Input = document.getElementById(`base64${modalId}`);
+          
+              if (!fileInput) return; // Prevent errors if the file input doesn't exist
+          
+              fileInput.addEventListener('change', async function () {
+                const allowedFileTypes = ['image/jpeg', 'image/png', 'image/bmp', 'image/jpg'];
+          
+                if (!fileInput.files.length) {
+                  alert('No file selected.');
+                  return;
+                }
+          
+                const file = fileInput.files[0];
+          
+                if (!allowedFileTypes.includes(file.type)) {
+                  alert('Invalid file type. Please upload a PNG, JPG, JPEG, or BMP file.');
+                  fileInput.value = ''; // Clear the input
+                  fileNameDisplay.textContent = ''; // Clear file name display
+                  return;
+                }
+          
+                fileNameDisplay.textContent = `Selected File: ${file.name}`;
+          
+                const toBase64 = file => new Promise((resolve, reject) => {
+                  const reader = new FileReader();
+                  reader.onload = () => resolve(reader.result.split(',')[1]);
+                  reader.onerror = error => reject(error);
+                  reader.readAsDataURL(file);
+                });
+          
+                const base64Value = await toBase64(file);
+                base64Input.value = base64Value;
+              });
+            }
+          </script>
+          
         
 
           <!-- Delete Record Modal-->
@@ -327,9 +403,11 @@
               <label for="inputText" class="col-sm-2 col-form-label">Select Store</label>
               <div class="col-sm-10">
                 <select name="store" class="form-control text-wrap" style="height: 50px;">
-                  <option value="10001">CRAFTS BY AIRA</option>
-                  <option value="10002">AVRIELLE’S SWEETS</option>
-                  <option value="10003">ZION STORE</option>
+                  {% for store in stores %}
+                    <option value="{{ store.id }}" {% if store.id == store.id %}selected{% endif %}>
+                      {{ store.StoreName }}
+                    </option>
+                  {% endfor %}
                 </select>
               </div>
             </div>

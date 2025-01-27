@@ -33,7 +33,7 @@ from website.models import db
 from sqlalchemy import update
 
 # LOADING MODEL CLASSES
-from website.models import MSAccount, MSProduct, MSStore, MSRating, MSCart
+from website.models import MSAccount, MSProduct, MSStore, MSRating, MSCart, MSPurchaseItem, MSNotification
 
 
 # LOAD JWT MODULE
@@ -82,50 +82,133 @@ products = Blueprint('products', __name__)
 
 # PRODUCTS ROUTES
 
+# Helper function to calculate average rating
+def calculate_average_rating(product_id):
+    """Calculate and return the average rating for a product."""
+    ratings_count = db.session.query(func.count(MSRating.id)).filter(MSRating.ProductId == product_id).scalar()
+    
+    if ratings_count > 0:
+        average_rating = db.session.query(func.avg(MSRating.Rate1)).filter(MSRating.ProductId == product_id).scalar()
+        return round(average_rating, 1) if average_rating is not None else 0
+    return 0
+
+
 @products.route("/products", methods=['GET', 'POST'])
 @login_required
 @Check_Token
 def ProductsM():
     # INITIALIZING DATA FROM USER LOGGED IN ACCOUNT    
-        username = MSAccount.query.filter_by(MSId=current_user.MSId).first() 
+    username = MSAccount.query.filter_by(MSId=current_user.MSId).first() 
+    
+    # Set default profile picture if none exists
+    ProfilePic = username.ProfilePic if username.ProfilePic else profile_default
+
+    # Retrieve non-deleted stores
+    stores = MSStore.query.filter((MSStore.is_delete == False) | (MSStore.is_delete.is_(None))).all()
+    msstore_products = MSProduct.query.filter(MSProduct.is_delete == False).order_by(MSProduct.id.asc()).all()
+
+    # Assuming msstore_products contains products fetched from the database
+    for product in msstore_products:
+        # Initialize average_rating to 0 by default
+        average_rating = 0
+            
+        # Check if there are any ratings for the product in the MSRating table
+        ratings_count = db.session.query(func.count(MSRating.id)).filter(MSRating.ProductId == product.id).scalar()
+
+        if ratings_count > 0:
+            # Calculate the average rating for the product only if there are ratings
+            average_rating = db.session.query(func.avg(MSRating.Rate1)).filter(MSRating.ProductId == product.id).scalar()
+            # Round to 1 decimal place
+            average_rating = round(average_rating, 1) if average_rating is not None else 0
+
+        # Add the average rating to the product object (or to the dictionary you're passing to the template)
+        product.average_rating = average_rating
+
+    # Handle POST request for updating products
+    if request.method == 'POST':
+        # VALUES
+        name = request.form.get('name')
+        description = request.form.get('description')
+        quantity = request.form.get('quantity')
+        price = request.form.get('price')
+        store = request.form.get('store')
+        itemid = request.form.get('id')
+        StoreId = MSStore.query.filter_by(id=store).first()
         
-        if username.ProfilePic == None:
-            ProfilePic=profile_default
+        # Get base64 image and file upload
+        file = request.form.get('base64')
+        ext = request.files.get('fileup')
+        
+        # Generate product ID
+        id = f'{str(username.MSId)}{str(name)}'
+        
+        # PRODUCT IMAGE FOLDER ID
+        folder = '1C2WKjnNSUIzKTaDeFUdPWariYEpLHWZz'
+        
+        if ext:  # Only process image if a new file is provided
+            ext = ext.filename
+            
+            url = """data:image/png;base64,{}""".format(file)
+            filename, m = urlretrieve(url)
+
+            # DELETE EXISTING IMAGE WITH SAME TITLE IN THE FOLDER
+            file_list = drive.ListFile({'q': "'%s' in parents and trashed=false" % folder}).GetList()
+            try:
+                for file1 in file_list:
+                    if file1['title'] == str(id):
+                        file1.Delete()
+            except Exception as e:
+                print(f"Error deleting file: {e}")
+            
+            # CONFIGURE FILE FORMAT AND NAME
+            file1 = drive.CreateFile(metadata={
+                "title": str(id),
+                "parents": [{"id": folder}],
+                "mimeType": "image/png"
+            })
+            
+            # GENERATE FILE AND UPLOAD
+            file1.SetContentFile(filename)
+            file1.Upload()
+            
+            # Set product image to the newly uploaded file ID
+            product_image_id = file1['id']
         else:
-            ProfilePic=username.ProfilePic
- 
-            # UPDATE 
-        if request.method == 'POST':
-         
-            # VALUES
-           
-            name = request.form.get('name')
-            description = request.form.get('description')
-            quantity = request.form.get('quantity')
-            price = request.form.get('price')
-            store = request.form.get('store')
-            id = request.form.get('id')
-            StoreId = MSStore.query.filter_by(id=store).first() 
+            # Retain the existing product image if no new file is uploaded
+            existing_product = MSProduct.query.filter_by(id=itemid).first()
+            product_image_id = existing_product.ProductImage
 
-            u = update(MSProduct)
-            u = u.values({"ProductName": name,
-                          "ProductDescription": description,
-                          "ProductStock": quantity,
-                          "ProductPrice": price,
-                          "StoreId": StoreId.id,
-                          })
-            u = u.where(MSProduct.id == id)
-            db.session.execute(u)
-            db.session.commit()
-            db.session.close()
-            return redirect(url_for('products.ProductsM')) 
+        # Update product details
+        u = update(MSProduct)
+        u = u.values({
+            "ProductName": name,
+            "ProductDescription": description,
+            "ProductStock": quantity,
+            "ProductImage": product_image_id,  # New or existing image ID
+            "ProductPrice": price,
+            "StoreId": StoreId.id,
+        })
+        u = u.where(MSProduct.id == itemid)
+        db.session.execute(u)
+        db.session.commit()
+        db.session.close()
+
+        # Redirect back to the products page
+        return redirect(url_for('products.ProductsM'))
+    
+    # Render template with user and store data
+    return render_template(
+        "Client-Home-Page/My-Product/index.html",
+        User=f"{username.FirstName} {username.LastName}",
+        user=current_user,
+        store=MSProduct.MSStore,
+        stores=stores,
+        products=msstore_products,
+        average_rating=average_rating,
+        profile_pic=ProfilePic
+    )
+
                       
-        return render_template("Client-Home-Page/My-Product/index.html", 
-                               User= username.FirstName + " " + username.LastName,
-                               user= current_user,
-                               store=MSProduct.MSStore,
-                               profile_pic=ProfilePic)
-
 
 @products.route("/products/add-record", methods=['GET', 'POST'])
 @login_required
@@ -188,35 +271,57 @@ def ProductsAdd():
         return redirect(url_for('products.ProductsM'))
             
            
-@products.route("/products/delete-record", methods=['GET', 'POST'])
+@products.route("/products/delete-record", methods=['POST'])
 @login_required
 def ProductsDel():
-        username = MSAccount.query.filter_by(MSId=current_user.MSId).first() 
+    username = MSAccount.query.filter_by(MSId=current_user.MSId).first()
 
-        id = request.form.get('id')
-        
-        
-        data = MSProduct.query.filter_by(id=id).first() 
-        
-        if data:
-            id = f'{str(username.MSId)}{str(data.ProductName)}'
-        
-            # INSTRUCTIONAL MATERIAL FOLDER ID
-            folder = '1C2WKjnNSUIzKTaDeFUdPWariYEpLHWZz'
-        
-            # CLEAR PROFILE PIC
-            file_list = drive.ListFile({'q': "'%s' in parents and trashed=false"%(folder)}).GetList()
-            try:
-                for file1 in file_list:
-                    if file1['title'] == str(id):
-                        file1.Delete()                
-            except:
-                pass
+    # Get the product ID from the form
+    product_id = request.form.get('id')
 
+    # Find the product in the database
+    data = MSProduct.query.filter_by(id=product_id).first()
+
+    if data:
+        # Build the folder name
+        id_str = f'{str(username.MSId)}{str(data.ProductName)}'
+
+        # Instructional material folder ID
+        folder = '1C2WKjnNSUIzKTaDeFUdPWariYEpLHWZz'
+
+        # Clear profile picture in Google Drive
+        file_list = drive.ListFile({'q': f"'{folder}' in parents and trashed=false"}).GetList()
+        try:
+            for file1 in file_list:
+                if file1['title'] == str(id_str):
+                    file1.Delete()
+        except:
+            pass
+
+        # Use a no_autoflush block to avoid premature flush
+        with db.session.no_autoflush:
+            # Delete related rows in MSNotification
+            MSPurchaseItem_ids = MSPurchaseItem.query.with_entities(MSPurchaseItem.id).filter_by(ProductId=data.id).all()
+            MSPurchaseItem_ids = [item.id for item in MSPurchaseItem_ids]
+
+            if MSPurchaseItem_ids:
+                MSNotification.query.filter(MSNotification.purchase_item_id.in_(MSPurchaseItem_ids)).delete(synchronize_session=False)
+
+            # Delete related MSPurchaseItem rows
+            MSPurchaseItem.query.filter_by(ProductId=data.id).delete()
+
+            # Delete the product
             db.session.delete(data)
+
+            # Commit changes
             db.session.commit()
-            db.session.close()
-            return redirect(url_for('products.ProductsM'))        
+
+        db.session.close()
+        return redirect(url_for('products.ProductsM'))
+
+    flash('Product not found.', 'danger')
+    return redirect(url_for('products.ProductsM'))
+     
 
         
 
