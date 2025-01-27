@@ -13,6 +13,7 @@ from .extensions import db
 
 class MSAccount(db.Model, UserMixin):
     __tablename__ = 'MSAccount'
+    
     MSId = db.Column(db.Integer, primary_key=True, autoincrement=True)  # UserID
     Type = db.Column(db.String(50), nullable=False)  
     FirstName = db.Column(db.String(50))  
@@ -22,8 +23,7 @@ class MSAccount(db.Model, UserMixin):
     Address = db.Column(db.String())
     BirthDate = db.Column(db.Date())
     ProfilePic = db.Column(db.String(50), default="1VikMpsCn5FpqbXd1Wny_EqOW92T8pFBt")
-    Gender = db.Column(db.Integer) # Gender # 1 if Male 2 if Female
-
+    Gender = db.Column(db.Integer)  # Gender # 1 if Male 2 if Female
     Email = db.Column(db.String(256))  
     Password = db.Column(db.String(256), nullable=False)  
     Status = db.Column(db.String(50), default="Deactivated")
@@ -32,16 +32,19 @@ class MSAccount(db.Model, UserMixin):
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     # RELATIONSHIP TABLES
-    MSOrder = db.relationship('MSOrder',back_populates='MSAccount')
-    MSRating = db.relationship('MSRating',back_populates='MSAccount')
-    MSVoucher = db.relationship('MSVoucher',back_populates='MSAccount')
-    MSProduct = db.relationship('MSProduct',back_populates='MSAccount')
-    
-    MSUser_Log = db.relationship('MSUser_Log',back_populates='MSAccount')
-    MSCart = db.relationship('MSCart',back_populates='MSAccount')
+    MSOrder = db.relationship('MSOrder', back_populates='MSAccount')
+    MSRating = db.relationship('MSRating', back_populates='MSAccount')
+    MSVoucher = db.relationship('MSVoucher', back_populates='MSAccount')
+    MSProduct = db.relationship('MSProduct', back_populates='MSAccount')
+    MSUser_Log = db.relationship('MSUser_Log', back_populates='MSAccount')
+    MSCart = db.relationship('MSCart', back_populates='MSAccount')
+    MSPurchase = db.relationship('MSPurchase', back_populates='MSAccount')
+    MSPurchaseItem = db.relationship('MSPurchaseItem', back_populates='MSAccount')
 
-    # LOGIN TOKEN
-    MSLoginToken = db.relationship('MSLoginToken',back_populates='MSAccount')
+    # Notification relationship (back_populates should match the one in MSNotification)
+    notifications = db.relationship('MSNotification', back_populates='user')
+    
+    MSLoginToken = db.relationship('MSLoginToken', back_populates='MSAccount')
 
     def to_dict(self):
         return {
@@ -54,28 +57,25 @@ class MSAccount(db.Model, UserMixin):
             'Address': self.Address,
             'BirthDate': self.BirthDate,
             'ProfilePic': self.ProfilePic,
-            'Age': self.Age,
             'Gender': self.Gender,
-            
             'Email': self.Email,
             'Password': self.Password,
             'Status': self.Status,
             'Login_Attempt': self.Login_Attempt,
             'created_at': self.created_at,
             'updated_at': self.updated_at,
-            
             'MSOrder': self.MSOrder,
-            'MSCart': self.MSCart,
             'MSRating': self.MSRating,
             'MSVoucher': self.MSVoucher,
             'MSProduct': self.MSProduct,
             'MSUser_Log': self.MSUser_Log,
             'MSCart': self.MSCart,
-            'MSMessage': self.MSMessage,
-            
-            'MSLoginToken': self.MSLoginToken, 
+            'MSPurchase': self.MSPurchase,
+            'MSPurchaseItem': self.MSPurchaseItem,
+            'MSLoginToken': self.MSLoginToken,
+            'notifications': self.notifications,  # Include notifications in the dict
         }
-        
+
     def get_id(self):
         return str(self.MSId)  # Convert to string to ensure compatibility
 
@@ -154,6 +154,7 @@ class MSStore(db.Model):
     is_delete = db.Column(db.Boolean, default=False) 
 
     MSProduct = db.relationship('MSProduct', back_populates='MSStore')
+    MSPurchase = db.relationship('MSPurchase', back_populates='MSStore')
 
     def to_dict(self):
         return {
@@ -162,6 +163,7 @@ class MSStore(db.Model):
             'Image': self.Image,
             'Visits': self.Visits,
             'MSProduct': self.MSProduct,
+            'MSPurchase': self.MSPurchase,
             'is_delete': self.is_delete
         }
         
@@ -226,6 +228,11 @@ class MSProduct(db.Model):
     MSStore = db.relationship('MSStore', back_populates='MSProduct')
     MSRating = db.relationship('MSRating', back_populates='MSProduct')
     MSCart = db.relationship('MSCart', back_populates='MSProduct')
+    MSPurchaseItem = db.relationship('MSPurchaseItem', back_populates='MSProduct')
+    
+    # Fix the relationship here
+    MSNotification = db.relationship('MSNotification', back_populates='product')
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -242,12 +249,102 @@ class MSProduct(db.Model):
             'MSStore': self.MSStore,
             'MSRating': self.MSRating,
             'MSCart': self.MSCart,
+            'MSPurchaseItem': self.MSPurchaseItem,
+            'MSNotification': self.MSNotification,
             'is_delete': self.is_delete
         }
         
     def get_id(self):
         return str(self.id)  # Convert to string to ensure compatibility
     
+# MS Purchase
+
+class MSPurchase(db.Model):
+    __tablename__ = 'MSPurchase'
+
+    id = db.Column(db.Integer, primary_key=True)  # PurchaseID
+    MSId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=False)  # Customer Account
+    StoreId = db.Column(db.Integer, db.ForeignKey('MSStore.id'), nullable=False)  # Store ID
+    PurchaseDate = db.Column(db.DateTime, nullable=False, default=db.func.now())  # Purchase timestamp
+    TotalAmount = db.Column(db.Float, nullable=False)  # Total cost of the purchase
+    is_complete = db.Column(db.Boolean, default=False)  # Status of purchase (completed or not)
+    status = db.Column(
+        db.String(20), 
+        nullable=False, 
+        default='pending'
+    )  # Status of purchase (pending, packing, delivering, delivered)
+    shipping_type = db.Column(db.String(20), nullable=False)  # Shipping type (e.g., 'walkin' or 'delivery')
+    shipping_address = db.Column(db.String(255), nullable=True)  # Shipping address (optional, for 'delivery' only)
+
+    MSAccount = db.relationship('MSAccount', back_populates='MSPurchase')
+    MSStore = db.relationship('MSStore', back_populates='MSPurchase')
+    MSPurchaseItem = db.relationship('MSPurchaseItem', back_populates='MSPurchase', cascade='all, delete-orphan')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'MSId': self.MSId,
+            'StoreId': self.StoreId,
+            'PurchaseDate': self.PurchaseDate.isoformat(),
+            'TotalAmount': self.TotalAmount,
+            'is_complete': self.is_complete,
+            'status': self.status,
+            'shipping_type': self.shipping_type,
+            'shipping_address': self.shipping_address,
+            'MSPurchaseItem': [item.to_dict() for item in self.MSPurchaseItem]
+        }
+
+
+class MSPurchaseItem(db.Model):
+    __tablename__ = 'MSPurchaseItem'
+
+    id = db.Column(db.Integer, primary_key=True)  # PurchaseItemID
+    PurchaseId = db.Column(db.Integer, db.ForeignKey('MSPurchase.id'), nullable=False)  # Associated Purchase
+    ProductId = db.Column(db.Integer, db.ForeignKey('MSProduct.id'), nullable=False)  # Product in the purchase
+    Quantity = db.Column(db.Integer, nullable=False)  # Quantity of product purchased
+    UnitPrice = db.Column(db.Float, nullable=False)  # Price per unit at the time of purchase
+    TotalPrice = db.Column(db.Float, nullable=False)  # Total price for the quantity of the product
+    ProductOwnerId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=False)  # Owner of the product
+
+    MSPurchase = db.relationship('MSPurchase', back_populates='MSPurchaseItem')
+    MSProduct = db.relationship('MSProduct', back_populates='MSPurchaseItem')
+    MSNotification = db.relationship('MSNotification', back_populates='purchase_item')  # Make sure back_populates matches the MSNotification model
+    MSAccount = db.relationship('MSAccount', back_populates='MSPurchaseItem')  # Owner relationship
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'PurchaseId': self.PurchaseId,
+            'ProductId': self.ProductId,
+            'Quantity': self.Quantity,
+            'UnitPrice': self.UnitPrice,
+            'TotalPrice': self.TotalPrice,
+            'ProductOwnerId': self.ProductOwnerId  # Add owner ID to the dictionary
+        }
+
+
+class MSNotification(db.Model):
+    __tablename__ = 'MSNotification'
+
+    id = db.Column(db.Integer, primary_key=True)  # Notification ID
+    user_id = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=False)  # Owner of the product
+    message = db.Column(db.String, nullable=False)  # Notification message
+    is_seen = db.Column(db.Boolean, default=False)  # Whether the notification is seen by the user
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # Timestamp for when the notification is created
+    product_id = db.Column(db.Integer, db.ForeignKey('MSProduct.id'), nullable=True)  # Product associated with the notification
+    purchase_item_id = db.Column(db.Integer, db.ForeignKey('MSPurchaseItem.id'), nullable=True)  # Purchase item associated with the notification
+
+    # Define relationships with MSAccount, MSProduct, and MSPurchaseItem
+    user = db.relationship('MSAccount', back_populates='notifications')
+    product = db.relationship('MSProduct', back_populates='MSNotification', lazy=True)  # Relationship with MSProduct
+    purchase_item = db.relationship('MSPurchaseItem', back_populates='MSNotification', lazy=True)  # Relationship with MSPurchaseItem
+
+    def __init__(self, user_id, message, product_id=None, purchase_item_id=None):
+        self.user_id = user_id
+        self.message = message
+        self.product_id = product_id
+        self.purchase_item_id = purchase_item_id
+
 
 # LOGIN TOKEN
   

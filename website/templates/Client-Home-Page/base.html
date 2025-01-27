@@ -113,7 +113,7 @@
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
             <li class="dropdown-header">
               You have <span id="notification-count-text">0</span> Item/s
-              <a href="/Faculty-Notifications"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+              <a href="/cart"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
             </li>
             <li>
               <hr class="dropdown-divider">
@@ -124,6 +124,31 @@
           </ul><!-- End Notification Dropdown Items -->
         
         </li><!-- End Notification Nav -->
+
+       
+
+        <li class="nav-item dropdown">
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-bell"></i> 
+            <span class="badge bg-danger badge-number" id="purchase-notification-count">0</span>
+          </a>
+         
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+            <li class="dropdown-header">
+              You have <span id="purchase-notification-count-text">0</span> Item/s
+              <a href="/sold"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <div id="purchase-notifications">
+
+            </div>
+            <!-- Purchase notifications will be dynamically added here -->
+          </ul>
+    
+        </li>
+        
 
       
 
@@ -214,18 +239,19 @@
       </li><!-- End HOMEPAGE Nav -->
 
       <li class="nav-item"><!-- MY PURCHASE Nav -->
-        <a class="nav-link collapsed" data-bs-target="#teaching-nav" data-bs-toggle="collapse" href="#">
+        <a class="nav-link collapsed" href="/cart" data-bs-target="#teaching-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-receipt"></i><span>MY PURCHASE</span>
         </a>
       </li><!-- End MY PURCHASE Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="/Mandatory-Requirements">
+        <a class="nav-link collapsed" href="/sold">
           <i class="bi bi-bag-check"></i>
-          <span>SOLD</span>
-          <span id="mandatory-requirements-warning" style="display: none; color: red;"> <!-- Add this span with an appropriate style -->
-            <i class="bi bi-exclamation-triangle-fill"></i> Warning!
-          </span>
+          <span>SOLD </span>
+        
+          <!-- Add a span to dynamically display the count -->
+<span id="sold-item-count" style="font-weight: bold; margin-left: 10px; color: rgba(252, 185, 60, 0.918);"></span>
+         
         </a>
       </li><!-- End MANDATORY REQUIREMENTS Nav -->
       
@@ -354,7 +380,7 @@
           return request.Status.toLowerCase() === 'pending' || request.Type.toLowerCase() === 'mandatory';
         });
 
-        var newTitle = "{% block title %}EntrApp{% endblock %}";
+        
 
         if (pendingRequests.length > 0) {
           // Sort pending notifications by DateTime in descending order
@@ -362,7 +388,7 @@
             return new Date(b.DateTime) - new Date(a.DateTime);
           });
 
-          document.getElementById("notification-count-title").innerText = '(' + pendingRequests.length + ')' + ' ' + newTitle;
+          
 
           // Update the notification count
           $('#notification-count').text(pendingRequests.length);
@@ -391,15 +417,14 @@
 
         } else {
           // Handle the case when there are no pending notifications
-          document.getElementById("notification-count-title").innerText = newTitle;
+         
 
           $('.notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">You have no items in cart. Add items from the store.</h6>');
         }
       },
       error: function () {
         // Handle the error case
-        document.getElementById("notification-count-title").innerText = newTitle;
-        
+       
         $('.notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">No Items available.</h6>');
       }
     });
@@ -410,6 +435,103 @@
 
   // Reload pending notifications every minute
   setInterval(fetchAndDisplayPendingNotifications, 60000);
+</script>
+
+
+<script>
+  // Load the relativeTime plugin for dayjs
+  dayjs.extend(window.dayjs_plugin_relativeTime);
+
+  // Function to calculate custom human-readable time difference using dayjs
+  function calculateTimeDifference(dateTime) {
+    const diffInSeconds = dayjs().diff(dayjs(dateTime), 'seconds');
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInSeconds / 3600);
+    const diffInDays = Math.floor(diffInSeconds / 86400);
+
+    if (diffInSeconds < 60) {
+      return diffInSeconds + 's ago';
+    } else if (diffInMinutes < 60) {
+      return diffInMinutes + 'm ago';
+    } else if (diffInHours < 24) {
+      return diffInHours + 'h ago';
+    } else if (diffInDays < 7) {
+      return diffInDays + 'd ago';
+    } else if (diffInDays < 30) {
+      return Math.floor(diffInDays / 7) + 'w ago';
+    } else if (diffInDays < 365) {
+      return Math.floor(diffInDays / 30) + 'mo ago';
+    } else {
+      return Math.floor(diffInDays / 365) + 'y ago';
+    }
+  }
+  
+  // Function to fetch and display purchase notifications and update sold items count
+  function fetchAndDisplayPurchaseNotifications() {
+    $.ajax({
+      url: '/api/purchase/notifications',
+      type: 'GET',
+      dataType: 'json',
+      success: function (data) {
+        var pendingRequests = data.requests.filter(function (request) {
+          return request.Status.toLowerCase() === 'pending' || request.Type.toLowerCase() === 'mandatory';
+        });
+
+        // Update the sold items count based on filtered pendingRequests
+        $('#sold-item-count').text(pendingRequests.length);  // Update the sold items count
+
+        var newTitle = "{% block title %}EntrApp{% endblock %}";
+
+        if (pendingRequests.length > 0) {
+          // Sort pending notifications by DateTime in descending order
+          pendingRequests.sort(function (a, b) {
+            return new Date(b.DateTime) - new Date(a.DateTime);
+          });
+
+          document.getElementById("notification-count-title").innerText = '(' + pendingRequests.length + ')' + ' ' + newTitle;
+
+          // Update the notification count
+          $('#purchase-notification-count').text(pendingRequests.length);
+          $('#purchase-notification-count-text').text(pendingRequests.length);
+
+          // Clear existing pending notifications without affecting styles
+          $('#purchase-notifications').empty();  // This will remove all child elements but leave the styles intact
+
+          // Loop through the latest 4 pending notifications and append them to the HTML
+          for (let index = 0; index < Math.min(3, pendingRequests.length); index++) {
+            var notification = pendingRequests[index];
+
+            var notificationItem = $('<li class="purchase-notification-item">');
+
+            var ProfileIcon = $('<img src="https://lh3.googleusercontent.com/d/'+notification.ProductImage+'" alt="Profile" class="rounded-circle" style="width:50px;height:50px;margin-right: 15px;"></img>');
+            var notificationContent = $('<div>');
+            var notificationTitle = $('<h6 class="purchase-title">').text(notification.Notification);
+            var identifierInfo = '₱ ' + notification.Price + ' (' + notification.Quantity + ')';
+            var notificationDescription = identifierInfo;
+
+            notificationContent.append(notificationTitle, notificationDescription);
+            notificationItem.append(ProfileIcon, notificationContent);
+            $('#purchase-notifications').append(notificationItem);  // Append new notification
+          }
+
+        } else {
+          // Handle the case when there are no pending purchase notifications
+          document.getElementById("notification-count-title").innerText = newTitle;
+          $('#purchase-notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">No notification.</h6>');
+        }
+      },
+      error: function () {
+        document.getElementById("notification-count-title").innerText = newTitle;
+        $('#purchase-notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">Error fetching notifications.</h6>');
+      }
+    });
+  }
+
+  // Initial fetch and display
+  fetchAndDisplayPurchaseNotifications();
+
+  // Reload pending notifications every minute
+  setInterval(fetchAndDisplayPurchaseNotifications, 60000);
 </script>
 
   <!-- ======= Footer ======= -->

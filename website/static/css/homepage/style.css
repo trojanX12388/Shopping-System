@@ -522,6 +522,26 @@ label {
   background-color: #f6f9ff;
 }
 
+/* Styling the dropdown menu */
+#purchase-notifications {
+  min-width: 250px;
+  font-size: 15px;
+  padding: 10px;
+}
+
+/* Styling the individual notification items */
+.purchase-notification-item {
+  display: flex;
+  color:#4e2806;
+  align-items: center;
+  padding: 15px 10px;
+  transition: 0.3s;
+}
+/* Styling the individual notification items */
+.purchase-title{
+  font-size: 13px;
+}
+
 .header-nav .messages {
   inset: 8px -15px auto auto !important;
 }

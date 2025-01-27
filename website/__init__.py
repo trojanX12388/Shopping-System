@@ -76,6 +76,8 @@ def create_app():
     app.register_blueprint(Store, url_prefix='/')
     from .modules.Chat import Chat
     app.register_blueprint(Chat, url_prefix='/')
+    from .modules.Purchase import purchase
+    app.register_blueprint(purchase, url_prefix='/')
     
     # # SYSTEM ADMIN ROUTES
     

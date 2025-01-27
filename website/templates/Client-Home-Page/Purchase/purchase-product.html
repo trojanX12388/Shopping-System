@@ -1,0 +1,143 @@
+{% extends "/Client-Home-Page/base.html" %}
+{% block title %}{{ product.ProductName }}{% endblock %}
+{% block content %}
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+
+<!-- Include DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+<!-- Include DataTables Buttons CSS and JS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.3.5/css/buttons.dataTables.min.css">
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.html5.min.js"></script>
+
+<!-- Include DataTables Print Button JS -->
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.print.min.js"></script>
+
+<!-- Add Font Awesome CDN -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Confirm Purchase</h1>
+  </div><!-- End Page Title -->
+
+  <section class="section">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Purchase Summary</h5>
+
+        <!-- Product Details -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <img src="https://lh3.googleusercontent.com/d/{{product.ProductImage}}" 
+                 alt="Product Image" 
+                 class="img-fluid rounded" 
+                 style="max-width: 200px; object-fit: cover;">
+          </div>
+          <div class="col-md-8">
+            <h5>{{ product.ProductName }}</h5>
+            <p>{{ product.ProductDescription }}</p>
+            <p><strong>Price:</strong> ₱{{ product.ProductPrice }}</p>
+            <p><strong>Available Stock:</strong> {{ product.ProductStock }}</p>
+            <br>
+            <p class="mb-1"><strong>Seller:</strong> {{ product.MSAccount.FirstName }}  {{ product.MSAccount.LastName }}</p>
+          </div>
+          <div>
+            <!-- Profile Picture in the top-right corner -->
+            <img 
+              src="https://lh3.googleusercontent.com/d/{{product.MSAccount.ProfilePic}}" 
+              alt="Seller Profile Picture" 
+              class="img-fluid rounded-circle position-absolute top-0 end-0 m-2" 
+              style="width: 50px; height: 50px; object-fit: cover; border: 2px solid #ddd;"
+            >
+          </div>
+        </div>
+
+        <!-- Buyer Details -->
+        <form action="/purchase/confirm" method="POST">
+          <input type="hidden" name="product_id" value="{{ product.id }}">
+          <input type="hidden" name="product_price" value="{{ product.ProductPrice }}">
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="quantity" class="form-label"><strong>Quantity:</strong></label>
+              <input 
+                type="number" 
+                id="quantity" 
+                name="quantity" 
+                class="form-control" 
+                min="1" 
+                max="{{ product.ProductStock }}" 
+                value="1" 
+                required
+                oninput="updateTotalAmount()">
+            </div>
+            <div class="col-md-6">
+              <label for="total_amount" class="form-label"><strong>Total Amount:</strong></label>
+              <input 
+                type="text" 
+                id="total_amount" 
+                class="form-control" 
+                value="₱{{ product.ProductPrice }}" 
+                readonly>
+            </div>
+          </div>
+
+          <!-- Add shipping type selection -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="shipping_type" class="form-label"><strong>Shipping Type:</strong></label>
+              <select name="shipping_type" id="shipping_type" class="form-control" required style="height: 50px;">
+                <option value="walkin">Walk-in</option>
+                <option value="delivery">Delivery (COD)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Add shipping address input, visible only if delivery is selected -->
+          <div class="row mb-3" id="shipping_address_row" style="display: none;">
+            <div class="col-md-12">
+              <label for="shipping_address" class="form-label"><strong>Shipping Address:</strong></label>
+              <input type="text" name="shipping_address" id="shipping_address" class="form-control" placeholder="Enter your delivery address" />
+            </div>
+          </div>
+
+          <script>
+            // Show or hide shipping address input based on selected shipping type
+            document.getElementById('shipping_type').addEventListener('change', function() {
+              var shippingType = this.value;
+              var shippingAddressRow = document.getElementById('shipping_address_row');
+              if (shippingType === 'delivery') {
+                shippingAddressRow.style.display = 'block';
+              } else {
+                shippingAddressRow.style.display = 'none';
+              }
+            });
+          </script>
+
+          <!-- Actions -->
+          <div class="text-end">
+            <button type="submit" class="btn btn-success">
+              <i class="fa fa-check"></i> Confirm Purchase
+            </button>
+            <a href="/products/view/{{ product.id }}" class="btn btn-secondary">
+              <i class="fa fa-arrow-left"></i> Back to Product
+            </a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+{% endblock %}

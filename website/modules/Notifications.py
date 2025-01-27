@@ -32,7 +32,7 @@ from website.models import db
 from sqlalchemy import update
 
 # LOADING MODEL CLASSES
-from website.models import MSAccount, MSCart, MSProduct
+from website.models import MSAccount, MSCart, MSProduct, MSNotification
 
 
 # LOAD JWT MODULE
@@ -129,4 +129,67 @@ def notificationFaculty_func():
     }
 
     # Return the data as JSON using Flask's jsonify
+    return jsonify(api_response_data)
+
+
+
+@notification.route("/notifications")
+@login_required
+@Check_Token
+def notifications():
+    # Get all unread notifications for the current user
+    user_notifications = MSNotification.query.filter_by(user_id=current_user.MSId, is_seen=False).all()
+
+    # Render notifications page
+    return render_template('notifications.html', notifications=user_notifications)
+
+
+@notification.route("/notifications/mark_seen/<int:notification_id>")
+@login_required
+@Check_Token
+def mark_notification_seen(notification_id):
+    notification = MSNotification.query.get(notification_id)
+    
+    if notification and notification.user_id == current_user.MSId:
+        notification.is_seen = True
+        db.session.commit()
+
+    return redirect(url_for('notification.notifications'))
+
+@notification.route('/api/purchase/notifications', methods=['GET'])
+@login_required
+@Check_Token
+def purchase_notifications():
+    # Fetch all unread notifications for the current user
+    user_notifications = MSNotification.query.filter_by(user_id=current_user.MSId, is_seen=False).all()
+
+    # Create a list to store the formatted notifications
+    formatted_notifications = []
+
+    for notification in user_notifications:
+        # Get the related product from the notification (if it exists)
+        product = MSProduct.query.get(notification.product_id) if notification.product_id else None
+
+        # Format the notification details (adjust as per your requirements)
+        formatted_notification = {
+            'id': notification.id,
+            'Notification': notification.message,  # Using 'Notification' for consistency with frontend
+            'DateTime': notification.created_at.strftime("%Y-%m-%d %H:%M:%S"),  # Format the timestamp as a string
+            'Status': "pending",  # Assuming 'Status' is pending (change based on your logic)
+            'Price': notification.purchase_item.TotalPrice if product else None,  # Fetch the price of the related product if exists
+            'Quantity': notification.purchase_item.Quantity if product else None,  # Fetch the price of the related product if exists
+            'ProductImage': product.ProductImage if product else "sample_image_url",  # Use product's image URL
+            'Type': "purchase",  # Can be dynamic depending on the notification type
+            'updated_at': notification.created_at.strftime("%Y-%m-%d %H:%M:%S")  # Optional: last update timestamp
+        }
+
+        # Append the formatted notification to the list
+        formatted_notifications.append(formatted_notification)
+
+    # Create a dictionary with the notifications (change key from 'notifications' to 'requests' for consistency)
+    api_response_data = {
+        'requests': formatted_notifications
+    }
+
+    # Return the data as JSON
     return jsonify(api_response_data)

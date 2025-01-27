@@ -1,0 +1,64 @@
+{% extends "/Client-Home-Page/base.html" %}{% block title %}Purchase Successful{% endblock %} {% block content%}
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+
+<!-- Include DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+<!-- Include DataTables Buttons CSS and JS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.3.5/css/buttons.dataTables.min.css">
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.html5.min.js"></script>
+
+<!-- Include DataTables Print Button JS -->
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.print.min.js"></script>
+
+<!-- Add Font Awesome CDN -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+
+<main id="main" class="main">
+  <div class="container text-center py-5">
+    <div class="card shadow p-4">
+      <div class="card-body">
+        <h1 class="text-success mb-3"><i class="fa fa-check-circle"></i> Purchase Successful!</h1>
+        <p class="lead">Thank you for your purchase, {{ user.FirstName }} {{ user.LastName }}!</p>
+        <p>Your order has been successfully placed.</p>
+
+       <!-- Display Order Details -->
+        <div class="mt-4">
+          <h5>Order Summary</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Product Name:</strong> {{ product.MSProduct.ProductName }}</li>
+            <li class="list-group-item"><strong>Quantity:</strong> {{ product.Quantity }}</li>
+            <li class="list-group-item"><strong>Total Amount:</strong> ₱{{ purchase.TotalAmount }}</li>
+            <li class="list-group-item">
+              <strong>Shipping:</strong> 
+              {{ purchase.shipping_type.capitalize() }}
+            </li>
+            {% if purchase.shipping_type.lower() == 'delivery' %}
+              <li class="list-group-item"><strong>Address:</strong> {{ purchase.shipping_address }}</li>
+            {% endif %}
+            <li class="list-group-item"><strong>Seller:</strong> {{ product.MSAccount.FirstName }} {{ product.MSAccount.LastName }}</li>
+          </ul>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-4">
+          <a href="/purchase" class="btn btn-primary"><i class="fa fa-list"></i> View Purchase</a>
+          <br><br>
+          <a href="/Store/{{purchase.StoreId}}" class="btn btn-secondary"><i class="fa fa-home"></i> Back to Store</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endblock %}
+
+
+      

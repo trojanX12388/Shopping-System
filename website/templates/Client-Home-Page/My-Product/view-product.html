@@ -77,24 +77,7 @@
           No ratings yet
         {% endif %}
       </p>
-
-      <!-- Quantity Input -->
-      <div class="row mb-3">
-        <div class="col-md-4 col-6">
-          <label for="quantity" class="form-label"><strong>Quantity:</strong></label>
-          <input 
-            type="number" 
-            id="quantity" 
-            name="quantity" 
-            class="form-control" 
-            min="1" 
-            max="{{ product.ProductStock }}" 
-            value="1" 
-            required 
-          >
-        </div>
-      </div>
-
+      
       <!-- Action buttons (Add to Cart and Purchase) -->
       <div class="row mb-1">
         <div class="col text-end">
@@ -110,9 +93,12 @@
       </div>
       <div class="row mb-1">
         <div class="col text-end">
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">
+          <form action="/purchase/{{product.id}}">
+
+          <button type="submit" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">
             <i class="fa fa-credit-card"></i> Purchase
           </button>
+        </form>
         </div>
       </div>
     </div>
