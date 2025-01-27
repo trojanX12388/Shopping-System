@@ -58,6 +58,78 @@
                   
                     <div class="card-body">
                      
+                        <div class="pagetitle">
+                            <h1>Revenue: ₱{{ "{:,.2f}".format(received_purchases_sum) }}</h1>
+                          </div><!-- End Page Title -->
+
+                         
+                           
+                              <h5 class="card-title">Line Chart</h5>
+                
+                          
+                              <!-- Dropdown to select between per day or per month -->
+                            <select id="timeFrameSelector" onchange="updateChart()">
+                                <option value="month">Per Month</option>
+                                <option value="week">Per Week</option>
+                            </select>
+
+                            <!-- Line Chart -->
+                            <canvas id="lineChart" style="display: block; box-sizing: border-box; height: 425px; width: 500px;" width="500" height="450"></canvas>
+
+                            <script>
+                                document.addEventListener("DOMContentLoaded", () => {
+                                    const orderCountsMonth = {{ order_counts }};  // Data for per month (from Flask)
+                                    const orderCountsWeek = {{ order_counts_week }};  // Data for per week (from Flask)
+                                    
+                                    // Initialize chart with per month data by default
+                                    const chart = new Chart(document.querySelector('#lineChart'), {
+                                        type: 'line',
+                                        data: {
+                                            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],  // Months as x-axis labels
+                                            datasets: [{
+                                                label: 'Number of Orders',
+                                                data: orderCountsMonth,  // Default to per month data
+                                                fill: false,
+                                                borderColor: 'rgb(75, 192, 192)',
+                                                tension: 0.1
+                                            }]
+                                        },
+                                        options: {
+                                            scales: {
+                                                y: {
+                                                    beginAtZero: true,
+                                                    max: Math.max(...orderCountsMonth) + 2,  // Adjust the maximum value with intervals
+                                                    ticks: {
+                                                        callback: function(value) {
+                                                            return value;  // Display raw number of orders on y-axis
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+
+                                    // Function to update chart based on the selected time frame
+                                    window.updateChart = function() {
+                                        const selectedTimeFrame = document.querySelector('#timeFrameSelector').value;
+                                        
+                                        if (selectedTimeFrame === 'month') {
+                                            chart.data.labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];  // Months
+                                            chart.data.datasets[0].data = orderCountsMonth;  // Per month data
+                                            chart.options.scales.y.max = Math.max(...orderCountsMonth) + 2;  // Adjust max value
+                                        } else if (selectedTimeFrame === 'week') {
+                                            chart.data.labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];  // Days of the week
+                                            chart.data.datasets[0].data = orderCountsWeek;  // Per week data
+                                            chart.options.scales.y.max = Math.max(...orderCountsWeek) + 2;  // Adjust max value
+                                        }
+                                        chart.update();  // Update the chart to reflect the change
+                                    }
+                                });
+                            </script>
+                            <!-- End Line Chart -->
+                
+                              <br><br>
+                      
         
                         <ul class="nav nav-tabs nav-tabs-bordered d-flex" id="borderedTabJustified" role="tablist">
                             <li class="nav-item flex-fill" role="presentation">
