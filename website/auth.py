@@ -2,6 +2,7 @@ from flask import Flask, Blueprint, abort, flash, json, make_response, redirect,
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 from dotenv import load_dotenv
+from urllib.request import urlretrieve
 from flask_login import login_user,login_required, logout_user, current_user, LoginManager
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
@@ -29,7 +30,8 @@ from .models import db
 from sqlalchemy import update
 
 # LOADING MODEL CLASSES
-from .models import MSAccount, MSLoginToken, MSUser_Log, MSStore
+from website.models import MSAccount, MSProduct, MSStore, MSRating, MSCart, MSPurchase, MSPurchaseItem,MSNotification, MSLoginToken, MSUser_Log,MSOrder,MSMessage,MSVoucher
+
 
 
 # LOAD JWT MODULE
@@ -171,11 +173,12 @@ def clientL():
                     
                     db.session.add(add_log)
                     db.session.commit()
-                    
-                     
-                    db.session.close()    
+                      
                     session['entry'] = 3
-                    return redirect(url_for('auth.clientH'))
+                    if User.Type == "Client":
+                        return redirect(url_for('auth.clientH'))
+                    else:
+                        return redirect(url_for('auth.adminH'))
 
                 else:
                     entry -= 1
@@ -243,10 +246,12 @@ def clientL():
                     
                     db.session.add(add_log)
                     db.session.commit()
-                        
-                    db.session.close()    
+                         
                     session['entry'] = 3
-                    return redirect(url_for('auth.clientH'))
+                    if User.Type == "Client":
+                        return redirect(url_for('auth.clientH'))
+                    else:
+                        return redirect(url_for('auth.adminH'))
 
                 else:
                     entry -= 1
@@ -537,3 +542,363 @@ def facultyRP():
 
 
 # -------------------------------------------------------------
+
+# calculate age in years
+from datetime import date
+ 
+def calculateAge(born):
+    today = date.today()
+    try: 
+        birthday = born.replace(year = today.year)
+ 
+    # raised when birth date is February 29
+    # and the current year is not a leap year
+    except ValueError: 
+        birthday = born.replace(year = today.year,
+                  month = born.month + 1, day = 1)
+ 
+    if birthday > today:
+        return today.year - born.year - 1
+    else:
+        return today.year - born.year
+
+@auth.route("/account", methods=['GET', 'POST'])
+@login_required
+@Check_Token
+def clientA():
+        
+    # INITIALIZING DATA FROM USER LOGGED IN ACCOUNT    
+        username = MSAccount.query.filter_by(MSId=current_user.MSId).first() 
+        
+        if username.ProfilePic == None:
+            ProfilePic=profile_default
+        else:
+            ProfilePic=username.ProfilePic
+
+        msstore_data = MSStore.query.order_by(MSStore.id.asc()).all()
+
+        if request.method == 'POST':
+
+            # UPDATE BASIC DETAILS
+            # VALUES
+            fname = request.form.get('fname')
+            lname = request.form.get('lname')
+            mname = request.form.get('mname')
+            birth_date = request.form.get('birth_date')
+            address = request.form.get('address')
+            phone = request.form.get('phone')
+            
+            u = update(MSAccount)
+            u = u.values({"FirstName": fname,
+                          "LastName": lname,
+                          "MiddleName": mname,
+                          "BirthDate": birth_date,
+                          "Address": address,
+                          "ContactNumber": phone,
+                          })
+            u = u.where(MSAccount.MSId == current_user.MSId)
+            db.session.execute(u)
+            db.session.commit()
+            db.session.close()
+            return redirect(url_for('auth.clientA')) 
+
+        return render_template("Client-Home-Page/Account/index.html", 
+                               User= username.FirstName + " " + username.LastName,
+                               user= current_user,
+                               store = msstore_data,
+                               age = str(calculateAge(date(current_user.BirthDate.year, current_user.BirthDate.month, current_user.BirthDate.day))),
+                               profile_pic=ProfilePic)
+
+
+# UPDATE PIC
+
+@auth.route("/Client-Update-Pic", methods=['POST'])
+@login_required
+def clientA_UP():
+    # INITIALIZING DATA FROM USER LOGGED IN ACCOUNT    
+        username = MSAccount.query.filter_by(MSId=current_user.MSId).first() 
+        id = username.MSId
+        
+        # UPDATE PROFILE PIC
+        
+        file =  request.form.get('base64')
+        ext = request.files.get('fileup')
+        ext = ext.filename
+        
+        # FACULTY FIS PROFILE PIC FOLDER ID
+        folder = '1RFtil8DViIv_SBObttRj0xAlHRkP9UEY'
+        
+        
+        url = """{}""".format(file)
+                
+        filename, m = urlretrieve(url)
+       
+        file_list = drive.ListFile({'q': "'%s' in parents and trashed=false"%(folder)}).GetList()
+        try:
+            for file1 in file_list:
+                if file1['title'] == str(id):
+                    file1.Delete()                
+        except:
+            pass
+        # CONFIGURE FILE FORMAT AND NAME
+        file1 = drive.CreateFile(metadata={
+            "title": ""+ str(id),
+            "parents": [{"id": folder}],
+            "mimeType": "image/png"
+            })
+        
+        # GENERATE FILE AND UPLOAD
+        file1.SetContentFile(filename)
+        file1.Upload()
+        
+        u = update(MSAccount)
+        u = u.values({"ProfilePic": '%s'%(file1['id'])})
+        u = u.where(MSAccount.MSId == current_user.MSId)
+        db.session.execute(u)
+        db.session.commit()
+        db.session.close()
+        
+        return redirect(url_for('auth.clientA')) 
+    
+    
+# CLEAR PIC
+    
+@auth.route("/Client-Clear-Pic")
+@login_required
+def clientA_C():
+    # INITIALIZING DATA FROM USER LOGGED IN ACCOUNT    
+        username = MSAccount.query.filter_by(MSId=current_user.MSId).first() 
+        id = username.MSId
+        
+        # FACULTY FIS PROFILE PIC FOLDER ID
+        folder = '1RFtil8DViIv_SBObttRj0xAlHRkP9UEY'
+       
+        # CLEAR PROFILE PIC
+        file_list = drive.ListFile({'q': "'%s' in parents and trashed=false"%(folder)}).GetList()
+        try:
+            for file1 in file_list:
+                if file1['title'] == str(id):
+                    file1.Delete()                
+        except:
+            pass
+
+        # UPDATE USER PROFILE PIC ID
+        
+        u = update(MSAccount)
+        u = u.values({"ProfilePic": profile_default})
+        u = u.where(MSAccount.MSId == current_user.MSId)
+        db.session.execute(u)
+        db.session.commit()
+        db.session.close()
+        
+        return redirect(url_for('auth.clientA')) 
+
+
+
+
+@auth.route("/Settings", methods=['GET', 'POST'])
+@login_required
+@Check_Token
+def Settings():
+    # INITIALIZING DATA FROM USER LOGGED IN ACCOUNT    
+    
+
+    
+        if request.method == 'POST':
+            from werkzeug.security import generate_password_hash
+            from werkzeug.security import check_password_hash
+         
+            # VALUES
+           
+            password = request.form.get('password')
+            newpassword = request.form.get('newpassword')
+            renewpassword = request.form.get('renewpassword')
+            
+            if check_password_hash(current_user.Password, password):
+
+                if newpassword == renewpassword:
+                    Password=generate_password_hash(newpassword)
+                    
+                    u = update(MSAccount)
+                    u = u.values({"Password": Password})
+                    
+                    u = u.where(MSAccount.MSId == current_user.MSId)
+                    db.session.execute(u)
+                    db.session.commit()
+                    db.session.close()
+                    
+                    flash('Password successfully updated!', category='success')
+                    return redirect(url_for('auth.clientA'))
+                 
+                else:
+                    flash('Invalid input! Password does not match...', category='error')
+                    return redirect(url_for('auth.clientA')) 
+            else:
+                flash('Invalid input! Password does not match...', category='error')
+                return redirect(url_for('auth.clientA')) 
+                                
+        return redirect(url_for('auth.clientA')) 
+
+
+
+
+# ____________________________ ADMIN ROUTE ______________________________
+
+@auth.route("/add/store",  methods=['GET', 'POST'])
+@login_required
+@Check_Token
+def admin_add_store():
+    # Handle POST request for updating products
+    if request.method == 'POST':
+        # VALUES
+        name = request.form.get('name')
+        # Get base64 image and file upload
+        file = request.form.get('base64')
+        ext = request.files.get('fileup')
+        
+        
+        # STORE IMAGE FOLDER ID
+        folder = '1GQUptoIKVP8zRahj5mF86Yc76QQJ3Cne'
+        
+        if ext:  # Only process image if a new file is provided
+            ext = ext.filename
+            
+            url = """data:image/png;base64,{}""".format(file)
+            filename, m = urlretrieve(url)
+
+            # DELETE EXISTING IMAGE WITH SAME TITLE IN THE FOLDER
+            file_list = drive.ListFile({'q': "'%s' in parents and trashed=false" % folder}).GetList()
+            try:
+                for file1 in file_list:
+                    if file1['title'] == str(name):
+                        file1.Delete()
+            except Exception as e:
+                print(f"Error deleting file: {e}")
+            
+            # CONFIGURE FILE FORMAT AND NAME
+            file1 = drive.CreateFile(metadata={
+                "title": str(name),
+                "parents": [{"id": folder}],
+                "mimeType": "image/png"
+            })
+            
+            # GENERATE FILE AND UPLOAD
+            file1.SetContentFile(filename)
+            file1.Upload()
+            
+
+        
+            add_record = MSStore(StoreName=name,
+                                Image='%s'%(file1['id']))
+            
+            db.session.add(add_record)
+            db.session.commit()
+            db.session.close()
+        
+        # Redirect back to the products page
+        return redirect(url_for('auth.clientH'))
+
+          
+@auth.route("/delete/store/<int:id>", methods=['GET', 'POST'])
+@Check_Token
+@login_required
+def admin_del_store(id):
+    storeid = id
+
+    # Find the store in the database
+    data = MSStore.query.filter_by(id=storeid).first()
+
+    if data:
+        id_str = data.StoreName
+
+        # Store image folder ID (Google Drive deletion code remains the same)
+        folder = '1GQUptoIKVP8zRahj5mF86Yc76QQJ3Cne'
+
+        file_list = drive.ListFile({'q': f"'{folder}' in parents and trashed=false"}).GetList()
+        try:
+            for file1 in file_list:
+                if file1['title'] == str(id_str):
+                    file1.Delete()
+        except:
+            pass
+
+        # Start a no_autoflush block to manually manage deletions
+        with db.session.no_autoflush:
+            # Delete related MSCart entries that reference the MSProduct
+            MSCart.query.filter(MSCart.ProductId == data.id).delete()
+
+            # Delete related MSProduct entries
+            MSProduct.query.filter_by(StoreId=data.id).delete()
+
+            # Delete related MSPurchase entries
+            MSPurchase.query.filter_by(StoreId=data.id).delete()
+
+            # Optionally delete other related entities (e.g., MSNotification, MSPurchaseItem, etc.)
+            MSPurchaseItem.query.filter_by(ProductId=data.id).delete()
+            MSNotification.query.filter(MSNotification.purchase_item_id.in_([item.id for item in MSPurchaseItem.query.filter_by(ProductId=data.id)])).delete(synchronize_session=False)
+
+        # Delete the store
+        db.session.delete(data)
+
+        # Commit changes
+        db.session.commit()
+
+        db.session.close()
+        return redirect(url_for('auth.clientH'))
+
+    flash('Store not found.', 'danger')
+    return redirect(url_for('auth.clientH'))
+
+@auth.route("/admin-dashboard")
+@login_required
+@Check_Token
+def adminH():
+    # INITIALIZING DATA FROM USER LOGGED IN ACCOUNT    
+    username = MSAccount.query.filter_by(MSId=current_user.MSId).first() 
+    if username.ProfilePic is None:
+        ProfilePic = profile_default
+    else:
+        ProfilePic = username.ProfilePic
+
+    # Orders: Get the count of all purchases (or orders)
+    all_orders = MSPurchase.query.filter(MSPurchase.MSId == current_user.MSId).all()
+
+    # Users: Get the count of users with 'Client' type
+    all_clients = MSAccount.query.filter_by(Type='Client').all()
+
+    # Revenue: Calculate total revenue (sum of purchase item prices or amounts)
+    revenue = db.session.query(db.func.sum(MSPurchaseItem.TotalPrice)).filter(MSPurchaseItem.PurchaseId == MSPurchase.id).all()[0][0]
+
+    # Calculate other data like pending, packing, etc. (as in your current code)
+    pending_purchases = MSPurchaseItem.query.join(MSPurchase, MSPurchaseItem.PurchaseId == MSPurchase.id) \
+        .join(MSProduct, MSPurchaseItem.ProductId == MSProduct.id) \
+        .join(MSAccount, MSPurchase.MSId == MSAccount.MSId) \
+        .filter(MSPurchase.MSId == current_user.MSId) \
+        .filter(MSPurchase.status == 'pending') \
+        .all()
+    
+
+    # Get the total number of products in the system
+    total_products = MSProduct.query.count()
+
+    # Get the most viewed product (assuming you have a 'views' column in MSProduct table)
+    most_viewed_products = MSProduct.query.order_by(MSProduct.ProductViews.desc()).limit(3).all()
+
+    # Get top contributors (assuming you already have the query for this)
+    top_contributors_data = db.session.query(
+        MSAccount.FirstName, MSAccount.LastName, MSAccount.ProfilePic, db.func.count(MSProduct.id).label('product_count')
+    ).join(MSProduct, MSAccount.MSId == MSProduct.MSId).group_by(MSAccount.MSId).order_by(db.func.count(MSProduct.id).desc()).limit(3).all()
+
+
+    # Pass data to template
+    return render_template("Client-Home-Page/Dashboard/index.html", 
+                           User=username.FirstName + " " + username.LastName,
+                           user=current_user,
+                           profile_pic=ProfilePic,
+                           total_orders=len(all_orders),
+                           total_clients=len(all_clients),
+                           pending_purchases=pending_purchases,
+                           top_contributors=top_contributors_data,
+                           total_products=total_products,
+                           most_viewed_products=most_viewed_products,
+                           revenue=revenue)
