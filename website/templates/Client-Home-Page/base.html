@@ -466,123 +466,78 @@
     }
   }
   
-  // Function to request notification permission
-function requestNotificationPermission() {
-  if (Notification.permission === "default") {
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        console.log("Notification permission granted.");
-      } else {
-        console.log("Notification permission denied.");
-      }
-    });
-  }
-}
-
-// Function to display browser notifications
-function displayBrowserNotification(title, message, icon) {
-  if (Notification.permission === "granted") {
-    new Notification(title, {
-      body: message,
-      icon: icon,
-    });
-  }
-}
-
-// Function to fetch and display purchase notifications and update sold items count
-function fetchAndDisplayPurchaseNotifications() {
-  $.ajax({
-    url: "/api/purchase/notifications",
-    type: "GET",
-    dataType: "json",
-    success: function (data) {
-      var pendingRequests = data.requests.filter(function (request) {
-        return (
-          request.Status.toLowerCase() === "pending" ||
-          request.Status.toLowerCase() === "delivering" ||
-          request.Status.toLowerCase() === "packing" ||
-          request.Type.toLowerCase() === "delivering"
-        );
-      });
-
-      // Update the sold items count based on filtered pendingRequests
-      $("#sold-item-count").text(pendingRequests.length);
-
-      var newTitle = "{% block title %}EntrApp{% endblock %}";
-
-      if (pendingRequests.length > 0) {
-        pendingRequests.sort(function (a, b) {
-          return new Date(b.DateTime) - new Date(a.DateTime);
+  // Function to fetch and display purchase notifications and update sold items count
+  function fetchAndDisplayPurchaseNotifications() {
+    $.ajax({
+      url: '/api/purchase/notifications',
+      type: 'GET',
+      dataType: 'json',
+      success: function (data) {
+        var pendingRequests = data.requests.filter(function (request) {
+          // Check if any of the conditions match 'packing' or 'delivered' for Status or Type
+          return (
+            request.Status.toLowerCase() === 'pending' || 
+            request.Status.toLowerCase() === 'delivering' || 
+            request.Status.toLowerCase() === 'packing' || 
+            request.Type.toLowerCase() === 'delivering'
+          );
         });
 
-        document.getElementById("notification-count-title").innerText =
-          "(" + pendingRequests.length + ")" + " " + newTitle;
+        // Update the sold items count based on filtered pendingRequests
+        $('#sold-item-count').text(pendingRequests.length);  // Update the sold items count
 
-        $("#purchase-notification-count").text(pendingRequests.length);
-        $("#purchase-notification-count-text").text(pendingRequests.length);
+        var newTitle = "{% block title %}EntrApp{% endblock %}";
 
-        $("#purchase-notifications").empty();
+        if (pendingRequests.length > 0) {
+          // Sort pending notifications by DateTime in descending order
+          pendingRequests.sort(function (a, b) {
+            return new Date(b.DateTime) - new Date(a.DateTime);
+          });
 
-        for (let index = 0; index < Math.min(3, pendingRequests.length); index++) {
-          var notification = pendingRequests[index];
+          document.getElementById("notification-count-title").innerText = '(' + pendingRequests.length + ')' + ' ' + newTitle;
 
-          var notificationItem = $('<li class="purchase-notification-item">');
+          // Update the notification count
+          $('#purchase-notification-count').text(pendingRequests.length);
+          $('#purchase-notification-count-text').text(pendingRequests.length);
 
-          var ProfileIcon = $(
-            '<img src="https://lh3.googleusercontent.com/d/' +
-              notification.ProductImage +
-              '" alt="Profile" class="rounded-circle" style="width:50px;height:50px;margin-right: 15px;"></img>'
-          );
-          var notificationContent = $("<div>");
-          var notificationTitle = $("<h6 class='purchase-title'>").text(
-            notification.Notification
-          );
-          var identifierInfo =
-            "₱ " +
-            notification.Price +
-            " (" +
-            notification.Quantity +
-            ")" +
-            " : " +
-            notification.Status;
-          var notificationDescription = identifierInfo;
+          // Clear existing pending notifications without affecting styles
+          $('#purchase-notifications').empty();  // This will remove all child elements but leave the styles intact
 
-          notificationContent.append(notificationTitle, notificationDescription);
-          notificationItem.append(ProfileIcon, notificationContent);
-          $("#purchase-notifications").append(notificationItem);
+          // Loop through the latest 4 pending notifications and append them to the HTML
+          for (let index = 0; index < Math.min(3, pendingRequests.length); index++) {
+            var notification = pendingRequests[index];
+
+            var notificationItem = $('<li class="purchase-notification-item">');
+
+            var ProfileIcon = $('<img src="https://lh3.googleusercontent.com/d/'+notification.ProductImage+'" alt="Profile" class="rounded-circle" style="width:50px;height:50px;margin-right: 15px;"></img>');
+            var notificationContent = $('<div>');
+            var notificationTitle = $('<h6 class="purchase-title">').text(notification.Notification);
+            var identifierInfo = '₱ ' + notification.Price + ' (' + notification.Quantity + ')' + ' : ' + notification.Status ;
+            var notificationDescription = identifierInfo;
+
+            notificationContent.append(notificationTitle, notificationDescription);
+            notificationItem.append(ProfileIcon, notificationContent);
+            $('#purchase-notifications').append(notificationItem);  // Append new notification
+          }
+
+        } else {
+          // Handle the case when there are no pending purchase notifications
+          document.getElementById("notification-count-title").innerText = newTitle;
+          $('#purchase-notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">No notification.</h6>');
         }
-
-        // Trigger a browser notification for the latest pending request
-        var latestRequest = pendingRequests[0];
-        displayBrowserNotification(
-          "New Purchase Notification",
-          `${latestRequest.Notification} | ₱${latestRequest.Price} (${latestRequest.Quantity})`,
-          `https://lh3.googleusercontent.com/d/${latestRequest.ProductImage}`
-        );
-      } else {
+      },
+      error: function () {
         document.getElementById("notification-count-title").innerText = newTitle;
-        $("#purchase-notifications").html(
-          '<h6 style="margin-right: 15px;margin-left: 15px;">No notification.</h6>'
-        );
+        $('#purchase-notifications').html('<h6 style="margin-right: 15px;margin-left: 15px;">Error fetching notifications.</h6>');
       }
-    },
-    error: function () {
-      document.getElementById("notification-count-title").innerText = newTitle;
-      $("#purchase-notifications").html(
-        '<h6 style="margin-right: 15px;margin-left: 15px;">Error fetching notifications.</h6>'
-      );
-    },
-  });
-}
+    });
+  }
 
-// Request permission for browser notifications when the page loads
-requestNotificationPermission();
+  // Initial fetch and display
+  fetchAndDisplayPurchaseNotifications();
 
-// Initial fetch and display
-fetchAndDisplayPurchaseNotifications();
-
-// Reload pending notifications every minute
-setInterval(fetchAndDisplayPurchaseNotifications, 60000);
+  // Reload pending notifications every minute
+  setInterval(fetchAndDisplayPurchaseNotifications, 60000);
 </script>
 
   <!-- ======= Footer ======= -->

@@ -183,6 +183,7 @@ class MSRating(db.Model):
     Rate3 = db.Column(db.Numeric)
     Rate4 = db.Column(db.Numeric)
     Rate5 = db.Column(db.Numeric)
+    Review = db.Column(db.String(255))
     is_delete = db.Column(db.Boolean, default=False) 
 
     MSProduct = db.relationship('MSProduct', back_populates='MSRating')
@@ -198,6 +199,7 @@ class MSRating(db.Model):
             'Rate3': self.Rate3,
             'Rate4': self.Rate4,
             'Rate5': self.Rate5,
+            'Review': self.Review,
             'MSProduct': self.MSProduct,
             'MSAccount': self.MSAccount,
             'is_delete': self.is_delete

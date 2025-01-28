@@ -383,3 +383,42 @@ def C_H():
         purchased_items=purchased_items,
     )
         
+@purchase.route('/cart/invoice/<int:id>')
+@login_required
+@Check_Token
+def C_I(id):
+    # Fetch user details
+    username = MSAccount.query.filter_by(MSId=current_user.MSId).first()
+    if username.ProfilePic is None:
+        ProfilePic = profile_default
+    else:
+        ProfilePic = username.ProfilePic
+
+    # Fetch the purchase invoice for the given product ID, including store information
+    purchase_invoice = MSPurchaseItem.query.join(MSPurchase, MSPurchaseItem.PurchaseId == MSPurchase.id) \
+        .join(MSProduct, MSPurchaseItem.ProductId == MSProduct.id) \
+        .join(MSAccount, MSPurchase.MSId == MSAccount.MSId) \
+        .join(MSStore, MSProduct.StoreId == MSStore.id) \
+        .filter(MSPurchase.MSId == current_user.MSId) \
+        .filter(MSPurchaseItem.id == id) \
+        .all()
+
+    # Calculate total amount
+    total_amount = sum(item.TotalPrice for item in purchase_invoice)
+
+    for purchase_item in purchase_invoice:
+        purchase_date = purchase_item.MSPurchase.PurchaseDate
+        # Format the date into MM/DD/YYYY 12-hour format
+        formatted_purchase_date = purchase_date.strftime('%m/%d/%Y %I:%M %p')
+
+    return render_template('Client-Home-Page/Invoice/index.html',
+                        User=username.FirstName + " " + username.LastName,
+                        PDM="show",
+                        user=current_user,
+                        purchase_date=formatted_purchase_date,
+                        ProfilePic=ProfilePic,
+                        purchase_invoice=purchase_invoice,
+                        id = id,
+                        total_amount=total_amount)
+
+# ------------------------------- END OF PDM PERSONAL DATA REPORTS  ---------------------------- 

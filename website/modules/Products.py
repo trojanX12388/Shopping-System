@@ -329,88 +329,73 @@ def ProductsDel():
 @login_required
 @Check_Token
 def ProductsV(id):
-        
-
     # INITIALIZING DATA FROM USER LOGGED IN ACCOUNT    
-        username = MSAccount.query.filter_by(MSId=current_user.MSId).first() 
-        
-        product = MSProduct.query.filter_by(id=id).first() 
-        msstore_products = MSProduct.query.filter_by(id=id).order_by(MSProduct.id.asc()).all()
+    username = MSAccount.query.filter_by(MSId=current_user.MSId).first()
+    product = MSProduct.query.filter_by(id=id).first()
+    msstore_products = MSProduct.query.filter_by(id=id).order_by(MSProduct.id.asc()).all()
 
-        # Assuming msstore_products contains products fetched from the database
-        for product in msstore_products:
-            # Initialize average_rating to 0 by default
-            average_rating = 0
-                
-            # Check if there are any ratings for the product in the MSRating table
-            ratings_count = db.session.query(func.count(MSRating.id)).filter(MSRating.ProductId == product.id).scalar()
-
-            if ratings_count > 0:
-                # Calculate the average rating for the product only if there are ratings
-                average_rating = db.session.query(func.avg(MSRating.Rate1)).filter(MSRating.ProductId == product.id).scalar()
-                # Round to 1 decimal place
-                average_rating = round(average_rating, 1) if average_rating is not None else 0
-
-            # Add the average rating to the product object (or to the dictionary you're passing to the template)
-            product.average_rating = average_rating
-
-        if username.ProfilePic == None:
-            ProfilePic=profile_default
-        else:
-            ProfilePic=username.ProfilePic
-        
-        # Perform the update using session.query instead of update()
-        try:
-            # Retrieve the store record by ID
-            store_to_update = MSProduct.query.get(id)
+    # Assuming msstore_products contains products fetched from the database
+    for product in msstore_products:
+        # Initialize average_rating to 0 by default
+        average_rating = 0
             
-            if store_to_update:
-                # Check if ProductViews is None
-                if store_to_update.ProductViews is None:
-                    store_to_update.ProductViews = 1  # Initialize to 1 if null
-                else:
-                    store_to_update.ProductViews += 1  # Increment by 1 if not null
-                
-                # Commit the transaction
-                db.session.commit()
+        # Check if there are any ratings for the product in the MSRating table
+        ratings_count = db.session.query(func.count(MSRating.id)).filter(
+            MSRating.ProductId == product.id,
+            MSRating.Rate1.isnot(None)  # Ensure Rate1 is not NULL
+        ).scalar()
+
+        if ratings_count > 0:
+            # Calculate the average rating for the product only if there are ratings
+            average_rating = db.session.query(func.avg(MSRating.Rate1)).filter(
+                MSRating.ProductId == product.id,
+                MSRating.Rate1.isnot(None)
+            ).scalar()
+            # Round to 1 decimal place
+            average_rating = round(average_rating, 1) if average_rating is not None else 0
+
+        # Add the average rating to the product object
+        product.average_rating = average_rating
+
+    ProfilePic = username.ProfilePic if username.ProfilePic else profile_default
+
+    # Perform the update using session.query instead of update()
+    try:
+        store_to_update = MSProduct.query.get(id)
+        if store_to_update:
+            if store_to_update.ProductViews is None or store_to_update.ProductViews <= 0:
+                store_to_update.ProductViews = 1  # Initialize to 1 if null or invalid
             else:
-                return "Store with the given ID not found."
-        except Exception as e:
-            db.session.rollback()
-            return str(e)
-
-            # UPDATE 
-        if request.method == 'POST':
-         
-            # VALUES
-           
-            name = request.form.get('name')
-            description = request.form.get('description')
-            quantity = request.form.get('quantity')
-            price = request.form.get('price')
-            store = request.form.get('store')
-            id = request.form.get('id')
-            StoreId = MSStore.query.filter_by(id=store).first() 
-
-            u = update(MSProduct)
-            u = u.values({"ProductName": name,
-                          "ProductDescription": description,
-                          "ProductStock": quantity,
-                          "ProductPrice": price,
-                          "StoreId": StoreId.id,
-                          })
-            u = u.where(MSProduct.id == id)
-            db.session.execute(u)
+                store_to_update.ProductViews += 1  # Increment by 1
             db.session.commit()
-            db.session.close()
-            return redirect(url_for('products.ProductsM')) 
-                      
-        return render_template("Client-Home-Page/My-Product/view-product.html", 
-                               User= username.FirstName + " " + username.LastName,
-                               user= current_user,
-                               product=product,
-                               average_rating = average_rating,
-                               profile_pic=ProfilePic)
+        else:
+            return "Store with the given ID not found."
+    except Exception as e:
+        db.session.rollback()
+        return str(e)
+
+    # Fetch Reviews for the product
+    reviews = db.session.query(
+        MSRating.Rate1, 
+        MSRating.Review, 
+        MSAccount.FirstName, 
+        MSAccount.LastName, 
+        MSAccount.ProfilePic
+    ).join(MSAccount, MSAccount.MSId == MSRating.MSId) \
+     .filter(
+         MSRating.ProductId == id,
+         MSRating.Rate1.isnot(None)  # Ensure Rate1 is not NULL
+     ).order_by(MSRating.id.desc()).all()
+
+    return render_template(
+        "Client-Home-Page/My-Product/view-product.html", 
+        User=username.FirstName + " " + username.LastName,
+        user=current_user,
+        product=product,
+        average_rating=average_rating,
+        profile_pic=ProfilePic,
+        reviews=reviews  # Pass reviews to the template
+    )
 
 
 
@@ -483,24 +468,31 @@ def ProductsRemoveFromCart():
 @products.route("/products/rate-product", methods=['POST'])
 @login_required
 def rate_product():
-    # Get product ID and rating from the form
+    # Get product ID, rating, and review from the form
     prid = request.form.get('prid')
     rating = request.form.get('rating')
+    review = request.form.get('review')
 
     # Check if the product and user exist
     existing_rating = MSRating.query.filter_by(ProductId=prid, MSId=current_user.MSId).first()
 
     if existing_rating:
-        # Update the existing rating
+        # Update the existing rating and review
         existing_rating.Rate1 = rating
+        existing_rating.Review = review
     else:
-        # Add a new rating record
+        # Add a new rating record with the review
         new_rating = MSRating(
             ProductId=prid,
             MSId=current_user.MSId,
-            Rate1=rating
+            Rate1=rating,
+            Review=review
         )
         db.session.add(new_rating)
 
+    # Commit changes to the database
     db.session.commit()
     return redirect(url_for('purchase.C_H'))
+
+
+
