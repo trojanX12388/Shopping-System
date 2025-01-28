@@ -347,12 +347,11 @@
                                         <td>{{ item.MSPurchase.shipping_type.capitalize() }}</td>
                                         <td>{{ item.MSProduct.MSAccount.FirstName }} {{ item.MSProduct.MSAccount.LastName }}</td>
                                         <td>
-                                            <!-- Print Button -->
-                                            <button type="button" 
-                                            class="btn btn-outline-primary rounded-pill" 
-                                            onclick="downloadPDF({{ item.id }})">
-                                            <i class="bi bi-printer"></i> Print Receipt
-                                            </button>
+                                           <!-- Print Button -->
+                                          <a href="/cart/invoice/{{ item.id }}" 
+                                          class="btn btn-outline-primary rounded-pill">
+                                          <i class="bi bi-printer"></i> Print Receipt
+                                          </a>
 
                                         
                                              <!-- Rate Product Button -->
