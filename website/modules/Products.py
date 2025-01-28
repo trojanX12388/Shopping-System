@@ -310,6 +310,9 @@ def ProductsDel():
             # Delete related MSPurchaseItem rows
             MSPurchaseItem.query.filter_by(ProductId=data.id).delete()
 
+            # Delete related MSCart rows
+            MSCart.query.filter_by(ProductId=data.id).delete()
+
             # Delete the product
             db.session.delete(data)
 
@@ -321,6 +324,7 @@ def ProductsDel():
 
     flash('Product not found.', 'danger')
     return redirect(url_for('products.ProductsM'))
+
      
 
         

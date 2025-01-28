@@ -378,7 +378,7 @@ def clientH():
         else:
             ProfilePic=username.ProfilePic
 
-        msstore_data = MSStore.query.order_by(MSStore.id.asc()).all()
+        msstore_data = MSStore.query.order_by(MSStore.Visits.desc()).all()
      
         return render_template("Client-Home-Page/base.html", 
                                User= username.FirstName + " " + username.LastName,
