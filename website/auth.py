@@ -454,13 +454,15 @@ def clientUsers():
             ProfilePic=username.ProfilePic
 
         users_data = MSAccount.query.order_by(MSAccount.MSId.desc()).all()
-     
+        total_users = MSAccount.query.count()
+
         return render_template("Client-Home-Page/Users/index.html", 
                                User= username.FirstName + " " + username.LastName,
                                user= current_user,
                                users_data = users_data,
                                most_recommended_products=most_recommended_products,
                                recom_average_rating = recom_average_rating,
+                               total_users = total_users,
                                profile_pic=ProfilePic)
 
 

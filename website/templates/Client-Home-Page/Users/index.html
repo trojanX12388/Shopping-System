@@ -51,7 +51,9 @@
         <div class="card-body p-2 text-start">
           <h6 class="card-title text-center">{{ user.FirstName }} {{ user.LastName }}</h6>
           <p class="text-muted small mb-1 text-center">Email: {{ user.Email }}</p>
-          <p class="text-muted small mb-1 text-center">Contact: {{ user.ContactNumber }}</p>
+          <p class="text-muted small mb-1 text-center">
+            Contact: {{ '*********' ~ user.ContactNumber[-2:] }}
+        </p>
         </div>
       </div>
     </div>
