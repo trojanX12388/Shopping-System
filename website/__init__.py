@@ -38,6 +38,8 @@ def create_app():
     app.config['MAIL_DEFAULT_SENDER'] = 'PUPQC FIS'               
     app.config['MAIL_USE_TLS']=False
     app.config['MAIL_USE_SSL']=True
+
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB
     
     # Enable CORS for all routes
     CORS(app, origins=["*"],
