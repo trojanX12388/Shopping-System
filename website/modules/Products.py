@@ -30,7 +30,7 @@ from wtforms.validators import DataRequired, Email
 
 # DATABASE CONNECTION
 from website.models import db
-from sqlalchemy import update
+from sqlalchemy import update, desc
 
 # LOADING MODEL CLASSES
 from website.models import MSAccount, MSProduct, MSStore, MSRating, MSCart, MSPurchaseItem, MSNotification
@@ -390,7 +390,31 @@ def ProductsV(id):
          MSRating.ProductId == id,
          MSRating.Rate1.isnot(None)  # Ensure Rate1 is not NULL
      ).order_by(MSRating.id.desc()).all()
+    
+    most_recommended_products = (
+                        MSProduct.query
+                        .join(MSRating, MSProduct.id == MSRating.ProductId)
+                        .order_by(desc(MSRating.Rate1), desc(MSProduct.ProductViews))
+                        .limit(10)
+                        .all()
+                    )
+        
+    # Assuming msstore_products contains products fetched from the database
+    for recommend in most_recommended_products:
+        # Initialize average_rating to 0 by default
+        recom_average_rating = 0
+                
+        # Check if there are any ratings for the product in the MSRating table
+        ratings_count = db.session.query(func.count(MSRating.id)).filter(MSRating.ProductId == recommend.id).scalar()
 
+        if ratings_count > 0:
+            # Calculate the average rating for the product only if there are ratings
+            recom_average_rating = db.session.query(func.avg(MSRating.Rate1)).filter(MSRating.ProductId == recommend.id).scalar()
+            # Round to 1 decimal place
+            recom_average_rating = round(recom_average_rating, 1) if recom_average_rating is not None else 0
+
+        # Add the average rating to the product object (or to the dictionary you're passing to the template)
+        recommend.recom_average_rating = recom_average_rating
     return render_template(
         "Client-Home-Page/My-Product/view-product.html", 
         User=username.FirstName + " " + username.LastName,
@@ -398,6 +422,8 @@ def ProductsV(id):
         product=product,
         average_rating=average_rating,
         profile_pic=ProfilePic,
+        most_recommended_products=most_recommended_products,
+        recom_average_rating = recom_average_rating,
         reviews=reviews  # Pass reviews to the template
     )
 

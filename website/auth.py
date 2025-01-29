@@ -27,7 +27,7 @@ from wtforms.validators import DataRequired, Email
 
 # DATABASE CONNECTION
 from .models import db
-from sqlalchemy import update
+from sqlalchemy import update, desc
 
 # LOADING MODEL CLASSES
 from website.models import MSAccount, MSProduct, MSStore, MSRating, MSCart, MSPurchase, MSPurchaseItem,MSNotification, MSLoginToken, MSUser_Log,MSOrder,MSMessage,MSVoucher
@@ -372,6 +372,31 @@ def clientH():
         
     # INITIALIZING DATA FROM USER LOGGED IN ACCOUNT    
         username = MSAccount.query.filter_by(MSId=current_user.MSId).first() 
+        # Get the most viewed product (assuming you have a 'views' column in MSProduct table)
+        most_recommended_products = (
+                        MSProduct.query
+                        .join(MSRating, MSProduct.id == MSRating.ProductId)
+                        .order_by(desc(MSRating.Rate1), desc(MSProduct.ProductViews))
+                        .limit(10)
+                        .all()
+                    )
+        
+        # Assuming msstore_products contains products fetched from the database
+        for recommend in most_recommended_products:
+            # Initialize average_rating to 0 by default
+            recom_average_rating = 0
+                
+            # Check if there are any ratings for the product in the MSRating table
+            ratings_count = db.session.query(func.count(MSRating.id)).filter(MSRating.ProductId == recommend.id).scalar()
+
+            if ratings_count > 0:
+                # Calculate the average rating for the product only if there are ratings
+                recom_average_rating = db.session.query(func.avg(MSRating.Rate1)).filter(MSRating.ProductId == recommend.id).scalar()
+                # Round to 1 decimal place
+                recom_average_rating = round(recom_average_rating, 1) if recom_average_rating is not None else 0
+
+            # Add the average rating to the product object (or to the dictionary you're passing to the template)
+            recommend.recom_average_rating = recom_average_rating
         
         if username.ProfilePic == None:
             ProfilePic=profile_default
@@ -384,6 +409,8 @@ def clientH():
                                User= username.FirstName + " " + username.LastName,
                                user= current_user,
                                store = msstore_data,
+                               most_recommended_products=most_recommended_products,
+                               recom_average_rating = recom_average_rating,
                                profile_pic=ProfilePic)
 
 
@@ -807,13 +834,54 @@ def admin_del_store(id):
 
     # Find the store in the database
     data = MSStore.query.filter_by(id=storeid).first()
-
     if data:
         id_str = data.StoreName
 
         # Store image folder ID (Google Drive deletion code remains the same)
         folder = '1GQUptoIKVP8zRahj5mF86Yc76QQJ3Cne'
 
+        # Use a no_autoflush block to avoid premature flush
+        with db.session.no_autoflush:
+            # Step 1: Get all product IDs for the store
+            product_ids = db.session.query(MSProduct.id).filter(MSProduct.StoreId == data.id).all()
+            product_ids = [product.id for product in product_ids]
+
+            # Step 2: Get all purchase IDs that reference the store
+            purchase_ids = db.session.query(MSPurchase.id).filter(MSPurchase.StoreId == data.id).all()
+            purchase_ids = [purchase.id for purchase in purchase_ids]
+
+            # Step 3: Get all MSPurchaseItem IDs related to those purchases
+            purchase_items = db.session.query(MSPurchaseItem.id).filter(MSPurchaseItem.PurchaseId.in_(purchase_ids)).all()
+            purchase_item_ids = [item.id for item in purchase_items]
+
+            # Step 4: Delete related MSNotification entries (delete notifications referencing MSPurchaseItem)
+            MSNotification.query.filter(MSNotification.purchase_item_id.in_(purchase_item_ids)).delete(synchronize_session=False)
+
+            # Step 5: Delete related MSPurchaseItem entries for the purchases
+            MSPurchaseItem.query.filter(MSPurchaseItem.PurchaseId.in_(purchase_ids)).delete(synchronize_session=False)
+
+            # Step 6: Delete related MSCart entries for the products
+            MSCart.query.filter(MSCart.ProductId.in_(product_ids)).delete(synchronize_session=False)
+
+            # Step 7: Delete related MSRating entries for the products
+            MSRating.query.filter(MSRating.ProductId.in_(product_ids)).delete(synchronize_session=False)
+
+            # Step 8: Delete all purchases for the store (after deleting purchase items)
+            MSPurchase.query.filter(MSPurchase.StoreId == data.id).delete(synchronize_session=False)
+
+            # Step 9: Delete the products for the store (after deleting related data)
+            MSProduct.query.filter(MSProduct.StoreId == data.id).delete(synchronize_session=False)
+
+        # Step 10: Delete the store itself (after all dependent records are removed)
+        db.session.delete(data)
+
+        # Step 11: Commit the changes to apply the deletions
+        db.session.commit()
+
+        # Step 12: Close the session
+        db.session.close()
+
+        # Google Drive deletion logic
         file_list = drive.ListFile({'q': f"'{folder}' in parents and trashed=false"}).GetList()
         try:
             for file1 in file_list:
@@ -821,33 +889,12 @@ def admin_del_store(id):
                     file1.Delete()
         except:
             pass
-
-        # Start a no_autoflush block to manually manage deletions
-        with db.session.no_autoflush:
-            # Delete related MSCart entries that reference the MSProduct
-            MSCart.query.filter(MSCart.ProductId == data.id).delete()
-
-            # Delete related MSProduct entries
-            MSProduct.query.filter_by(StoreId=data.id).delete()
-
-            # Delete related MSPurchase entries
-            MSPurchase.query.filter_by(StoreId=data.id).delete()
-
-            # Optionally delete other related entities (e.g., MSNotification, MSPurchaseItem, etc.)
-            MSPurchaseItem.query.filter_by(ProductId=data.id).delete()
-            MSNotification.query.filter(MSNotification.purchase_item_id.in_([item.id for item in MSPurchaseItem.query.filter_by(ProductId=data.id)])).delete(synchronize_session=False)
-
-        # Delete the store
-        db.session.delete(data)
-
-        # Commit changes
-        db.session.commit()
-
-        db.session.close()
+        
         return redirect(url_for('auth.clientH'))
 
     flash('Store not found.', 'danger')
     return redirect(url_for('auth.clientH'))
+
 
 @auth.route("/admin-dashboard")
 @login_required
@@ -882,7 +929,7 @@ def adminH():
     total_products = MSProduct.query.count()
 
     # Get the most viewed product (assuming you have a 'views' column in MSProduct table)
-    most_viewed_products = MSProduct.query.order_by(MSProduct.ProductViews.desc()).limit(3).all()
+    most_viewed_products = MSProduct.query.order_by(MSProduct.ProductViews.desc()).limit(10).all()
 
     # Get top contributors (assuming you already have the query for this)
     top_contributors_data = db.session.query(

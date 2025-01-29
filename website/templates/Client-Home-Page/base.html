@@ -325,7 +325,7 @@
               <input type="file" value="" name="fileup" id="fileup" accept=".png,.jpg,.jpeg,.bmp" hidden required>
               <input type="text" id="base64" name="base64" hidden required>
             </div>
-
+<br>
             <button type="submit" class="btn btn-primary">Add Store</button>
           </form>
         </div>
@@ -336,75 +336,111 @@
   <section class="section dashboard">
     <div class="container">
       <div class="row gy-4"> <!-- Bootstrap row with spacing between items -->
-  
-        {% for data in store %}
-          {% if data.id != none %}
-        <!-- Add Store Button -->
-          <div class="col-lg-4 col-md-6 col-sm-12"> <!-- Adjust grid size -->
-            <!--<div style="position: relative; top:20px; z-index: 200;">
-              <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#delStoreModal">
-                Remove Store
-              </button> 
-            </div>-->
-            <a href="/Store/{{data.id}}">
-              <div class="card h-100"> <!-- Full height for equal height cards -->
-               
-                <div class="card-body pb-0 text-center"> <!-- Centered content -->
-                  <h5 class="card-title">{{ data.StoreName }}</h5>
-                  <img src="https://lh3.googleusercontent.com/d/{{ data.Image }}" 
-                       alt="Product Image" 
-                       class="img-fluid rounded" 
-                       style="max-width: 250px; height: auto;">
+      
+        {% if store %}
+          {% for data in store %}
+            {% if data.id is not none %}
+              <!-- Add Store Button -->
+              <div class="col-lg-4 col-md-6 col-sm-12"> <!-- Adjust grid size -->
+                {% if current_user.Type == "Admin" %}
+                <div style="position: relative; top:20px; z-index: 200;">
+                  <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#delStoreModal{{ data.id }}">
+                    Remove Store
+                  </button> 
+                </div>
+                {% endif %}
                 
-                </div>
-          
-                <!-- Visits Info Section -->
-                <div class="card-footer text-center bg-light">
-                  <span class="me-2"><i class="bi bi-eye"></i></span> <!-- Eye icon -->
-                  <span>{{ data.Visits }} Visits</span> <!-- Display visits info -->
-                </div>
-              </div>
-            </a>
-          </div>
-
-          
-        <!-- REMOVE Store Modal -->
-        <div class="modal fade" id="delStoreModal" tabindex="-1" aria-labelledby="delStoreModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="delStoreModalLabel">Add New Store</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <form action="/delete/store/{{data.id}}" method="POST" enctype="multipart/form-data" accept-charset="utf-8" >
-
-                  <!-- Store Name Input -->
-                  <div class="mb-3">
-                    <label for="storeName" class="form-label">Are you sure you want to delete this store?</label>
-                    
+                <a href="/Store/{{data.id}}">
+                  <div class="card h-100"> <!-- Full height for equal height cards -->
+                    <div class="card-body pb-0 text-center"> <!-- Centered content -->
+                      <h5 class="card-title">{{ data.StoreName }}</h5>
+                      <img src="https://lh3.googleusercontent.com/d/{{ data.Image }}" 
+                           alt="Product Image" 
+                           class="img-fluid rounded" 
+                           style="max-width: 250px; height: auto;">
+                    </div>
+    
+                    <!-- Visits Info Section -->
+                    <div class="card-footer text-center bg-light">
+                      <span class="me-2"><i class="bi bi-eye"></i></span> <!-- Eye icon -->
+                      <span>{{ data.Visits }} Visits</span> <!-- Display visits info -->
+                    </div>
                   </div>
-
-                  <button type="submit" class="btn btn-primary">Confirm</button>
-                </form>
+                </a>
               </div>
-            </div>
-          </div>
+    
+      <!-- Modal -->
+<div class="modal fade" id="delStoreModal{{ data.id }}" tabindex="-1" aria-labelledby="delStoreModalLabel{{ data.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      
+      <!-- Modal Header -->
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title" id="delStoreModalLabel{{ data.id }}">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i> Warning: Are you sure you want to delete this store?
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <p class="text-dark">By deleting this store, all products stored in the store will also be removed. This action is irreversible.</p>
+        
+        <!-- Store Name Confirmation Input -->
+        <div class="mb-3">
+          <label for="storeNameConfirmation{{ data.id }}" class="form-label">Please type the store name to confirm:</label>
+          <input type="text" id="storeNameConfirmation{{ data.id }}" class="form-control" placeholder="{{ data.StoreName }}" required oninput="enableDeleteButton({{ data.id }})">
+          <small class="form-text text-muted">Type <strong>{{ data.StoreName }}</strong> to confirm deletion.</small>
         </div>
 
+        <!-- Form with Confirmation Check -->
+        <form action="/delete/store/{{ data.id }}" method="POST" enctype="multipart/form-data" accept-charset="utf-8">
+          <button type="submit" class="btn btn-danger" id="deleteButton{{ data.id }}" disabled>Confirm Deletion</button>
+        </form>
+      </div>
       
+    </div>
+  </div>
+</div>
 
-          {% else %}
+<!-- JavaScript to Enable/Disable Delete Button -->
+<script>
+  // Function to enable the delete button only if the correct store name is entered
+  function enableDeleteButton(storeId) {
+    var storeNameInput = document.getElementById('storeNameConfirmation' + storeId).value;
+    
+    // Get the store name from the placeholder attribute (this ensures we get the correct value from the backend template)
+    var storeName = document.getElementById('storeNameConfirmation' + storeId).placeholder; 
 
+    // Get the delete button for this store
+    var deleteButton = document.getElementById('deleteButton' + storeId);
+    
+    // Check if the entered store name matches the placeholder store name
+    if (storeNameInput === storeName) {
+      deleteButton.disabled = false;  // Enable the button if the store names match
+    } else {
+      deleteButton.disabled = true;   // Disable the button if they don't match
+    }
+  }
+</script>
+
+
+
+    
+            {% endif %}
+          {% endfor %}
+        {% else %}
           <h5 class="card-title mb-2">NO STORE AVAILABLE.</h5>
-          
-          {% endif %}
-
-
-        {% endfor %}
-  
+        {% endif %}
+      
       </div>
     </div>
+    
+
+    <br><br>
+
+   
+    {% include "/Client-Home-Page/Recommend/index.html" %}  <!-- Recommended -->
 
     <br><br><br>
   </section>

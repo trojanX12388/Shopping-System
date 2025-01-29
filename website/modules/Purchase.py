@@ -30,7 +30,7 @@ from wtforms.validators import DataRequired, Email
 
 # DATABASE CONNECTION
 from website.models import db
-from sqlalchemy import update
+from sqlalchemy import update, desc
 
 # LOADING MODEL CLASSES
 from website.models import MSAccount, MSProduct, MSStore, MSRating, MSCart, MSPurchase, MSPurchaseItem,MSNotification
@@ -162,11 +162,38 @@ def PurchaseSuccess(purchase_id):
     if not purchase:
         return "Purchase not found", 404
 
+    most_recommended_products = (
+                        MSProduct.query
+                        .join(MSRating, MSProduct.id == MSRating.ProductId)
+                        .order_by(desc(MSRating.Rate1), desc(MSProduct.ProductViews))
+                        .limit(10)
+                        .all()
+                    )
+        
+    # Assuming msstore_products contains products fetched from the database
+    for recommend in most_recommended_products:
+        # Initialize average_rating to 0 by default
+        recom_average_rating = 0
+                
+        # Check if there are any ratings for the product in the MSRating table
+        ratings_count = db.session.query(func.count(MSRating.id)).filter(MSRating.ProductId == recommend.id).scalar()
+
+        if ratings_count > 0:
+            # Calculate the average rating for the product only if there are ratings
+            recom_average_rating = db.session.query(func.avg(MSRating.Rate1)).filter(MSRating.ProductId == recommend.id).scalar()
+            # Round to 1 decimal place
+            recom_average_rating = round(recom_average_rating, 1) if recom_average_rating is not None else 0
+
+        # Add the average rating to the product object (or to the dictionary you're passing to the template)
+        recommend.recom_average_rating = recom_average_rating
+
     return render_template(
         "Client-Home-Page/Purchase/purchase-success.html",
         purchase=purchase,
         product=product,
         user=current_user,
+        most_recommended_products=most_recommended_products,
+        recom_average_rating = recom_average_rating,
         User= username.FirstName + " " + username.LastName,
         profile_pic=ProfilePic,
     )
@@ -368,6 +395,31 @@ def C_H():
     cart_items = MSCart.query.filter_by(MSId=current_user.MSId).all()
     cart = len(cart_items)
 
+    most_recommended_products = (
+                        MSProduct.query
+                        .join(MSRating, MSProduct.id == MSRating.ProductId)
+                        .order_by(desc(MSRating.Rate1), desc(MSProduct.ProductViews))
+                        .limit(10)
+                        .all()
+                    )
+        
+    # Assuming msstore_products contains products fetched from the database
+    for recommend in most_recommended_products:
+        # Initialize average_rating to 0 by default
+        recom_average_rating = 0
+                
+        # Check if there are any ratings for the product in the MSRating table
+        ratings_count = db.session.query(func.count(MSRating.id)).filter(MSRating.ProductId == recommend.id).scalar()
+
+        if ratings_count > 0:
+            # Calculate the average rating for the product only if there are ratings
+            recom_average_rating = db.session.query(func.avg(MSRating.Rate1)).filter(MSRating.ProductId == recommend.id).scalar()
+            # Round to 1 decimal place
+            recom_average_rating = round(recom_average_rating, 1) if recom_average_rating is not None else 0
+
+        # Add the average rating to the product object (or to the dictionary you're passing to the template)
+        recommend.recom_average_rating = recom_average_rating
+
     return render_template(
         "Client-Home-Page/Purchase/My-Purchase.html",
         User=username.FirstName + " " + username.LastName,
@@ -379,6 +431,9 @@ def C_H():
         delivering = delivering,
         received = received,
         cancelled = cancelled,
+
+        most_recommended_products=most_recommended_products,
+        recom_average_rating = recom_average_rating,
 
         purchased_items=purchased_items,
     )
