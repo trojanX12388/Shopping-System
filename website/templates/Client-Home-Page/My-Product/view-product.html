@@ -44,66 +44,237 @@
       </div>
     </div>
 
-    <!-- Product Details Section -->
-    <div class="card mt-2">
-      <div class="card-body">
-        <div class="product-details">
-          <h5 class="card-title">Product Details</h5>
-          <!-- Profile Picture in the top-right corner -->
-          <img 
-            src="https://lh3.googleusercontent.com/d/{{product.MSAccount.ProfilePic}}" 
-            alt="Seller Profile Picture" 
-            class="img-fluid rounded-circle position-absolute top-0 end-0 m-2" 
-            style="width: 50px; height: 50px; object-fit: cover; border: 2px solid #ddd;"
-          >
-          <p class="mb-1"><strong>Seller:</strong> {{ product.MSAccount.FirstName }} {{ product.MSAccount.LastName }}</p>
-          <p class="mb-1"><strong>Price:</strong> ₱{{ product.ProductPrice }}</p>
-          <p class="mb-1"><strong>Stocks:</strong> {{ product.ProductStock }}</p>
-          <p class="mb-2">
-            <strong>Rating:</strong><br>
-            {% if product.average_rating is not none %}
-              <span class="stars">
-                {% for i in range(1, 6) %}
-                  {% if i <= product.average_rating %}
-                    <i class="fas fa-star text-warning"></i>  <!-- Full star in yellow -->
-                  {% elif i - 0.5 <= product.average_rating %}
-                    <i class="fas fa-star-half-alt text-warning"></i>  <!-- Half star in yellow -->
-                  {% else %}
-                    <i class="far fa-star text-warning"></i>  <!-- Empty star in yellow -->
-                  {% endif %}
-                {% endfor %}
-              </span>
-            {% else %}
-              No ratings yet
-            {% endif %}
-          </p>
-          
-          <!-- Action buttons (Add to Cart and Purchase) -->
-          <div class="row mb-1">
-            <div class="col text-end">
-              <form action="/products/add-to-cart" method="POST" enctype="multipart/form-data" accept-charset="utf-8">
-                <input type="hidden" name="prid" value="{{product.id}}"></input>
-                <input type="hidden" name="prname" value="{{product.ProductName}}"></input>
-                <input type="hidden" name="prowner" value="{{product.MSAccount.MSId}}"></input>
-                <button type="submit" class="btn btn-primary">
-                <i class="fa fa-cart-plus"></i> Add to cart
-              </button>
-            </form>
-            </div>
-          </div>
-          <div class="row mb-1">
-            <div class="col text-end">
-              <form action="/purchase/{{product.id}}">
+   <!-- Product Details Section -->
+<div class="card mt-2">
+  <div class="card-body">
+    <div class="product-details">
+      <h5 class="card-title">Product Details</h5>
+      
+      <!-- Profile Picture in the top-right corner (Clickable) -->
+        <img 
+        src="https://lh3.googleusercontent.com/d/{{product.MSAccount.ProfilePic}}" 
+        alt="Seller Profile Picture" 
+        class="img-fluid rounded-circle position-absolute top-0 end-0 m-2" 
+        style="width: 50px; height: 50px; object-fit: cover; border: 2px solid #ddd;"
+        data-bs-toggle="modal" 
+        data-bs-target="#followModal"
+        onclick="setSellerInfo('{{product.MSAccount.MSId}}', '{{product.MSAccount.FirstName}} {{product.MSAccount.LastName}}')"
+        />
 
-              <button type="submit" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">
-                <i class="fa fa-credit-card"></i> Purchase
-              </button>
-            </form>
-            </div>
-          </div>
+      <p class="mb-1"><strong>Seller:</strong> {{ product.MSAccount.FirstName }} {{ product.MSAccount.LastName }}</p>
+      <p class="mb-1"><strong>Price:</strong> ₱{{ product.ProductPrice }}</p>
+      <p class="mb-1"><strong>Stocks:</strong> {{ product.ProductStock }}</p>
+      <p class="mb-2">
+        <strong>Rating:</strong><br>
+        {% if product.average_rating is not none %}
+          <span class="stars">
+            {% for i in range(1, 6) %}
+              {% if i <= product.average_rating %}
+                <i class="fas fa-star text-warning"></i>  <!-- Full star in yellow -->
+              {% elif i - 0.5 <= product.average_rating %}
+                <i class="fas fa-star-half-alt text-warning"></i>  <!-- Half star in yellow -->
+              {% else %}
+                <i class="far fa-star text-warning"></i>  <!-- Empty star in yellow -->
+              {% endif %}
+            {% endfor %}
+          </span>
+        {% else %}
+          No ratings yet
+        {% endif %}
+      </p>
+      
+      <!-- Action buttons (Add to Cart and Purchase) -->
+      <div class="row mb-1">
+        <div class="col text-end">
+          <form action="/products/add-to-cart" method="POST" enctype="multipart/form-data" accept-charset="utf-8">
+            <input type="hidden" name="prid" value="{{product.id}}"></input>
+            <input type="hidden" name="prname" value="{{product.ProductName}}"></input>
+            <input type="hidden" name="prowner" value="{{product.MSAccount.MSId}}"></input>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa fa-cart-plus"></i> Add to cart
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="row mb-1">
+        <div class="col text-end">
+          <form action="/purchase/{{product.id}}">
+            <button type="submit" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">
+              <i class="fa fa-credit-card"></i> Purchase
+            </button>
+          </form>
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<style>
+  /* Additional styling for the modal content */
+.modal-content {
+  border-radius: 10px; /* Rounded corners for the modal */
+}
+
+#modalProfilePic {
+  border: 3px solid #007bff; /* Blue border around the profile picture */
+}
+
+#modalSellerName {
+  font-size: 1.2rem; /* Slightly larger font for the seller's name */
+  margin-top: 10px;
+}
+</style>
+
+<!-- Modal Structure -->
+<div class="modal fade" id="followModal" tabindex="-1" aria-labelledby="followModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="followModalLabel">Seller Info</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <!-- Seller Profile -->
+        <div class="d-flex flex-column align-items-center">
+          <img id="modalProfilePic" class="img-fluid rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #ddd;" />
+          <h5 id="modalSellerName" class="fw-bold text-dark"></h5>
+          <button id="followButton" class="btn btn-outline-primary mt-3" style="color: #ddd;">Follow</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  // Function to open the follow modal and check the follow status
+  function openFollowModal(sellerId, sellerName) {
+    // Call the setSellerInfo function which will check the follow status internally
+    setSellerInfo(sellerId, sellerName);
+  }
+
+  // Function to check the follow status of the seller
+  function checkFollowingStatus(sellerId) {
+    // Perform AJAX request to backend to check if the user is following
+    return fetch(`/check-following-status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ sellerId: sellerId })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data && data.isFollowing !== undefined) {
+        return data.isFollowing; // Return follow status as a boolean
+      } else {
+        return false; // Default to not following if there's an error
+      }
+    })
+    .catch(error => {
+      return false; // Return false on error
+    });
+  }
+
+  // Function to set the seller info in the modal
+  async function setSellerInfo(sellerId, sellerName) {
+    // Check the follow status of the seller
+    const isFollowing = await checkFollowingStatus(sellerId);
+
+    // Populate modal fields with the seller's name and follow status
+    document.getElementById('modalSellerName').textContent = sellerName;  // Set seller name in the modal
+    document.getElementById('followButton').textContent = isFollowing ? 'Unfollow' : 'Follow';  // Update the follow button text
+    document.getElementById('followButton').setAttribute('data-seller-id', sellerId);  // Set the sellerId for follow/unfollow action
+
+    // Optionally, set other seller info like profile picture if needed
+    document.getElementById('modalProfilePic').src = `https://lh3.googleusercontent.com/d/{{product.MSAccount.ProfilePic}}`;  // Set profile pic URL if needed
+
+    // Set the action button functionality based on follow status
+    const actionButton = document.getElementById('followButton');
+    if (actionButton) {
+      if (isFollowing) {
+        actionButton.classList.remove('btn-primary');
+        actionButton.classList.add('btn-danger'); // Change color to red for unfollow
+        actionButton.onclick = async function () {
+          try {
+            const response = await fetch(`/unfollow/${sellerId}`, {
+              method: 'POST',
+            });
+
+            if (!response.ok) {
+              const error = await response.json();
+              alert(`Error: ${error.error}`);
+              return;
+            }
+
+            const result = await response.json();
+            alert(result.message);
+
+            $('#followModal').modal('hide'); // Close the modal
+
+            // Update the UI after unfollowing
+            actionButton.textContent = 'Follow';
+            actionButton.classList.remove('btn-danger');
+            actionButton.classList.add('btn-primary');
+          } catch (error) {
+            alert('An error occurred while unfollowing the user.');
+          }
+        };
+      } else {
+        actionButton.classList.remove('btn-danger');
+        actionButton.classList.add('btn-primary');  // Default color for follow
+        actionButton.onclick = async function () {
+          try {
+            const response = await fetch(`/follow/${sellerId}`, {
+              method: 'POST',
+            });
+
+            if (!response.ok) {
+              const error = await response.json();
+              alert(`Error: ${error.error}`);
+              return;
+            }
+
+            const result = await response.json();
+            alert(result.message);
+
+            $('#followModal').modal('hide'); // Close the modal
+
+            // Update the UI after following
+            actionButton.textContent = 'Unfollow';
+            actionButton.classList.remove('btn-primary');
+            actionButton.classList.add('btn-danger');
+          } catch (error) {
+            alert('An error occurred while following the user.');
+          }
+        };
+      }
+    }
+
+    // Show the modal
+    $('#followModal').modal('show');
+  }
+
+  // Focus management on modal open
+  $('#followModal').on('shown.bs.modal', function () {
+    // Move focus to the modal's action button
+    $('#followButton').focus();
+  });
+
+  // Optionally close and reset inert state when the modal is closed
+  $('#followModal').on('hidden.bs.modal', function () {
+    const modalBackdrop = document.querySelector('.modal-backdrop');
+    if (modalBackdrop) {
+      modalBackdrop.removeAttribute('inert');  // Re-enable interaction with the background
+      modalBackdrop.removeAttribute('aria-hidden');  // Ensure aria-hidden is removed
+    }
+
+    // Return focus to the profile image that triggered the modal
+    const profileImg = document.querySelector('[data-bs-toggle="modal"]');
+    if (profileImg) {
+      profileImg.focus();
+    }
+  });
+</script>
+
 
    <!-- Reviews Section -->
 <div class="card mt-3">

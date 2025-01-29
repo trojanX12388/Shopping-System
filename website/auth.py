@@ -412,6 +412,56 @@ def clientH():
                                most_recommended_products=most_recommended_products,
                                recom_average_rating = recom_average_rating,
                                profile_pic=ProfilePic)
+ 
+# CLIENT USERS
+
+@auth.route("/users")
+@login_required
+@Check_Token
+def clientUsers():
+        
+    # INITIALIZING DATA FROM USER LOGGED IN ACCOUNT    
+        username = MSAccount.query.filter_by(MSId=current_user.MSId).first() 
+        # Get the most viewed product (assuming you have a 'views' column in MSProduct table)
+        most_recommended_products = (
+                        MSProduct.query
+                        .join(MSRating, MSProduct.id == MSRating.ProductId)
+                        .order_by(desc(MSRating.Rate1), desc(MSProduct.ProductViews))
+                        .limit(10)
+                        .all()
+                    )
+        
+        # Assuming msstore_products contains products fetched from the database
+        for recommend in most_recommended_products:
+            # Initialize average_rating to 0 by default
+            recom_average_rating = 0
+                
+            # Check if there are any ratings for the product in the MSRating table
+            ratings_count = db.session.query(func.count(MSRating.id)).filter(MSRating.ProductId == recommend.id).scalar()
+
+            if ratings_count > 0:
+                # Calculate the average rating for the product only if there are ratings
+                recom_average_rating = db.session.query(func.avg(MSRating.Rate1)).filter(MSRating.ProductId == recommend.id).scalar()
+                # Round to 1 decimal place
+                recom_average_rating = round(recom_average_rating, 1) if recom_average_rating is not None else 0
+
+            # Add the average rating to the product object (or to the dictionary you're passing to the template)
+            recommend.recom_average_rating = recom_average_rating
+        
+        if username.ProfilePic == None:
+            ProfilePic=profile_default
+        else:
+            ProfilePic=username.ProfilePic
+
+        users_data = MSAccount.query.order_by(MSAccount.MSId.desc()).all()
+     
+        return render_template("Client-Home-Page/Users/index.html", 
+                               User= username.FirstName + " " + username.LastName,
+                               user= current_user,
+                               users_data = users_data,
+                               most_recommended_products=most_recommended_products,
+                               recom_average_rating = recom_average_rating,
+                               profile_pic=ProfilePic)
 
 
 

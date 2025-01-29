@@ -1,0 +1,151 @@
+{% extends "/Client-Home-Page/base.html" %}{% block title %}EntrApp Users{% endblock %} {% block content%}
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+
+<!-- Include DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+<!-- Include DataTables Buttons CSS and JS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.3.5/css/buttons.dataTables.min.css">
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.html5.min.js"></script>
+
+<!-- Include DataTables Print Button JS -->
+<script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.print.min.js"></script>
+
+<!-- Add Font Awesome CDN -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>EntrApp Users</h1>
+  </div><!-- End Page Title -->
+
+  <section class="section">
+    <!-- User Profiles Section -->
+<div class="container mt-4">
+  <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2">
+    {% for user in users_data %}
+    <div class="col">
+      <div class="card h-100 shadow-sm p-2">
+        <!-- User Profile Image (Centered) -->
+      <div class="d-flex justify-content-center">
+        <img 
+          src="https://lh3.googleusercontent.com/d/{{ user.ProfilePic }}" 
+          alt="User Profile Picture" 
+          class="img-fluid rounded-circle mb-2" 
+          style="width: 100px; height: 100px; object-fit: cover; border: 2px solid #ddd;"
+          data-bs-toggle="modal" 
+          data-bs-target="#followModal"
+          onclick="setSellerInfo('{{ user.MSId }}', '{{ user.FirstName }} {{ user.LastName }}', '{{ user.ProfilePic }}')"
+        />
+      </div>
+        
+        <!-- Card Body -->
+        <div class="card-body p-2 text-start">
+          <h6 class="card-title text-center">{{ user.FirstName }} {{ user.LastName }}</h6>
+          <p class="text-muted small mb-1 text-center">Email: {{ user.Email }}</p>
+          <p class="text-muted small mb-1 text-center">Contact: {{ user.ContactNumber }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+<!-- Modal Structure -->
+<div class="modal fade" id="followModal" tabindex="-1" aria-labelledby="followModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="followModalLabel">User Info</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="d-flex flex-column align-items-center">
+          <img id="modalProfilePic" class="img-fluid rounded-circle mb-3" 
+               style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #ddd;" />
+          <h5 id="modalSellerName" class="fw-bold text-dark"></h5>
+          <button id="followButton" class="btn btn-outline-primary mt-3" style="color: #ddd;">Follow</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Function to check follow status
+  function checkFollowingStatus(sellerId) {
+    return fetch(`/check-following-status`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sellerId })
+    })
+    .then(response => response.json())
+    .then(data => data.isFollowing ?? false) // Default to false if data is undefined
+    .catch(() => false); // Return false on error
+  }
+
+  // Function to update and show modal
+  async function setSellerInfo(sellerId, sellerName, profilePic) {
+    const isFollowing = await checkFollowingStatus(sellerId);
+
+    document.getElementById('modalSellerName').textContent = sellerName;
+    document.getElementById('modalProfilePic').src = `https://lh3.googleusercontent.com/d/${profilePic}`;
+    
+    const followButton = document.getElementById('followButton');
+    followButton.textContent = isFollowing ? 'Unfollow' : 'Follow';
+    followButton.classList.toggle('btn-danger', isFollowing);
+    followButton.classList.toggle('btn-primary', !isFollowing);
+    followButton.setAttribute('data-seller-id', sellerId);
+
+    followButton.onclick = async function () {
+      const action = isFollowing ? 'unfollow' : 'follow';
+      try {
+        const response = await fetch(`/${action}/${sellerId}`, { method: 'POST' });
+        if (!response.ok) {
+          const error = await response.json();
+          alert(`Error: ${error.error}`);
+          return;
+        }
+
+        const result = await response.json();
+        alert(result.message);
+
+        // Update UI dynamically
+        followButton.textContent = isFollowing ? 'Follow' : 'Unfollow';
+        followButton.classList.toggle('btn-danger', !isFollowing);
+        followButton.classList.toggle('btn-primary', isFollowing);
+      } catch {
+        alert(`An error occurred while trying to ${action} the user.`);
+      }
+    };
+
+    $('#followModal').modal('show');
+  }
+</script>
+
+
+    <br><br>
+
+   
+    {% include "/Client-Home-Page/Recommend/index.html" %}  <!-- usered -->
+
+    <br><br><br>
+
+  </section>
+  
+</main>
+
+
+{% endblock %}
+
+
+      

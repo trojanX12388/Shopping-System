@@ -40,7 +40,7 @@ class MSAccount(db.Model, UserMixin):
     MSCart = db.relationship('MSCart', back_populates='MSAccount')
     MSPurchase = db.relationship('MSPurchase', back_populates='MSAccount')
     MSPurchaseItem = db.relationship('MSPurchaseItem', back_populates='MSAccount')
-
+    
     # Notification relationship (back_populates should match the one in MSNotification)
     notifications = db.relationship('MSNotification', back_populates='user')
     
@@ -447,6 +447,29 @@ class MSCart(db.Model):
         
     def get_id(self):
         return str(self.id)  # Convert to string to ensure compatibility  
+    
+class MSFollowing(db.Model):
+    __tablename__ = 'MSFollowing'
+
+    id = db.Column(db.Integer, primary_key=True)
+    MSId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=True)  # User who follows
+    FollowId = db.Column(db.Integer, db.ForeignKey('MSAccount.MSId'), nullable=True)  # User being followed
+    is_delete = db.Column(db.Boolean, default=False)
+
+    # Explicitly define the relationships to MSAccount
+    follower = db.relationship('MSAccount', foreign_keys=[MSId], backref='following')
+    followed = db.relationship('MSAccount', foreign_keys=[FollowId], backref='followers')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'MSId': self.MSId,
+            'FollowId': self.FollowId,
+            'is_delete': self.is_delete
+        }
+
+    def get_id(self):
+        return str(self.id)
 
     
 class MSMessage(db.Model):

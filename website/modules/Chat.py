@@ -15,6 +15,7 @@ from sqlalchemy.exc import IntegrityError  # Import this for catching database i
 from sqlalchemy import func
 from sqlalchemy.orm import sessionmaker
 import traceback 
+from sqlalchemy import and_, or_
 
 
 load_dotenv()
@@ -35,7 +36,7 @@ from website.models import db
 from sqlalchemy import update
 
 # LOADING MODEL CLASSES
-from website.models import MSAccount, MSProduct, MSStore, MSRating, MSMessage
+from website.models import MSAccount, MSProduct, MSStore, MSRating, MSMessage, MSFollowing
 
 
 # LOAD JWT MODULE
@@ -127,8 +128,7 @@ def ChatH():
                                user= current_user,
                                profile_pic=ProfilePic)
 
-
-@Chat.route('/get_messages/<int:sender_id>/<int:receiver_id>', methods=['GET'])
+@Chat.route('/get_messages/<sender_id>/<receiver_id>', methods=['GET'])
 @login_required
 @Check_Token
 def get_messages(sender_id, receiver_id):
@@ -143,7 +143,13 @@ def get_messages(sender_id, receiver_id):
         if not messages:
             return jsonify({'error': 'No messages found'}), 404
 
-        # Prepare messages with sender's profile picture
+        # Fetch MSFollowing relationship
+        ms_following = MSFollowing.query.filter(
+            (MSFollowing.MSId == sender_id) & (MSFollowing.FollowId == receiver_id) |
+            (MSFollowing.FollowId == receiver_id) & (MSFollowing.MSId == sender_id)
+        ).first()  # Assuming MSFollowing is one-to-one or you'd want the first match
+
+        # Prepare messages with sender's profile picture and following status
         message_list = [{
             'sender_id': message.sender_id,
             'receiver_id': message.receiver_id,
@@ -153,7 +159,11 @@ def get_messages(sender_id, receiver_id):
                 'FirstName': message.sender.FirstName,
                 'LastName': message.sender.LastName,
                 'ProfilePic': message.sender.ProfilePic  # Include the ProfilePic here
-            }
+            },
+            'receiver': {
+                'ProfilePic': message.sender.ProfilePic  # Include the ProfilePic here
+            },
+            'is_following': ms_following is not None  # Check if sender and receiver are following each other
         } for message in messages]
 
         return jsonify(message_list)
@@ -167,27 +177,134 @@ def get_messages(sender_id, receiver_id):
 @login_required
 @Check_Token
 def send_message():
-    data = request.get_json()
-    sender_id = data['sender_id']
-    receiver_id = data['receiver_id']
-    content = data['content']
+    try:
+        data = request.get_json()
+        sender_id = data['sender_id']
+        receiver_id = data['receiver_id']
+        content = data['content']
 
-    message = MSMessage(sender_id=sender_id, receiver_id=receiver_id, content=content)
-    db.session.add(message)
-    db.session.commit()
+        # Check if sender follows receiver
+        following = MSFollowing.query.filter_by(MSId=sender_id, FollowId=receiver_id).first()
+        
+        if not following:
+            return jsonify({'error': 'You can only message users you follow'}), 403
 
-    return jsonify({'message': 'Message sent successfully!'})
+        # Create and store the message
+        message = MSMessage(sender_id=sender_id, receiver_id=receiver_id, content=content)
+        db.session.add(message)
+        db.session.commit()
+
+        return jsonify({'message': 'Message sent successfully!'})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 
 @Chat.route('/get_users', methods=['GET'])
 @login_required
 @Check_Token
 def get_users():
-    users = MSAccount.query.all()  # Query to get all users
-    user_list = [{
-        'MSId': user.MSId,
-        'FirstName': user.FirstName,
-        'LastName': user.LastName,
-        'ProfilePic': user.ProfilePic  # Add the profile picture
-    } for user in users]
+    try:
+        # Fetch only users that the current user follows
+        followed_users = MSFollowing.query.filter_by(MSId=current_user.MSId).all()
 
-    return jsonify(user_list)
+        if not followed_users:
+            return jsonify({'error': 'You are not following any users'}), 404
+
+        # Extract the IDs of followed users
+        followed_user_ids = [user.FollowId for user in followed_users]
+
+        # Fetch the MSAccount details of followed users
+        users = MSAccount.query.filter(MSAccount.MSId.in_(followed_user_ids)).all()
+
+        user_list = [{
+            'MSId': user.MSId,
+            'FirstName': user.FirstName,
+            'LastName': user.LastName,
+            'ProfilePic': user.ProfilePic
+        } for user in users]
+
+        return jsonify(user_list)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@Chat.route('/follow/<seller_id>', methods=['POST'])
+@login_required
+@Check_Token
+def follow_user(seller_id):
+    try:
+        # Ensure the seller exists
+        seller = MSAccount.query.filter_by(MSId=seller_id).first()
+        if not seller:
+            return jsonify({'error': 'Seller not found'}), 404
+
+        # Check if the current user is already following the seller
+        existing_follow = MSFollowing.query.filter_by(MSId=current_user.MSId, FollowId=seller_id).first()
+        if existing_follow:
+            return jsonify({'message': 'You are already following this user', 'isFollowing': True}), 200
+
+        # Add the follow relationship to the MSFollowing table
+        new_follow = MSFollowing(MSId=current_user.MSId, FollowId=seller_id)
+        db.session.add(new_follow)
+        db.session.commit()
+
+        return jsonify({'message': 'You are now following the seller!', 'isFollowing': True}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@Chat.route('/unfollow/<seller_id>', methods=['POST'])
+@login_required
+@Check_Token
+def unfollow_user(seller_id):
+    try:
+        # Ensure the seller exists
+        seller = MSAccount.query.filter_by(MSId=seller_id).first()
+        if not seller:
+            return jsonify({'error': 'Seller not found'}), 404
+
+        # Check if the current user is following the seller
+        existing_follow = MSFollowing.query.filter_by(MSId=current_user.MSId, FollowId=seller_id).first()
+        if not existing_follow:
+            return jsonify({'message': 'You are not following this user', 'isFollowing': False}), 200
+
+        # Remove the follow relationship
+        db.session.delete(existing_follow)
+        db.session.commit()
+
+        return jsonify({'message': 'You have unfollowed the seller!', 'isFollowing': False}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@Chat.route('/check-following-status', methods=['POST'])
+@login_required
+@Check_Token
+def check_following_status():
+    try:
+        # Get the sellerId from the request payload
+        data = request.get_json()
+        seller_id = data.get('sellerId')
+
+        # Ensure the seller exists
+        seller = MSAccount.query.filter_by(MSId=seller_id).first()
+        if not seller:
+            return jsonify({'error': 'Seller not found'}), 404
+
+        # Check if the current user is following the seller
+        existing_follow = MSFollowing.query.filter_by(MSId=current_user.MSId, FollowId=seller_id).first()
+        is_following = True if existing_follow else False
+
+        return jsonify({'isFollowing': is_following}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+

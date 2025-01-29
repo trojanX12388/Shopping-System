@@ -226,74 +226,77 @@
   </style>
 
 <div class="container">
-  <div class="chat-container">
-     <!-- Left Panel: User List -->
-     <div class="container d-flex justify-content-center align-items-center">
-      <div class="user-list text-center">
-          <h3>EntrApp Users</h3>
-          <!-- Updated to be a select dropdown -->
-          <select id="users" class="form-select w-auto mx-auto" style="height: 40px;">
-              <!-- Users will be populated here -->
-          </select>
-      </div>
-  </div>
-
-      <!-- Right Panel: Chatbox -->
-      <div class="chat-box">
-        
-          <div id="messages">
-              <!-- Messages will be displayed here -->
-          </div>
-          <form id="message-form">
-              <input type="hidden" id="receiver" />
-              <textarea id="content" placeholder="Type a message..." required></textarea>
-              <button type="submit">Send</button>
-          </form>
-      </div>
-  </div>
-</div>
-
+    <div class="chat-container">
+       <!-- Left Panel: User List -->
+       <div class="container d-flex justify-content-center align-items-center">
+        <div class="user-list text-center">
+            <h3>Followed Users</h3>
+            <!-- Updated to be a select dropdown -->
+            <select id="users" class="form-select w-auto mx-auto" style="height: 40px;">
+                <!-- Users will be populated here -->
+            </select>
+        </div>
+    </div>
   
-<script>
-  const senderId = "{{user.MSId}}";  // Get the sender ID dynamically
-
-  // Function to load the list of users to chat with
-async function loadUsers() {
-    const response = await fetch('/get_users');  // Fetch the list of users
-    const users = await response.json();
-    const usersSelect = document.getElementById('users'); // Assuming there's a <select> element with id "users"
-
-    // Clear any previous options
-    usersSelect.innerHTML = '';
-
-    // Create a default "Choose a user" option
-    const defaultOption = document.createElement('option');
-    defaultOption.text = 'Choose a user';
-    usersSelect.add(defaultOption);
-
-    // Add each user as an option in the dropdown
-    users.forEach(user => {
-        const userOption = document.createElement('option');
-        userOption.value = user.MSId;  // Set the MSId as the value
-        userOption.innerHTML = `
-            <img src="https://lh3.googleusercontent.com/d/${user.ProfilePic}" class="profile-pic" />
-            ${user.FirstName} ${user.LastName}
-        `;
-        usersSelect.add(userOption);
-    });
-
-    // Event listener for when a user is selected
-    usersSelect.onchange = () => {
-        const selectedMSId = usersSelect.value;
-        if (selectedMSId) {
-            selectUserAndStartFetching(selectedMSId);  // Start chat with the selected user
-        }
-    };
-}
+        <!-- Right Panel: Chatbox -->
+        <div class="chat-box">
+          
+            <div id="messages">
+                <!-- Messages will be displayed here -->
+            </div>
+            <form id="message-form">
+                <input type="hidden" id="receiver" />
+                <textarea id="content" placeholder="Type a message..." required></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+  </div>
 
 
-  // Function to format timestamps (e.g., "5 minutes ago", "2 hours ago")
-  function formatRelativeTimestamp(timestamp) {
+  <script>
+    const senderId = "{{user.MSId}}";  // Get the sender ID dynamically
+  
+    // Function to load the list of users to chat with
+    async function loadUsers() {
+      try {
+          const response = await fetch('/get_users');  // Fetch the list of users
+          const users = await response.json();
+          const usersSelect = document.getElementById('users'); // Assuming there's a <select> element with id "users"
+  
+          // Clear any previous options
+          usersSelect.innerHTML = '';
+  
+          // Create a default "Choose a user" option
+          const defaultOption = document.createElement('option');
+          defaultOption.text = 'Choose a user';
+          usersSelect.add(defaultOption);
+  
+          // Add each user as an option in the dropdown
+          users.forEach(user => {
+              const userOption = document.createElement('option');
+              userOption.value = user.MSId;  // Set the MSId as the value
+              userOption.innerHTML = `
+                  <img src="https://lh3.googleusercontent.com/d/${user.ProfilePic}" class="profile-pic" />
+                  ${user.FirstName} ${user.LastName}
+              `;
+              usersSelect.add(userOption);
+          });
+  
+          // Event listener for when a user is selected
+          usersSelect.onchange = () => {
+              const selectedMSId = usersSelect.value;
+              if (selectedMSId) {
+                  selectUserAndStartFetching(selectedMSId);  // Start chat with the selected user
+              }
+          };
+      } catch (error) {
+          console.error('Error loading users:', error);
+      }
+    }
+  
+    // Function to format timestamps (e.g., "5 minutes ago", "2 hours ago")
+    function formatRelativeTimestamp(timestamp) {
       const now = new Date();
       const messageTime = new Date(timestamp);
       const diffInSeconds = Math.floor((now - messageTime) / 1000);
@@ -301,7 +304,7 @@ async function loadUsers() {
       const minutes = Math.floor(diffInSeconds / 60);
       const hours = Math.floor(diffInSeconds / 3600);
       const days = Math.floor(diffInSeconds / (3600 * 24));
-
+  
       if (days > 0) {
           return `${days} day${days > 1 ? 's' : ''} ago`;
       } else if (hours > 0) {
@@ -311,9 +314,9 @@ async function loadUsers() {
       } else {
           return `${diffInSeconds} second${diffInSeconds > 1 ? 's' : ''} ago`;
       }
-  }
-
-  // Function to load messages
+    }
+  
+    // Function to load messages
 async function loadMessages(receiverId) {
     if (!receiverId) {
         console.error('Receiver ID is missing!');
@@ -344,8 +347,11 @@ async function loadMessages(receiverId) {
             const msgElement = document.createElement('div');
             msgElement.classList.add('message');
             
-            const profilePicUrl = `https://lh3.googleusercontent.com/d/${message.sender.ProfilePic}`;
-            const isCurrentUser = message.sender_id === senderId;
+            const senderProfilePicUrl = `https://lh3.googleusercontent.com/d/${message.sender.ProfilePic}`;
+            const receiverProfilePicUrl = `https://lh3.googleusercontent.com/d/${message.receiver.ProfilePic}`;
+            
+            const isCurrentUser = message.sender_id === senderId;  // Check if the current message is from the current user
+            const profilePicUrl = isCurrentUser ? senderProfilePicUrl : receiverProfilePicUrl;  // Use correct profile pic
 
             const messageContent = document.createElement('div');
             messageContent.classList.add('content');
@@ -356,11 +362,12 @@ async function loadMessages(receiverId) {
             timestamp.classList.add('timestamp');
             timestamp.textContent = formatRelativeTimestamp(message.timestamp);
 
-            // Position the profile pic and name for the current user on the right
+            // Create the profile picture element
             const profilePic = document.createElement('img');
             profilePic.src = profilePicUrl;
             profilePic.classList.add('profile-pic');
-            
+
+            // Add the message and profile pic to the message element
             if (isCurrentUser) {
                 msgElement.style.flexDirection = 'row-reverse';  // Move current user's messages to the right
                 msgElement.innerHTML = '';  // Clear the default content
@@ -373,7 +380,9 @@ async function loadMessages(receiverId) {
                 msgElement.appendChild(timestamp);
             }
 
+            // Append the message to the messages container
             messagesDiv.appendChild(msgElement);
+
         });
 
         // Scroll to the bottom after loading messages
@@ -385,80 +394,82 @@ async function loadMessages(receiverId) {
     }
 }
 
-// Function to scroll to the bottom of the chat box
-function scrollToBottom() {
-    const messagesDiv = document.getElementById('messages');
-    messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
-}
-
-
-  // Function to periodically reload the chat box every 3 seconds (3000 milliseconds)
-  let messageFetchInterval;
-
-  function startMessageFetching(receiverId) {
+  
+    // Function to scroll to the bottom of the chat box
+    function scrollToBottom() {
+      const messagesDiv = document.getElementById('messages');
+      messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
+    }
+  
+    // Function to periodically reload the chat box every 3 seconds (3000 milliseconds)
+    let messageFetchInterval;
+  
+    function startMessageFetching(receiverId) {
       // Clear any existing interval before starting a new one
       if (messageFetchInterval) {
           clearInterval(messageFetchInterval);
       }
-
-      // Set interval to fetch messages every 3000ms
+  
+      // Set interval to fetch messages every 10000ms (10 seconds)
       messageFetchInterval = setInterval(() => {
           loadMessages(receiverId);  // Fetch and update the messages
       }, 10000);
-  }
-
-  // Initialize the page
-  loadUsers();  // Load the list of users to chat with
-
-  // Modified part: Start fetching messages after selecting a user to chat with
-  async function selectUserAndStartFetching(receiverId) {
+    }
+  
+    // Initialize the page
+    loadUsers();  // Load the list of users to chat with
+  
+    // Modified part: Start fetching messages after selecting a user to chat with
+    async function selectUserAndStartFetching(receiverId) {
       if (!receiverId) {
           console.error('Receiver ID is missing!');
           return;
       }
-
+  
       // Start fetching messages for the selected user
       startMessageFetching(receiverId);
-
+  
       // Also, load the initial set of messages
       loadMessages(receiverId);
-  }
-
-  // Handle sending the message when the form is submitted
-  document.getElementById('message-form').addEventListener('submit', async function(event) {
+    }
+  
+    // Handle sending the message when the form is submitted
+    document.getElementById('message-form').addEventListener('submit', async function(event) {
       event.preventDefault();  // Prevent the form from submitting and reloading the page
-
+  
       const content = document.getElementById('content').value;
       const receiverId = document.getElementById('receiver').value;  // Get the selected receiver ID
-
+  
       if (!receiverId) {
           alert('Please select a user to chat with!');
           return;
       }
-
-      const response = await fetch('/send_message', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sender_id: senderId, receiver_id: receiverId, content })
-      });
-
-      const result = await response.json();
-
-      // Show success message via Bootstrap toast
-      if (result.success) {
-          const toastElement = document.getElementById('toast');
-          const toast = new bootstrap.Toast(toastElement);
-          toast.show();  // Show the toast notification
-      }
-
-      loadMessages(receiverId);  // Reload messages after sending a new one
-      document.getElementById('content').value = '';  // Clear the input field after sending
-  });
-</script>
-
-
   
-   
+      try {
+          const response = await fetch('/send_message', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ sender_id: senderId, receiver_id: receiverId, content })
+          });
+  
+          const result = await response.json();
+  
+          // Show success message via Bootstrap toast
+          if (result.success) {
+              const toastElement = document.getElementById('toast');
+              const toast = new bootstrap.Toast(toastElement);
+              toast.show();  // Show the toast notification
+          }
+  
+          loadMessages(receiverId);  // Reload messages after sending a new one
+          document.getElementById('content').value = '';  // Clear the input field after sending
+      } catch (error) {
+          console.error('Error sending message:', error);
+      }
+    });
+  </script>
+  
+
   </section>
 
 </main> 
